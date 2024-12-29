@@ -1,0 +1,19 @@
+DESCRIPTION:
+A NODE for indirect response model. PK is modeled explicitly. Effect of drug concentration on kin is modeled with a NN.
+
+[LONGITUDINAL]
+input = {V=2,kel=0.1,kin=40,ic50=3,R0=100}
+
+PK:
+; PK model definition
+depot(target=C)
+
+EQUATION:
+R_0 = R0
+kout = kin/R0
+ddt_C = -kel * C
+Cc = C/V
+ddt_R = kin * (1 - NNr(state=C,min_init=0.5,max_init=5,time_nn=FALSE)) - kout * R
+
+OUTPUT:
+output = {Cc,R}
