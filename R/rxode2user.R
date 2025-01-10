@@ -91,21 +91,47 @@ nn_nlmixr_reset <- function() {
 #'
 #' }
 #'
-NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
+NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
                act=c("ReLU", "Softplus"),
                time_nn=FALSE,
                beta=20,
-               pop=TRUE,
+               pop=getOption("pmxNODE.pop",TRUE),
                eta_model=c("prop", "add"),
-               theta_scale=0.1,eta_scale=0.1, pre_fixef=NULL,
+               theta_scale=0.1,eta_scale=0.1,
+               pre_fixef=getOption("pmxNODE.pre_fixef",NULL),
                iniDf=NULL) {
   if (identical(rxode2::rxUdfUiNum(), 1L) && is.null(rxUdfUiMv())) {
     # If this is the first call of NN()
     nn_nlmixr_reset()
   }
+
+  number <- as.character(substitute(number))
+  tmp <- suppressWarnings(try(force(number), silent=TRUE))
+  if (!inherits(tmp, "try-error")) {
+    if (is.character(tmp)) {
+      number <- tmp
+    }
+  }
+
   replace <- paste0("NN", number)
   if (exists(replace, envir = nn_nlmixr_env)) {
     # When NN# already exists, simply replace NN# in model
+    if (!missing(state) ||
+          !missing(min_init) ||
+           !missing(max_init) ||
+           !missing(n_hidden) ||
+           !missing(act) ||
+           !missing(time_nn) ||
+           !missing(beta) ||
+           !missing(pop) ||
+           !missing(eta_model) ||
+           !missing(theta_scale) ||
+           !missing(eta_scale) ||
+           !missing(pre_fixef) ||
+           !missing(iniDf)) {
+      warning(paste0("NN(", number, ") already exists. Using old definition"),
+              call. = FALSE)
+    }
     return(list(replace=replace))
   }
   ## Restore variables that are not part of the function call in the
@@ -161,9 +187,6 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
     rep <- gsub("\"","", deparse1(expr))
     return(list(replace=rep, uiUseMv=TRUE))
   }
-
-  checkmate::assertIntegerish(number, lower=1, len=1, any.missing=FALSE)
-  number <- as.character(number)
   rxode2::assertVariableName(state)
   checkmate::assertNumeric(min_init, len=1, any.missing=FALSE)
   checkmate::assertNumeric(max_init, len=1, any.missing=FALSE)
