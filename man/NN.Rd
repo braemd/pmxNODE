@@ -64,8 +64,12 @@ Neural Network ODE language in nlmixr2 langauage
 }
 \examples{
 
+ if (requireNamespace("rxode2", quietly = TRUE)) {
+
 # Called directly, this isn't that interesting, but can show what
 # is produced for rxode2 integration
+
+library(rxode2)
 
 NN(1, state="t", min_init=0.1, max_init=24, pop=TRUE)
 
@@ -82,6 +86,12 @@ f_ode_pop <- function(){
     cp = centr / V
     cp ~ prop(prop.err)
   })
+}
+
+# but it expands to the complete model
+
+f_ode_pop()
+
 }
 
 }
