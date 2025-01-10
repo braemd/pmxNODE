@@ -5,6 +5,7 @@
 #'
 #' @param fun The function to convert
 #'
+#' @author Matthew L Fidler
 #'
 rxUdfUi.NN <- function(fun) {
   eval(fun)
@@ -30,6 +31,10 @@ nn_nlmixr_reset <- function() {
 #'
 #' @param n_hidden The number of hidden layers in the neural network (default 5)
 #'
+#' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
+#'
+#' @inheritParams nn_converter_nlmixr
+
 #' @param act activation in the hidden layer, ReLU and Softplus
 #'   implemented. Default is ReLU.
 #'
@@ -47,7 +52,12 @@ nn_nlmixr_reset <- function() {
 #' @return A list with the before and replace elements and iniDf to
 #'   allow integration in the rxode2/nlmixr2 language directly.
 #'
+#' @author Matthew L Fidler (uses the same functions `nn_generator_nlmixr`, written by Dominic Bräm)
+#'
 #' @examples
+#'
+#' # Called directly, this isn't that interesting, but can show what
+#' # is produced for rxode2 integration
 #'
 #' NN(1, state="t", min_init=0.1, max_init=24, pop=TRUE)
 NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
@@ -70,6 +80,7 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   checkmate::assertLogical(pop, len=1, any.missing=FALSE)
   checkmate::assertNumeric(theta_scale, len=1, lower=0, any.missing=FALSE)
   checkmate::assertNumeric(eta_scale, len=1, lower=0, any.missing=FALSE)
+  checkmate::assertNumeric(beta, len=1, lower=0, any.missing=FALSE)
 
   replace <- paste0("NN", number)
   if (exists(replace, envir = nn_nlmixr_env)) {
@@ -79,7 +90,8 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   before <- c(nn_parm_setter_nlmixr(number=number,pop=pop, n_hidden=n_hidden,
                                     time_nn=time_nn),
               nn_generator_nlmixr(number=number,state=state,time_nn=time_nn,
-                                  n_hidden = n_hidden,act=act))
+                                  n_hidden = n_hidden,act=act,
+                                  beta=beta))
   if (is.null(iniDf)) {
     iniDf <- rxode2::rxUdfUiIniDf()
   }
