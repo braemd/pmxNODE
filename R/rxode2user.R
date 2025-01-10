@@ -238,7 +238,7 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   eta1$fix <- FALSE
   eta1$label <- NA_character_
   eta1$backTransform <- NA_character_
-  eta1$condition <- NA_character_
+  eta1$condition <- "id"
   eta1$err <- NA_character_
 
   env <- new.env(parent=baseenv())
