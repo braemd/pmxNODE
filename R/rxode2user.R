@@ -82,9 +82,12 @@ nn_nlmixr_reset <- function() {
 #'   })
 #' }
 #'
-#' # but it expands to the complete model
+#' # but it expands to the complete model:
 #'
 #' f_ode_pop()
+#'
+#' # This is because pmxNODE uses the extensible user model interface
+#' # in rxode2.  This only works if you load rxode2/nlmixr2 and pmxNODE
 #'
 #' }
 #'
