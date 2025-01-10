@@ -17,4 +17,6 @@ LazyData: true
 RoxygenNote: 7.3.2
 Suggests: 
     checkmate,
-    rxode2
+    rxode2,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

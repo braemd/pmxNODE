@@ -94,13 +94,25 @@ nn_nlmixr_reset <- function() {
 NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
                act=c("ReLU", "Softplus"),
                time_nn=FALSE,
-               pop=FALSE,theta_scale=0.1,eta_scale=0.1, pre_fixef=NULL,
+               beta=20,
+               pop=FALSE,
+               eta_model=c("prop", "add"),
+               theta_scale=0.1,eta_scale=0.1, pre_fixef=NULL,
                iniDf=NULL) {
+  state <- as.character(substitute(state))
+  tmp <- suppressWarnings(try(force(state), silent=TRUE))
+  if (!inherits(tmp, "try-error")) {
+    if (is.character(tmp)) {
+      state <- state
+    }
+  }
+
   if (identical(rxode2::rxUdfUiNum(), 1L)) {
     # If this is the first call of NN()
     nn_nlmixr_reset()
   }
   act <- match.arg(act)
+  eta_model <- match.arg(eta_model)
   checkmate::assertIntegerish(number, lower=1, len=1, any.missing=FALSE)
   number <- as.character(number)
   rxode2::assertVariableName(state)
@@ -118,7 +130,8 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
     # When NN# already exists, simply replace NN# in model
     return(list(replace=replace))
   }
-  before <- c(nn_parm_setter_nlmixr(number=number,pop=pop, n_hidden=n_hidden,
+  before <- c(nn_parm_setter_nlmixr(number=number, pop=pop, n_hidden=n_hidden,
+                                    eta_model=eta_model,
                                     time_nn=time_nn),
               nn_generator_nlmixr(number=number,state=state,time_nn=time_nn,
                                   n_hidden = n_hidden,act=act,
@@ -133,14 +146,14 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
                                        theta_scale=theta_scale,
                                        time_nn=time_nn,pre_fixef=pre_fixef,
                                        n_hidden=n_hidden)
-  if (pop) {
+  eta <- NULL
+  if (!pop) {
     eta <- nn_eta_initializer_nlmixr(number=number, n_hidden=n_hidden,
                                      eta_scale=eta_scale, time_nn=time_nn)
   }
   # Fill in iniDf with thetas and etas
   if (!is.null(iniDf)) {
-    iniDf <- rxode2::rxUdfUiIniDf(iniDf)
-    theta1 <- iniDf[!is.na(iniDf$theta),,drop=FALSE]
+    theta1 <- iniDf[!is.na(iniDf$ntheta),,drop=FALSE]
     theta0 <- theta1
     if (length(theta1$ntheta) > 0L) {
       max_theta <- max(theta1$ntheta)
@@ -189,8 +202,12 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   with(env,
        base::eval(str2lang(paste(c("{", .theta, "}"), collapse="\n"))))
   env$.max_theta <- max_theta
+  # For some reason the order changes with a simple ls(env) call
+  # depending on interactive and possibly regions. So we need to
+  # store the names in a separate variable.
+  n <- gsub(" *<-.*","", theta)
   theta0 <- c(list(theta0),
-              lapply(ls(env), function(v) {
+              lapply(n, function(v) {
                 cur <- theta1
                 cur$name <- v
                 cur$est <- get(v, envir=env)
@@ -203,11 +220,12 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   env <- new.env(parent=baseenv())
   env$.eta <- eta
   env$.max_eta <- max_eta
-  if (pop) {
+  if (!pop) {
     with(env,
          base::eval(str2lang(paste(c("{", gsub("~", "<-", .eta, fixed=TRUE), "}"), collapse="\n"))))
+    n <- gsub(" *~.*","", eta)
     eta0 <- c(list(eta0),
-              lapply(ls(env), function(v) {
+              lapply(n, function(v) {
                 cur <- eta1
                 cur$name <- v
                 cur$est <- get(v, envir=env)
@@ -223,7 +241,7 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
     newVars <- c(newVars$lhs, newVars$params, newVars$state)
     newVars <- newVars[newVars != state]
     oldVars <- c(oldVars$lhs, oldVars$params, oldVars$state)
-    both <- intercet(oldVars, newVars)
+    both <- intersect(oldVars, newVars)
     if (length(both) > 0L) {
       stop("The following variables are already defined in the model and are needed for NN(): ", paste(both, collapse=", "))
     }
