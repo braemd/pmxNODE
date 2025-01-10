@@ -56,6 +56,8 @@ nn_nlmixr_reset <- function() {
 #'
 #' @author Matthew L Fidler (uses the same functions `nn_generator_nlmixr`, written by Dominic Bräm)
 #'
+#' @export
+#'
 #' @examples
 #'
 #'  if (requireNamespace("rxode2", quietly = TRUE)) {
@@ -100,7 +102,7 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
                theta_scale=0.1,eta_scale=0.1,
                pre_fixef=getOption("pmxNODE.pre_fixef",NULL),
                iniDf=NULL) {
-  if (identical(rxode2::rxUdfUiNum(), 1L) && is.null(rxUdfUiMv())) {
+  if (identical(rxode2::rxUdfUiNum(), 1L) && is.null(rxode2::rxUdfUiMv())) {
     # If this is the first call of NN()
     nn_nlmixr_reset()
   }
@@ -165,7 +167,7 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
     }
   }
 
-  if (is.null(rxUdfUiMv())) {
+  if (is.null(rxode2::rxUdfUiMv())) {
     # If we use names (like ReLU or prop) in the model they become
     # model variables. To avoid this convert to numeric and allow
     # numeric processing. In theory the state should already be in the

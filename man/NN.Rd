@@ -7,15 +7,17 @@
 NN(
   number = 1,
   state = "t",
-  min_init,
-  max_init,
+  min_init = 0.5,
+  max_init = 10,
   n_hidden = 5,
   act = c("ReLU", "Softplus"),
   time_nn = FALSE,
-  pop = FALSE,
+  beta = 20,
+  pop = getOption("pmxNODE.pop", TRUE),
+  eta_model = c("prop", "add"),
   theta_scale = 0.1,
   eta_scale = 0.1,
-  pre_fixef = NULL,
+  pre_fixef = getOption("pmxNODE.pre_fixef", NULL),
   iniDf = NULL
 )
 }
@@ -39,6 +41,8 @@ implemented. Default is ReLU.}
 consequently all weights from inputs to hidden layer should be
 strictly negative (default is FALSE)}
 
+\item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
 \item{pop}{(boolean) If the generated nlmixr model function should
 be a fit without (TRUE) or with (FALSE).  Default is FALSE.}
 
@@ -52,8 +56,6 @@ initialized between -0.3 and 0.3}
 
 \item{iniDf}{the initialization \code{data.frame}, if \code{NULL} query using
 \code{rxUdfUiIniDf()}}
-
-\item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
 }
 \value{
 A list with the before and replace elements and iniDf to
