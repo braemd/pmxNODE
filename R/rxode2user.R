@@ -95,7 +95,7 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
                act=c("ReLU", "Softplus"),
                time_nn=FALSE,
                beta=20,
-               pop=FALSE,
+               pop=TRUE,
                eta_model=c("prop", "add"),
                theta_scale=0.1,eta_scale=0.1, pre_fixef=NULL,
                iniDf=NULL) {
@@ -186,10 +186,15 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   rxode2::assertIniDf(iniDf, null.ok=TRUE)
 
   theta <- nn_theta_initializer_nlmixr(number=number,xmini=min_init,
-  xmaxi=max_init, theta_scale=theta_scale,
-  time_nn=time_nn,pre_fixef=pre_fixef, n_hidden=n_hidden) eta <- NULL
-  if (!pop) { eta <- nn_eta_initializer_nlmixr(number=number,
-  n_hidden=n_hidden, eta_scale=eta_scale, time_nn=time_nn) }
+                                       xmaxi=max_init,
+                                       theta_scale=theta_scale,
+                                       time_nn=time_nn,pre_fixef=pre_fixef,
+                                       n_hidden=n_hidden)
+  eta <- NULL
+  if (!pop) {
+    eta <- nn_eta_initializer_nlmixr(number=number, n_hidden=n_hidden,
+                                     eta_scale=eta_scale, time_nn=time_nn)
+  }
   # Fill in iniDf with thetas and etas
   if (!is.null(iniDf)) {
     theta1 <- iniDf[!is.na(iniDf$ntheta),,drop=FALSE]
