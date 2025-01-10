@@ -99,20 +99,69 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
                eta_model=c("prop", "add"),
                theta_scale=0.1,eta_scale=0.1, pre_fixef=NULL,
                iniDf=NULL) {
+  if (identical(rxode2::rxUdfUiNum(), 1L) && is.null(rxUdfUiMv())) {
+    # If this is the first call of NN()
+    nn_nlmixr_reset()
+  }
+  replace <- paste0("NN", number)
+  if (exists(replace, envir = nn_nlmixr_env)) {
+    # When NN# already exists, simply replace NN# in model
+    return(list(replace=replace))
+  }
+  ## Restore variables that are not part of the function call in the
+  ## rxode2 model variable parse step
+  if (exists(paste0(replace, "pre_fixef"), envir = nn_nlmixr_env)) {
+    pre_fixef <- get(paste0(replace, "pre_fixef"), envir = nn_nlmixr_env)
+  }
+  if (exists(paste0(replace, "iniDf"), envir = nn_nlmixr_env)) {
+    iniDf <- get(paste0(replace, "iniDf"), envir = nn_nlmixr_env)
+  }
+  if (exists(paste0(replace, "time_nn"), envir = nn_nlmixr_env)) {
+    time_nn <- get(paste0(replace, "time_nn"), envir = nn_nlmixr_env)
+  }
+  if (exists(paste0(replace, "pop"), envir = nn_nlmixr_env)) {
+    pop <- get(paste0(replace, "pop"), envir = nn_nlmixr_env)
+  }
+  if (is.numeric(act)) {
+    act <- c("ReLU", "Softplus")[act]
+  }
+  if (is.numeric(eta_model)) {
+    eta_model <- c("prop", "add")[eta_model]
+  }
+  act <- match.arg(act)
+  eta_model <- match.arg(eta_model)
+
   state <- as.character(substitute(state))
   tmp <- suppressWarnings(try(force(state), silent=TRUE))
   if (!inherits(tmp, "try-error")) {
     if (is.character(tmp)) {
-      state <- state
+      state <- tmp
     }
   }
 
-  if (identical(rxode2::rxUdfUiNum(), 1L)) {
-    # If this is the first call of NN()
-    nn_nlmixr_reset()
+  if (is.null(rxUdfUiMv())) {
+    # If we use names (like ReLU or prop) in the model they become
+    # model variables. To avoid this convert to numeric and allow
+    # numeric processing. In theory the state should already be in the
+    # model so it won't affect model parameters
+    expr <- str2lang(deparse1(list(number, state, min_init, max_init,
+         n_hidden, stats::setNames(c(ReLU=1, Softplus=2)[act], NULL), 0, beta,
+         0, stats::setNames(c(prop=1,add=2)[eta_model], NULL), theta_scale,
+         eta_scale, 0, 0)))
+    # Save pre_fixef and iniDf since they may be a bit more complex
+    # and can't be parsed by rxode2 base parser
+    assign(paste0(replace, "pre_fixef"), pre_fixef, envir=nn_nlmixr_env)
+    assign(paste0(replace, "iniDf"), iniDf, envir=nn_nlmixr_env)
+    assign(paste0(replace, "time_nn"), time_nn, envir=nn_nlmixr_env)
+    assign(paste0(replace, "pop"), pop, envir=nn_nlmixr_env)
+
+    expr[[1]] <- quote(`NN`)
+    # Need to have model variables to check for name collision
+    # reparse with all variables filled out requesting MV
+    rep <- gsub("\"","", deparse1(expr))
+    return(list(replace=rep, uiUseMv=TRUE))
   }
-  act <- match.arg(act)
-  eta_model <- match.arg(eta_model)
+
   checkmate::assertIntegerish(number, lower=1, len=1, any.missing=FALSE)
   number <- as.character(number)
   rxode2::assertVariableName(state)
@@ -125,11 +174,6 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   checkmate::assertNumeric(eta_scale, len=1, lower=0, any.missing=FALSE)
   checkmate::assertNumeric(beta, len=1, lower=0, any.missing=FALSE)
 
-  replace <- paste0("NN", number)
-  if (exists(replace, envir = nn_nlmixr_env)) {
-    # When NN# already exists, simply replace NN# in model
-    return(list(replace=replace))
-  }
   before <- c(nn_parm_setter_nlmixr(number=number, pop=pop, n_hidden=n_hidden,
                                     eta_model=eta_model,
                                     time_nn=time_nn),
@@ -142,15 +186,10 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
   rxode2::assertIniDf(iniDf, null.ok=TRUE)
 
   theta <- nn_theta_initializer_nlmixr(number=number,xmini=min_init,
-                                       xmaxi=max_init,
-                                       theta_scale=theta_scale,
-                                       time_nn=time_nn,pre_fixef=pre_fixef,
-                                       n_hidden=n_hidden)
-  eta <- NULL
-  if (!pop) {
-    eta <- nn_eta_initializer_nlmixr(number=number, n_hidden=n_hidden,
-                                     eta_scale=eta_scale, time_nn=time_nn)
-  }
+  xmaxi=max_init, theta_scale=theta_scale,
+  time_nn=time_nn,pre_fixef=pre_fixef, n_hidden=n_hidden) eta <- NULL
+  if (!pop) { eta <- nn_eta_initializer_nlmixr(number=number,
+  n_hidden=n_hidden, eta_scale=eta_scale, time_nn=time_nn) }
   # Fill in iniDf with thetas and etas
   if (!is.null(iniDf)) {
     theta1 <- iniDf[!is.na(iniDf$ntheta),,drop=FALSE]
@@ -236,7 +275,7 @@ NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
     eta0 <- do.call(`rbind`, eta0)
   }
   oldVars <- rxode2::rxUdfUiMv()
-  if (is.null(oldVars)) {
+  if (!is.null(oldVars)) {
     newVars <- rxode2::rxModelVars(paste(c(theta, eta, before), collapse="\n"))
     newVars <- c(newVars$lhs, newVars$params, newVars$state)
     newVars <- newVars[newVars != state]

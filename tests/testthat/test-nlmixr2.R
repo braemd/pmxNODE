@@ -46,4 +46,18 @@ if (requireNamespace("rxode2", quietly = TRUE)) {
                    "eta.b1_21"))
 
   })
+
+  test_that("NN errors when overwritting a parameter", {
+
+    f_ode_pop <- function() {
+      model({
+        h1_5 <- lV
+        d/dt(centr)  =  NN(1, state=centr,min_init=0,max_init=300, pop=TRUE)
+        cp = centr / h1_5
+      })
+    }
+
+    expect_error(f_ode_pop(), "h1_5")
+
+  })
 }
