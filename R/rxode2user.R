@@ -7,6 +7,8 @@
 #'
 #' @author Matthew L Fidler
 #'
+#' @noRd
+#'
 rxUdfUi.NN <- function(fun) {
   eval(fun)
 }
@@ -60,6 +62,22 @@ nn_nlmixr_reset <- function() {
 #' # is produced for rxode2 integration
 #'
 #' NN(1, state="t", min_init=0.1, max_init=24, pop=TRUE)
+#'
+#' # This can be used in the rxode2 language as follows:
+#'
+#' f_ode_pop <- function(){
+#'   ini({
+#'     lV <- 1
+#'     prop.err <- 0.1
+#'   })
+#'   model({
+#'     V <- lV
+#'     d/dt(centr)  =  NN(1, state=centr,min_init=0,max_init=300)
+#'     cp = centr / V
+#'     cp ~ prop(prop.err)
+#'   })
+#' }
+#'
 NN <- function(number=1,state="t",min_init,max_init, n_hidden=5,
                act=c("ReLU", "Softplus"),
                time_nn=FALSE,
