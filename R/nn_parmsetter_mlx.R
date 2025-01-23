@@ -51,7 +51,8 @@ nn_theta_def_mlx <- function(number,n_hidden=5,time_nn=FALSE){
 #' \dontrun{
 #' ini_values <- nn_theta_initializer_mlx(number="1",xmini=1,xmaxi=5)
 #' }
-nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.1,pre_fixef=NULL,time_nn=FALSE){
+nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.1,pre_fixef=NULL,time_nn=FALSE,
+                                    act="ReLU",beta=20){
   if(!is.null(pre_fixef)){
     if(!time_nn){
       nn_parm_names <- unlist(list(paste0("lW",number,"_1",1:n_hidden),
@@ -75,6 +76,10 @@ nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
       b1s <- round(acts * w1s^2,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       
+      if(act=="Softplus"){
+        b1s <- b1s * beta
+      }
+      
       inis <- unlist(list(w1s,b1s,w2s))
     } else{
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
@@ -82,6 +87,10 @@ nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
       b1s <- round(-acts * w1s,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       b2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),1) * theta_scale
+      
+      if(act=="Softplus"){
+        b1s <- b1s * beta
+      }
       
       inis <- unlist(list(w1s,b1s,w2s,b2s))
     }

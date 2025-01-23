@@ -95,7 +95,7 @@ nn_converter_nlmixr <- function(f_ode,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pr
     theta_inis[[i]] <- nn_theta_initializer_nlmixr(number=nn_numbers[i],xmini=min_states[i],
                                                    xmaxi=max_states[i],theta_scale=theta_scale,
                                                    time_nn=time_nns[i],pre_fixef=pre_fixef,
-                                                   n_hidden=nn_nhiddens[i])
+                                                   n_hidden=nn_nhiddens[i],act=nn_acts[i])
   }
   
   if(!pop){
@@ -253,7 +253,7 @@ nn_converter_nm <- function(ctl_path,pop=FALSE,theta_scale=0.1,eta_scale=0.001,p
     theta_inis[[i]] <- nn_theta_initializer_nm(number=nn_numbers[i],xmini=min_states[i],
                                                xmaxi=max_states[i],theta_scale=theta_scale,
                                                time_nn=time_nns[i],pre_fixef=pre_fixef,
-                                               n_hidden=nn_nhiddens[i])
+                                               n_hidden=nn_nhiddens[i],act=nn_acts[i])
   }
   
   eta_defs <- vector("list", length = length(nn_numbers))
@@ -446,7 +446,7 @@ nn_converter_mlx <- function(mlx_path,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pr
     theta_inis[[i]] <- nn_theta_initializer_mlx(number=nn_numbers[i],xmini=min_states[i],
                                                 xmaxi=max_states[i],theta_scale=theta_scale,
                                                 time_nn=time_nns[i],pre_fixef=pre_fixef,
-                                                n_hidden=nn_nhiddens[i])
+                                                n_hidden=nn_nhiddens[i],act=nn_acts[i])
   }
   
   f_parse_new <- nn_reducer(f_parse)
