@@ -245,8 +245,13 @@ pre_fixef_extractor_mlx <- function(model_name){
   }
   
   file_path <- gsub("\\.mlxtran","",model_name)
+  pop_file_path <- paste0(file_path,"/populationParameters.txt")
   
-  parm_table <- read.table(paste0(file_path,"/populationParameters.txt"),header=T,sep=",")
+  if(!file.exists(pop_file_path)){
+    stop("No population estimates available for provided Monolix file")
+  }
+  
+  parm_table <- read.table(pop_file_path,header=T,sep=",")
   
   pop_parm_table <- parm_table[grepl("_pop",parm_table$parameter),]
   
@@ -254,6 +259,40 @@ pre_fixef_extractor_mlx <- function(model_name){
   names(pre_fixef) <- pop_parm_table$parameter
   
   return(pre_fixef)
+}
+
+#' Monolix individual estimations extractor
+#' 
+#' When the Monolix model has been run, this function allows to extract the
+#' estimated individual parameters (EBEs) from the Monolix run folder.
+#' 
+#' NULL
+#' 
+#' @param model_name (string) Name of the Monolix run. Must include \dQuote{.mlxtran}
+#' @return Data frame with individual parameter estimates (EBEs)
+#' @examples 
+#' \dontrun{
+#' est_parms <- indparm_extractor_mlx("run_1_ind.mlxtran")
+#' }
+#' @author Dominic Bräm
+#' @export
+indparm_extractor_mlx <- function(model_name){
+  if(!grepl("\\.mlxtran",model_name)){
+    stop("Please provid a .mlxtran file that already run population estimation")
+  }
+  
+  file_path <- gsub("\\.mlxtran","",model_name)
+  ind_file_path <- paste0(file_path,"/IndividualParameters/estimatedIndividualParameters.txt")
+  
+  if(!file.exists(ind_file_path)){
+    stop("No individual estimates available for provided Monolix file")
+  }
+  
+  parm_table <- read.table(ind_file_path,header=T,sep=",")
+  
+  ind_parm_table <- parm_table[,grepl("id|_mode",colnames(parm_table))]
+  
+  return(ind_parm_table)
 }
 
 #' Run Monolix from R

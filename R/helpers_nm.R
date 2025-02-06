@@ -93,6 +93,59 @@ pre_fixef_extractor_nm <- function(res_path){
   
 }
 
+#' NONMEM individual estimations extractor
+#' 
+#' When the NOMEM model has been run, this function allows to extract the
+#' estimated individual parameters by combining information from the .res and
+#' the .phi file
+#' 
+#' NULL
+#' 
+#' @param res_file (Path/)Name of the results file of a NONMEM run, must include file extension, e.g., \dQuote{.res}
+#' @param phi_file (Path/)Name of the phi file of a NONMEM run, must include file extension, e.g., \dQuote{.phi}
+#' @return Data frame with individual parameter estimates
+#' @examples 
+#' \dontrun{
+#' est_parms <- indparm_extractor_nm("run_1_ind.res","run_1_ind.phi")
+#' }
+#' @author Dominic Bräm
+#' @export
+indparm_extractor_nm <- function(res_file,phi_file){
+  if(!file.exists(phi_file)){
+    stop("Provided .phi file from NONMEM run doesn't exist")
+  }
+  
+  if(tools::file_ext(phi_file) != "phi"){
+    stop("Please provid a .phi file from NONMEM run")
+  }
+  
+  phi_text <- readLines(phi_file)[-1]
+  phi_standardised <- gsub("\\s+"," ",phi_text)
+  phi_split <- lapply(phi_standardised,function(x) unlist(strsplit(x,split=" ")))
+  
+  id_place <- grep("ID",phi_split[[1]])
+  etas_place <- grep("ETA",phi_split[[1]])
+  
+  ids <- unlist(lapply(phi_split[-1],function(x) x[id_place]))
+  etas <- lapply(phi_split[-1],function(x) as.numeric(x[etas_place]))
+  
+  etas_df <- do.call(rbind,etas)
+  
+  thetas <- pre_fixef_extractor_nm(res_file)
+  thetas_names <- names(thetas)
+  suppressWarnings({
+    thetas_num <- ifelse(is.na(as.numeric(thetas)),0,as.numeric(thetas))
+  })
+  
+  ind_parms <- t(apply(etas_df,1,function(x) thetas_num * exp(x)))
+  colnames(ind_parms) <- thetas_names
+  
+  id_df <- data.frame(id = ids)
+  out <- cbind(id_df,ind_parms)
+  
+  return(out)
+}
+
 #' Run NONMEM from R
 #'
 #' Runs NONMEM from R
