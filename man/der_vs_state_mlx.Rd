@@ -10,6 +10,7 @@ der_vs_state_mlx(
   max_state,
   est_parms = NULL,
   mlx_file = NULL,
+  length_out = 100,
   time_nn = FALSE,
   act = "ReLU",
   beta = 20
@@ -25,6 +26,8 @@ der_vs_state_mlx(
 \item{est_parms}{(named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.}
 
 \item{mlx_file}{(string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.}
+
+\item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
