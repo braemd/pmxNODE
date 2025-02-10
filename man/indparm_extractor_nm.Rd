@@ -12,11 +12,11 @@ indparm_extractor_nm(res_file, phi_file)
 \item{phi_file}{(Path/)Name of the phi file of a NONMEM run, must include file extension, e.g., \dQuote{.phi}}
 }
 \value{
-Data frame with individual parameter estimates
+Data frame with individual parameter estimates for NN parameters
 }
 \description{
 When the NOMEM model has been run, this function allows to extract the
-estimated individual parameters by combining information from the .res and
+estimated individual parameters for NN parameters by combining information from the .res and
 the .phi file
 }
 \examples{

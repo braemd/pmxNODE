@@ -15,6 +15,11 @@ Opens unconverted NONMEM example model with NN functions
 \details{
 Currently only \emph{nm_theophylline_model.txt} available
 }
+\examples{
+\dontrun{
+open_nm_example()
+}
+}
 \author{
 Dominic Bräm
 }
