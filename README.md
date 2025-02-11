@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pmxNODE
+# pmxNODE \<img src=“man/pmxNODE_sticker_4.png” align=“right”, height=“138”\>
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -24,19 +24,18 @@ devtools::install_github("braemd/pmxNODE")
 
 The general workflow for Monolix with pmxNODE consists of few steps:
 
--   Write a Monolix model file, as you would do normaly. However, you
-    can utilize NN functions in your model code, e.g., for complex or
-    unknown model parts.
+- Write a Monolix model file, as you would do normaly. However, you can
+  utilize NN functions in your model code, e.g., for complex or unknown
+  model parts.
 
--   Convert the written model file with the `nn_converter_mlx` function
-    from the pmxNODE package. This function can also directly generate a
-    *.mlxtran* file with automatically initialized model parameters.
+- Convert the written model file with the `nn_converter_mlx` function
+  from the pmxNODE package. This function can also directly generate a
+  *.mlxtran* file with automatically initialized model parameters.
 
--   We suggest to fit the model to the data first without
-    inter-individual variability on neural networks parameters (argument
-    *pop = True* in the `nn_converter_mlx` function) and add the random
-    effects in a second run, where parameters were initialized with last
-    estimates.
+- We suggest to fit the model to the data first without inter-individual
+  variability on neural networks parameters (argument *pop = True* in
+  the `nn_converter_mlx` function) and add the random effects in a
+  second run, where parameters were initialized with last estimates.
 
 #### Package loading and initialization
 
