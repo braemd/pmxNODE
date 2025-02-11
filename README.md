@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pmxNODE \<img src=“man/figures/pmxNODE_sticker_4.png” align=“right”, height=“138”\>
+# pmxNODE <img src="man/figures/pmxNODE_sticker_4.png" align="right" height="138">
 
 <!-- badges: start -->
 <!-- badges: end -->
