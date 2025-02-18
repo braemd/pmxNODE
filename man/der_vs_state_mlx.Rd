@@ -39,7 +39,7 @@ Dataframe with columns for the state and the corresponding derivatives
 This functions allows to generate derivative versus state data for a neural network from a NODE in Monolix.
 }
 \details{
-Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is priotized.
+Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
 \dontrun{

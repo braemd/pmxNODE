@@ -96,14 +96,14 @@ pre_fixef_extractor_nm <- function(res_path){
 #' NONMEM individual estimations extractor
 #' 
 #' When the NOMEM model has been run, this function allows to extract the
-#' estimated individual parameters by combining information from the .res and
+#' estimated individual parameters for NN parameters by combining information from the .res and
 #' the .phi file
 #' 
 #' NULL
 #' 
 #' @param res_file (Path/)Name of the results file of a NONMEM run, must include file extension, e.g., \dQuote{.res}
 #' @param phi_file (Path/)Name of the phi file of a NONMEM run, must include file extension, e.g., \dQuote{.phi}
-#' @return Data frame with individual parameter estimates
+#' @return Data frame with individual parameter estimates for NN parameters
 #' @examples 
 #' \dontrun{
 #' est_parms <- indparm_extractor_nm("run_1_ind.res","run_1_ind.phi")
@@ -115,8 +115,12 @@ indparm_extractor_nm <- function(res_file,phi_file){
     stop("Provided .phi file from NONMEM run doesn't exist")
   }
   
+  if(!file.exists(res_file)){
+    stop("Provided .res file from NONMEM run doesn't exist")
+  }
+  
   if(tools::file_ext(phi_file) != "phi"){
-    stop("Please provid a .phi file from NONMEM run")
+    stop("Please provide a .phi file from NONMEM run")
   }
   
   phi_text <- readLines(phi_file)[-1]
@@ -125,20 +129,37 @@ indparm_extractor_nm <- function(res_file,phi_file){
   
   id_place <- grep("ID",phi_split[[1]])
   etas_place <- grep("ETA",phi_split[[1]])
+  etas_names <- phi_split[[1]][etas_place]
   
   ids <- unlist(lapply(phi_split[-1],function(x) x[id_place]))
   etas <- lapply(phi_split[-1],function(x) as.numeric(x[etas_place]))
   
+  res_text <- readLines(res_file)
+  res_pk <- res_text[grep("\\$PK",res_text):grep("\\$DES",res_text)]
+  res_des <- res_text[grep("\\$DES",res_text):grep("\\$ERROR",res_text)]
+  
+  nn_thetas_def <- res_pk[grep("lW[^_]+_[0-9]+ =|lb[^_]+_[0-9]+ =",res_pk)]
+  nn_etas_def <- res_pk[grep("etaW[^_]+_[0-9]+ =|etab[^_]+_[0-9]+ =",res_pk)]
+  
+  nn_thetas_theta <- unlist(regmatches(nn_thetas_def,gregexpr("THETA(.+)",nn_thetas_def)))
+  nn_etas_eta <- unlist(regmatches(nn_etas_def,gregexpr("ETA(.+)",nn_etas_def)))
+  
+  nn_thetas_names <- c(unlist(regmatches(nn_thetas_def,gregexpr("lW[^_]+_[0-9]+",nn_thetas_def))),unlist(regmatches(nn_thetas_def,gregexpr("lb[^_]+_[0-9]+",nn_thetas_def))))
+  
   etas_df <- do.call(rbind,etas)
+  colnames(etas_df) <- etas_names
+  
+  nn_etas_df <- etas_df[,etas_names %in% nn_etas_eta]
   
   thetas <- pre_fixef_extractor_nm(res_file)
-  thetas_names <- names(thetas)
+  nn_thetas <- thetas[names(thetas) %in% nn_thetas_names]
+  nn_thetas_names_order <- names(nn_thetas)
   suppressWarnings({
-    thetas_num <- ifelse(is.na(as.numeric(thetas)),0,as.numeric(thetas))
+    nn_thetas_num <- ifelse(is.na(as.numeric(nn_thetas)),0,as.numeric(nn_thetas))
   })
   
-  ind_parms <- t(apply(etas_df,1,function(x) thetas_num * exp(x)))
-  colnames(ind_parms) <- thetas_names
+  ind_parms <- t(apply(nn_etas_df,1,function(x) nn_thetas_num * exp(x)))
+  colnames(ind_parms) <- nn_thetas_names_order
   
   id_df <- data.frame(id = ids)
   out <- cbind(id_df,ind_parms)
