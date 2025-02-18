@@ -115,8 +115,12 @@ indparm_extractor_nm <- function(res_file,phi_file){
     stop("Provided .phi file from NONMEM run doesn't exist")
   }
   
+  if(!file.exists(res_file)){
+    stop("Provided .res file from NONMEM run doesn't exist")
+  }
+  
   if(tools::file_ext(phi_file) != "phi"){
-    stop("Please provid a .phi file from NONMEM run")
+    stop("Please provide a .phi file from NONMEM run")
   }
   
   phi_text <- readLines(phi_file)[-1]
@@ -138,7 +142,7 @@ indparm_extractor_nm <- function(res_file,phi_file){
   nn_etas_def <- res_pk[grep("etaW[^_]+_[0-9]+ =|etab[^_]+_[0-9]+ =",res_pk)]
   
   nn_thetas_theta <- unlist(regmatches(nn_thetas_def,gregexpr("THETA(.+)",nn_thetas_def)))
-  nn_etas_eta <- unlist(regmatches(nn_etas,gregexpr("ETA(.+)",nn_etas_def)))
+  nn_etas_eta <- unlist(regmatches(nn_etas_def,gregexpr("ETA(.+)",nn_etas_def)))
   
   nn_thetas_names <- c(unlist(regmatches(nn_thetas_def,gregexpr("lW[^_]+_[0-9]+",nn_thetas_def))),unlist(regmatches(nn_thetas_def,gregexpr("lb[^_]+_[0-9]+",nn_thetas_def))))
   
