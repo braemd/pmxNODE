@@ -46,7 +46,7 @@ model_parm_extractor_mlx <- function(text){
 #' }
 #' @author Dominic Bräm
 model_parm_updater_mlx <- function(text,model_parm_names,nn_thetas){
-  input_line <- grep("input\\s+=\\s+\\{",text)
+  input_line <- grep("input\\s*=\\s*\\{",text)
   
   if(length(model_parm_names)!=0){
     model_parm_names <- paste(unlist(model_parm_names),collapse = ",")
