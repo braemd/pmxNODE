@@ -319,3 +319,89 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
   assign(replace, TRUE, envir=nn_nlmixr_env)
   list(before=before, replace=replace, iniDf=rbind(theta0, eta0))
 }
+
+#' Change a population Neural Network model to a model with between subject variability
+#'
+#' This only changes the Neural Network model to add between subject
+#' variability.  It assumes the following parameter structure
+#'
+#' @param ui -- nlmixr2 fit or rxode2 model function to modify and add
+#'   between subject variabilities to the neural network.
+#'
+#' @param val -- initial value for the added etas
+#'
+#' @return modified model with between subject variabilities added for
+#'   neural-network components.
+#' @author Matthew L. Fidler
+#' @examples
+#'
+#' f_ode_pop <- function(){
+#'   ini({
+#'     lV <- 1
+#'     prop.err <- 0.1
+#'   })
+#'   model({
+#'     V <- lV
+#'     d/dt(centr)  =  NN(1, state=centr,min_init=0,max_init=300)
+#'     cp = centr / V
+#'     cp ~ prop(prop.err)
+#'   })
+#' }
+#'
+#' f_ode_pop() %>% NNbsv(.2)
+#'
+#' @export
+NNbsv <- function(ui, val=0.1) {
+  .ui <- rxode2::assertRxUi(ui)
+  .n <- names(.ui$theta)
+  .etaNames <- dimnames(.ui$omega)[[1]]
+  .nn <- vapply(seq_along(.n), function(i){
+    grepl("^[l][Wb].*_[1-9]?[0-9]*", .n[i]) &&
+      !any(paste0("eta.", .n[i]) %in% .etaNames)
+  }, logical(1))
+  .n <- .n[which(.nn)]
+  if (length(.n) == 0) return(ui)
+  .v <- gsub("^[l]", "", .n)
+  .s1 <- paste0(.v, " <- l", .v)
+  .s2 <- paste0(.v, " <- l", .v, "*exp(eta.", .v, ")")
+  # Change the model expression first.
+  .model <- vapply(.ui$lstChr,
+                   function(l) {
+                     .w <- which(.s1 == l)
+                     if (length(.w) != 1) {
+                       return(l)
+                     }
+                     .s2[.w]
+                   }, character(1),
+                   USE.NAMES=FALSE)
+  rxode2::model(.ui) <- .model
+  # Now add eta estimates
+  .iniDf <- .ui$iniDf
+  .w <- which(!is.na(.iniDf$neta1))
+  if (length(.w) == 0L) {
+    .maxEta <- 0
+  } else {
+    .maxEta <- max(.iniDf$neta1[.w])
+  }
+  .i1 <- .iniDf[1,]
+  .i1$ntheta <- NA_integer_
+  .i1$lower <- -Inf
+  .i1$upper <- Inf
+  .i1$est <- val
+  .i1$label <- NA_character_
+  .i1$backTransform <- NA_character_
+  .i1$condition <- "id"
+  .i1$err <- NA_character_
+  .etas <- do.call(`rbind`,
+                   lapply(seq_along(.v), function(i) {
+                     .cur <- .i1
+                     .cur$neta1 <- .maxEta+i
+                     .cur$neta2 <- .maxEta+i
+                     .cur$name <- paste0("eta.", .v[i])
+                     .cur
+                   }))
+  .iniDf <- rbind(.iniDf, .etas)
+
+  rxode2::ini(.ui) <- .iniDf
+  .ui
+}
