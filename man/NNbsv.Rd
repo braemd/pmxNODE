@@ -4,7 +4,7 @@
 \alias{NNbsv}
 \title{Change a population Neural Network model to a model with between subject variability}
 \usage{
-NNbsv(ui, val = 0.1, exp_eta = FALSE)
+NNbsv(ui, val = 0.1, str = "\%s <- l\%s*exp(eta.\%s)")
 }
 \arguments{
 \item{ui}{-- nlmixr2 fit or rxode2 model function to modify and add
@@ -12,8 +12,10 @@ between subject variabilities to the neural network.}
 
 \item{val}{-- initial value for the added etas}
 
-\item{exp_eta}{-- boolean, if TRUE use the form lW*exp(eta), if not
-use the mu-referenced form lW+eta.  Default is FALSE.}
+\item{str}{-- String used to construct the eta expressions.  The
+default is "%s <- l%s*exp(eta.%s)". This translates the variable
+to the `eta` variable.  If desired you can try different forms
+for the between subject variables.}
 }
 \value{
 modified model with between subject variabilities added for
