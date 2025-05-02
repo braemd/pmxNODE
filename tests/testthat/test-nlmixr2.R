@@ -310,4 +310,91 @@ if (requireNamespace("rxode2", quietly = TRUE)) {
 
   })
 
+  test_that("NNbsv() function", {
+
+    # First with etas
+    f_ode_pop <- function() {
+      ini({
+        tV <- 1
+        eta.V ~ 1.1
+      })
+      model({
+        V <- exp(tV+eta.V)
+        d/dt(depot) <- NN(a, state=depot, min_init=0.5, max_init=10) +
+          DOSE*NN(at, state=t, min_init=0.5, max_init=10, time_nn=TRUE)
+        d/dt(centr)  =  -NN(a) - DOSE*NN(at) +
+          NN(c, state=centr, min_init=0.5, max_init=3) +
+          DOSE*NN(ct, state=t, min_init=0.5, max_init=10, time_nn=TRUE)
+        cp = centr / V
+      })
+    }
+
+    f <- NNbsv(f_ode_pop, 0.1)
+
+    expect_equal(dimnames(f$omega)[[1]],
+                 c("eta.V", "eta.Wa_11", "eta.Wa_12", "eta.Wa_13", "eta.Wa_14",
+                   "eta.Wa_15", "eta.ba_11", "eta.ba_12", "eta.ba_13", "eta.ba_14",
+                   "eta.ba_15", "eta.Wa_21", "eta.Wa_22", "eta.Wa_23", "eta.Wa_24",
+                   "eta.Wa_25", "eta.ba_21", "eta.Wat_11", "eta.Wat_12", "eta.Wat_13",
+                   "eta.Wat_14", "eta.Wat_15", "eta.bat_11", "eta.bat_12", "eta.bat_13",
+                   "eta.bat_14", "eta.bat_15", "eta.Wat_21", "eta.Wat_22", "eta.Wat_23",
+                   "eta.Wat_24", "eta.Wat_25", "eta.Wc_11", "eta.Wc_12", "eta.Wc_13",
+                   "eta.Wc_14", "eta.Wc_15", "eta.bc_11", "eta.bc_12", "eta.bc_13",
+                   "eta.bc_14", "eta.bc_15", "eta.Wc_21", "eta.Wc_22", "eta.Wc_23",
+                   "eta.Wc_24", "eta.Wc_25", "eta.bc_21", "eta.Wct_11", "eta.Wct_12",
+                   "eta.Wct_13", "eta.Wct_14", "eta.Wct_15", "eta.bct_11", "eta.bct_12",
+                   "eta.bct_13", "eta.bct_14", "eta.bct_15", "eta.Wct_21", "eta.Wct_22",
+                   "eta.Wct_23", "eta.Wct_24", "eta.Wct_25"))
+
+    # Now with no etas
+    f_ode_pop <- function() {
+      ini({
+        tV <- 1
+      })
+      model({
+        V <- exp(tV)
+        d/dt(depot) <- NN(a, state=depot, min_init=0.5, max_init=10) +
+          DOSE*NN(at, state=t, min_init=0.5, max_init=10, time_nn=TRUE)
+        d/dt(centr)  =  -NN(a) - DOSE*NN(at) +
+          NN(c, state=centr, min_init=0.5, max_init=3) +
+          DOSE*NN(ct, state=t, min_init=0.5, max_init=10, time_nn=TRUE)
+        cp = centr / V
+      })
+    }
+
+    f <- NNbsv(f_ode_pop, 0.1)
+
+    expect_equal(dimnames(f$omega)[[1]],
+                 c("eta.Wa_11", "eta.Wa_12", "eta.Wa_13", "eta.Wa_14", "eta.Wa_15",
+                   "eta.ba_11", "eta.ba_12", "eta.ba_13", "eta.ba_14", "eta.ba_15",
+                   "eta.Wa_21", "eta.Wa_22", "eta.Wa_23", "eta.Wa_24", "eta.Wa_25",
+                   "eta.ba_21", "eta.Wat_11", "eta.Wat_12", "eta.Wat_13", "eta.Wat_14",
+                   "eta.Wat_15", "eta.bat_11", "eta.bat_12", "eta.bat_13", "eta.bat_14",
+                   "eta.bat_15", "eta.Wat_21", "eta.Wat_22", "eta.Wat_23", "eta.Wat_24",
+                   "eta.Wat_25", "eta.Wc_11", "eta.Wc_12", "eta.Wc_13", "eta.Wc_14",
+                   "eta.Wc_15", "eta.bc_11", "eta.bc_12", "eta.bc_13", "eta.bc_14",
+                   "eta.bc_15", "eta.Wc_21", "eta.Wc_22", "eta.Wc_23", "eta.Wc_24",
+                   "eta.Wc_25", "eta.bc_21", "eta.Wct_11", "eta.Wct_12", "eta.Wct_13",
+                   "eta.Wct_14", "eta.Wct_15", "eta.bct_11", "eta.bct_12", "eta.bct_13",
+                   "eta.bct_14", "eta.bct_15", "eta.Wct_21", "eta.Wct_22", "eta.Wct_23",
+                   "eta.Wct_24", "eta.Wct_25"))
+
+    f_ode_pop <- function() {
+      ini({
+        tV <- 1
+        kel <- 1
+      })
+      model({
+        V <- exp(tV)
+        d/dt(depot) <- -ka*depot
+        d/dt(centr)  <- ka*depot - kel*centr
+        cp <- centr / V
+      })
+    }
+
+    f <- NNbsv(f_ode_pop, 0.1)
+
+    expect_true(inherits(f, "function"))
+  })
+
 }
