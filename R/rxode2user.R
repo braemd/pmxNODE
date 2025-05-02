@@ -54,7 +54,8 @@ nn_nlmixr_reset <- function() {
 #' @return A list with the before and replace elements and iniDf to
 #'   allow integration in the rxode2/nlmixr2 language directly.
 #'
-#' @author Matthew L Fidler (uses the same functions `nn_generator_nlmixr`, written by Dominic Bräm)
+#' @author Matthew L Fidler (uses the same functions
+#'   `nn_generator_nlmixr`, written by Dominic Bräm)
 #'
 #' @export
 #'
@@ -102,7 +103,8 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
                theta_scale=0.1,eta_scale=0.1,
                pre_fixef=getOption("pmxNODE.pre_fixef",NULL),
                iniDf=NULL) {
-  if (identical(rxode2::rxUdfUiNum(), 1L) && is.null(rxode2::rxUdfUiMv())) {
+  if (identical(rxode2::rxUdfUiNum(), 1L) &&
+        is.null(rxode2::rxUdfUiMv())) {
     # If this is the first call of NN()
     nn_nlmixr_reset()
   }
@@ -368,7 +370,7 @@ NNbsv <- function(ui, val=0.1, str="%s <- l%s*exp(eta.%s)") {
   if (length(.n) == 0) return(ui)
   .v <- gsub("^[l]", "", .n)
   .s1 <- paste0(.v, " <- l", .v)
-  .s2 <- sprintf("%s <- l%s*exp(eta.%s)", .v, .v, .v)
+  .s2 <- sprintf(str, .v, .v, .v)
   # Change the model expression first.
   .model <- vapply(.ui$lstChr,
                    function(l) {
