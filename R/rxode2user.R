@@ -330,6 +330,9 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
 #'
 #' @param val -- initial value for the added etas
 #'
+#' @param exp_eta -- boolean, if TRUE use the form lW*exp(eta), if not
+#'   use the mu-referenced form lW+eta.  Default is FALSE.
+#'
 #' @return modified model with between subject variabilities added for
 #'   neural-network components.
 #' @author Matthew L. Fidler
@@ -351,7 +354,7 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
 #' f_ode_pop() %>% NNbsv(.2)
 #'
 #' @export
-NNbsv <- function(ui, val=0.1) {
+NNbsv <- function(ui, val=0.1, exp_eta=FALSE) {
   .ui <- rxode2::assertRxUi(ui)
   .n <- names(.ui$theta)
   .etaNames <- dimnames(.ui$omega)[[1]]
@@ -363,7 +366,11 @@ NNbsv <- function(ui, val=0.1) {
   if (length(.n) == 0) return(ui)
   .v <- gsub("^[l]", "", .n)
   .s1 <- paste0(.v, " <- l", .v)
-  .s2 <- paste0(.v, " <- l", .v, "*exp(eta.", .v, ")")
+  if (expEta) {
+    .s2 <- paste0(.v, " <- l", .v, "*exp(eta.", .v, ")")
+  } else {
+    .s2 <- paste0(.v, " <- l", .v, " + eta.", .v)
+  }
   # Change the model expression first.
   .model <- vapply(.ui$lstChr,
                    function(l) {

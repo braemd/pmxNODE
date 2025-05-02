@@ -1,4 +1,5 @@
 if (requireNamespace("rxode2", quietly = TRUE)) {
+
   test_that("NN ODE works with no initial estimates", {
 
     library(rxode2)
