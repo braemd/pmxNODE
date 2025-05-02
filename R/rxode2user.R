@@ -366,7 +366,7 @@ NNbsv <- function(ui, val=0.1, exp_eta=FALSE) {
   if (length(.n) == 0) return(ui)
   .v <- gsub("^[l]", "", .n)
   .s1 <- paste0(.v, " <- l", .v)
-  if (expEta) {
+  if (exp_eta) {
     .s2 <- paste0(.v, " <- l", .v, "*exp(eta.", .v, ")")
   } else {
     .s2 <- paste0(.v, " <- l", .v, " + eta.", .v)
