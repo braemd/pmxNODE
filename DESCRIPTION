@@ -20,4 +20,7 @@ Suggests:
     checkmate,
     rxode2,
     testthat (>= 3.0.0)
+Imports:
+    tidyr,
+    ggplot2
 Config/testthat/edition: 3
