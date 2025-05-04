@@ -1,7 +1,10 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# pmxNODE \<img src=“man/pmxNODE_sticker_4.png” align=“right”, height=“138”\>
+\<\<\<\<\<\<\< HEAD \# pmxNODE \<img src=“man/pmxNODE_sticker_4.png”
+align=“right”, height=“138”\> ======= \# pmxNODE
+<img src="man/figures/pmxNODE_sticker_4.png" align="right" height="138">
+\>\>\>\>\>\>\> b8440e45de6452fb511e4264e74588dc3f0969ea
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -22,20 +25,51 @@ devtools::install_github("braemd/pmxNODE")
 
 #### General workflow
 
-The general workflow for Monolix with pmxNODE consists of few steps:
+The general workflow of pmxNODE consists of few steps:
 
-- Write a Monolix model file, as you would do normaly. However, you can
-  utilize NN functions in your model code, e.g., for complex or unknown
-  model parts.
+- Write a structural model, as you would do normaly for Monolix, NONMEM,
+  or nlmixr2. However, you can utilize NN functions in your model code,
+  e.g., for complex or unknown model parts.
 
-- Convert the written model file with the `nn_converter_mlx` function
-  from the pmxNODE package. This function can also directly generate a
-  *.mlxtran* file with automatically initialized model parameters.
+- Convert the written model file with the `nn_converter_XXX` function
+  from the pmxNODE package, e.g. `nn_converter_mlx` for Monolix. This
+  function can also directly generate a *.mlxtran* file with
+  automatically initialized model parameters.
 
 - We suggest to fit the model to the data first without inter-individual
   variability on neural networks parameters (argument *pop = True* in
   the `nn_converter_mlx` function) and add the random effects in a
   second run, where parameters were initialized with last estimates.
+
+#### NN functions
+
+The NN functions in your structural model do need to be of following
+form:
+
+- They must be named in order to uniquely identify them in the model
+  (e.g., if the same NN is used to outflow of an absorption compartment
+  and as inflow into the central compartment) and to generate uniquly
+  identifiable parameters.
+
+- The following arguments are mandatory:
+
+  - `state`: Defines the state that goes into the NN
+  - `min_init`: The minimal expected input into the NN
+  - `max_init`: The maximal expected input into the NN The minimal and
+    maximal expected inputs are needed to properly initialize the
+    weights of the NN. They don’t need to be exact but should roughly
+    give the range of expected inputs.
+
+- The following arguments are optional:
+
+  - `n_hidden`: Number of units in the hidden layer. Default is 5.
+  - `act`: Activation function to be used in the hidden layer.
+    Currently, only “ReLU” and “Softplus” are available. Default is
+    “ReLU”.
+  - `time_nn`: Whether the NN should be a “Time-dependent NN” according
+    to <https://doi.org/10.1007/s10928-023-09886-4>, i.e., whether the
+    weights from input to hidden layer should be negative. Default is
+    FALSE.
 
 #### Package loading and initialization
 
