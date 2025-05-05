@@ -11,7 +11,9 @@ nn_theta_initializer_nm(
   n_hidden = 5,
   theta_scale = 0.1,
   pre_fixef = NULL,
-  time_nn = FALSE
+  time_nn = FALSE,
+  act = "ReLU",
+  beta = 20
 )
 }
 \arguments{
