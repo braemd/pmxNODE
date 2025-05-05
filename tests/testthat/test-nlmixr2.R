@@ -330,7 +330,7 @@ if (requireNamespace("rxode2", quietly = TRUE)) {
       })
     }
 
-    f <- NNbsv(f_ode_pop, 0.1)
+    f <- suppressWarnings(NNbsv(f_ode_pop, 0.1, warn=TRUE))
 
     expect_equal(dimnames(f$omega)[[1]],
                  c("eta.V", "eta.Wa_11", "eta.Wa_12", "eta.Wa_13", "eta.Wa_14",
@@ -363,7 +363,7 @@ if (requireNamespace("rxode2", quietly = TRUE)) {
       })
     }
 
-    f <- NNbsv(f_ode_pop, 0.1)
+    f <- suppressWarnings(NNbsv(f_ode_pop, 0.1, warn=TRUE))
 
     expect_equal(dimnames(f$omega)[[1]],
                  c("eta.Wa_11", "eta.Wa_12", "eta.Wa_13", "eta.Wa_14", "eta.Wa_15",
@@ -393,9 +393,11 @@ if (requireNamespace("rxode2", quietly = TRUE)) {
       })
     }
 
-    f <- NNbsv(f_ode_pop, 0.1)
+    f <- suppressWarnings(NNbsv(f_ode_pop, 0.1, warn=TRUE))
 
     expect_true(inherits(f, "function"))
+
+    expect_error(NNbsv(f_ode_pop, 0.1, warn=FALSE))
   })
 
 }
