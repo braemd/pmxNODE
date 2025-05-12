@@ -337,6 +337,9 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
 #'   to the `eta` variable.  If desired you can try different forms
 #'   for the between subject variables.
 #'
+#' @param warn -- boolean; Should you warn or error if the element is
+#'   not a nlmixr2 fit
+#'
 #' @return modified model with between subject variabilities added for
 #'   neural-network components.
 #' @author Matthew L. Fidler
@@ -355,10 +358,19 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
 #'   })
 #' }
 #'
-#' f_ode_pop() %>% NNbsv(.2)
+#' f_ode_pop() %>% NNbsv(.2, warn=TRUE)
 #'
 #' @export
-NNbsv <- function(ui, val=0.1, str="%s <- l%s*exp(eta.%s)") {
+NNbsv <- function(ui, val=0.1, str="%s <- l%s*exp(eta.%s)",
+                  warn=FALSE) {
+  if (!inherits(ui, "nlmixr2FitCore")) {
+    .txt <- "'ui' input function is not a fit\n population values should be fit before adding between subject variability"
+    if (warn) {
+      warning(.txt, call.=FALSE)
+    } else {
+      stop(.txt, call.=FALSE)
+    }
+  }
   .ui <- rxode2::assertRxUi(ui)
   .n <- names(.ui$theta)
   .etaNames <- dimnames(.ui$omega)[[1]]
