@@ -10,6 +10,7 @@ der_state_plot_nm(
   max_state,
   est_parms = NULL,
   nm_res_file = NULL,
+  length_out = 100,
   time_nn = FALSE,
   act = "ReLU",
   plot_type = c("base", "ggplot"),
@@ -23,7 +24,7 @@ der_state_plot_nm(
 
 \item{max_state}{(numeric) Value of maximal state for which the derivative should be calculated}
 
-\item{est_parms}{(named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.}
+\item{est_parms}{(named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_nm} function. For optionality, see \strong{Details}.}
 
 \item{nm_res_file}{(string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.}
 
@@ -38,9 +39,10 @@ Displaying derivative versus state plot; returns ggplot-object if \emph{plot_typ
 }
 \description{
 This functions allows to generate a derivative versus state plot for a neural network from a NODE in NONMEM.
+Can also be used for nlmixr2.
 }
 \details{
-Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is priotized.
+Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
 \dontrun{

@@ -10,6 +10,7 @@ der_vs_state_nm(
   max_state,
   est_parms = NULL,
   nm_res_file = NULL,
+  length_out = 100,
   time_nn = FALSE,
   act = "ReLU",
   beta = 20
@@ -26,6 +27,8 @@ der_vs_state_nm(
 
 \item{nm_res_file}{(string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.}
 
+\item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
+
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
@@ -35,9 +38,10 @@ Dataframe with columns for the state and the corresponding derivatives
 }
 \description{
 This functions allows to generate derivative versus state data for a neural network from a NODE in NONMEM.
+Can also be used for nlmixr2.
 }
 \details{
-Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is priotized.
+Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
 \dontrun{

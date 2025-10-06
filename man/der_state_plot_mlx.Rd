@@ -12,6 +12,7 @@ der_state_plot_mlx(
   mlx_file = NULL,
   time_nn = FALSE,
   act = "ReLU",
+  length_out = 100,
   plot_type = c("base", "ggplot"),
   beta = 20
 )
@@ -29,6 +30,8 @@ der_state_plot_mlx(
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 
+\item{length_out}{(numeric) Number of points between min_state and max_state}
+
 \item{plot_type}{(string) What plot type should be used; "base" or "ggplot"}
 
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
@@ -40,7 +43,7 @@ Displaying derivative versus state plot; returns ggplot-object if \emph{plot_typ
 This functions allows to generate a derivative versus state plot for a neural network from a NODE in Monolix.
 }
 \details{
-Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is priotized.
+Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
 \dontrun{

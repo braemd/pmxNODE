@@ -17,7 +17,7 @@
 #' @param mlx_instal_path (string) Required if \emph{software="Monolix"} and lixoftConnectors package not yet installed. Path to the 
 #' "lixoftConnectors.tar.gz" file, under Windows usually located at C:/ProgramData/Lixoft/MonolixSuiteXXXX/connectors/lixoftConnectors.tar.gz
 #' @return Initialization of software
-#' @example 
+#' @examples 
 #' \dontrun{
 #' software_initializer(software="NONMEM")
 #' software_initializer(software="nlmixr")

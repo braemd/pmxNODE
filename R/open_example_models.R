@@ -6,7 +6,7 @@
 #' 
 #' @param model (string) (Path/)Name of Monolix model to open
 #' @return NULL
-#' @example 
+#' @examples 
 #' \dontrun{
 #' open_mlx_example()
 #' }
@@ -29,7 +29,7 @@ open_mlx_example <- function(model="mlx_theophylline_model.txt",pkg_name = "pmxN
 #' 
 #' @param model (string) (Path/)Name of NONMEM model to open
 #' @return NULL
-#' @example 
+#' @examples 
 #' \dontrun{
 #' open_nm_example()
 #' }
