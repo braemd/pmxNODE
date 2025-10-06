@@ -35,6 +35,14 @@ will install previous to loading, including its dependencies 'RJSONIO', 'ggplot2
 Note: nlmixr2 and lixoftConnectors share function \emph{getData}. If both, nlmixr and Monolix, get initialized, \emph{getData}
 will be used from the package initialized second
 }
+\examples{
+\dontrun{
+software_initializer(software="NONMEM")
+software_initializer(software="nlmixr")
+software_initializer(software="Monolix",mlx_path="C:/ProgramData/Lixoft/MonolixSuite2021R2")
+software_initializer(software="Monolix",mlx_path="C:/ProgramData/Lixoft/MonolixSuite2021R2",mlx_instal_path="C:/ProgramData/Lixoft/MonolixSuite2021R2/connectors/lixoftConnectors.tar.gz")
+}
+}
 \author{
 Dominic Bräm
 }

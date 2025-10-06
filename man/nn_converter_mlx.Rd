@@ -6,7 +6,7 @@
 \usage{
 nn_converter_mlx(
   mlx_path,
-  pop = FALSE,
+  pop_only = FALSE,
   theta_scale = 0.1,
   eta_scale = 0.1,
   pre_fixef = NULL,
@@ -15,13 +15,14 @@ nn_converter_mlx(
   data_file = NULL,
   header_types = NULL,
   obs_types = NULL,
-  mapping = NULL
+  mapping = NULL,
+  seed = 1908
 )
 }
 \arguments{
 \item{mlx_path}{(string) (Path/)Name of the unconverted Monolix model file}
 
-\item{pop}{(boolean) If the generated Monolix \emph{.mlxtran} file should be a fit without (TRUE) or with (FALSE)
+\item{pop_only}{(boolean) If the generated Monolix \emph{.mlxtran} file should be a fit without (TRUE) or with (FALSE)
 inter-individual variability on NN parameters}
 
 \item{theta_scale}{(numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
@@ -47,6 +48,8 @@ ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, c
 \item{obs_types}{(list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations}
 
 \item{mapping}{(list) List of mapping between model outputs and observation IDs}
+
+\item{seed}{(numeric) Seed for random parameter initialization.}
 }
 \value{
 Saving a converted Monolix model file under \emph{mlx_path}_converted.txt and optionally a Monolix file (\emph{mlx_name}.mlxtran)
@@ -89,11 +92,11 @@ Note: Converted Monolix model file will be saved under \emph{unconverted_file}_c
 }
 \examples{
 \dontrun{
-nn_converter_mlx("mlx_model2.txt",pop=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
+nn_converter_mlx("mlx_model2.txt",pop_only=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
 
 est_parms <- pre_fixef_extractor_mlx("mlx_model2_time_nn_mlx_file_pop.mlxtran")
 
-nn_converter_mlx("mlx_model2.txt",pop=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
+nn_converter_mlx("mlx_model2.txt",pop_only=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
 }
 }
 \author{

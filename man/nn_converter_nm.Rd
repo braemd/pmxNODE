@@ -6,16 +6,17 @@
 \usage{
 nn_converter_nm(
   ctl_path,
-  pop = FALSE,
+  pop_only = FALSE,
   theta_scale = 0.1,
   eta_scale = 0.001,
-  pre_fixef = NULL
+  pre_fixef = NULL,
+  seed = 1908
 )
 }
 \arguments{
 \item{ctl_path}{(string) (Path/)Name of the unconverted NONMEM model file}
 
-\item{pop}{(boolean) If the generated NONMEM model file should be a fit without (TRUE) or with (FALSE)
+\item{pop_only}{(boolean) If the generated NONMEM model file should be a fit without (TRUE) or with (FALSE)
 inter-individual variability on NN parameters}
 
 \item{theta_scale}{(numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
@@ -25,6 +26,8 @@ initialized between -0.3 and 0.3}
 
 \item{pre_fixef}{(named vector) Specific initial values for typical parameters, can be optained with the 
 \emph{nn_prefix_extractor_nm} function from the results file of a previous NONMEM run}
+
+\item{seed}{(numeric) Seed for random parameter initialization.}
 }
 \value{
 Saving a converted NONMEM model file under \emph{ctl_path}_converted.ctl
@@ -77,11 +80,11 @@ Note: Converted NONMEM model file will be saved under \emph{unconverted_file}_co
 }
 \examples{
 \dontrun{
-nn_converter_nm("nm_example_model.ctl",pop=TRUE)
+nn_converter_nm("nm_example_model.ctl",pop_only = TRUE)
 
 est_parms <- pre_fixef_extractor_nm("nm_example_model_converted.res")
 
-nn_converter_nm("nm_example_model.ctl",pop=FALSE,pre_fixef=est_parms)
+nn_converter_nm("nm_example_model.ctl",pop_only = FALSE,pre_fixef=est_parms)
 }
 }
 \author{

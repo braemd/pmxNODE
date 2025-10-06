@@ -31,7 +31,7 @@ derivative_calc_nm(
 A vector of derivatives of the NN for the state values
 }
 \description{
-Calculate the derivatives from a NN for derivative versus state plots
+Calculate the derivatives from a NN for derivative versus state plots. Can also be used for nlmixr2.
 }
 \examples{
 \dontrun{

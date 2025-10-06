@@ -6,16 +6,17 @@
 \usage{
 nn_converter_nlmixr(
   f_ode,
-  pop = FALSE,
+  pop_only = FALSE,
   theta_scale = 0.1,
   eta_scale = 0.1,
-  pre_fixef = NULL
+  pre_fixef = NULL,
+  seed = 1908
 )
 }
 \arguments{
 \item{f_ode}{(nlmixr model function) Model function of nlmixr type with NN functions}
 
-\item{pop}{(boolean) If the generated nlmixr model function should be a fit without (TRUE) or with (FALSE)
+\item{pop_only}{(boolean) If the generated nlmixr model function should be a fit without (TRUE) or with (FALSE)
 inter-individual variability on NN parameters}
 
 \item{theta_scale}{(numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
@@ -25,6 +26,8 @@ initialized between -0.3 and 0.3}
 
 \item{pre_fixef}{(named vector) Specific initial values for typical parameters, can be obtained from a run nlmixr model (e.g., run_1) through
 \emph{run_1$fixef}}
+
+\item{seed}{(numeric) Seed for random parameter initialization.}
 }
 \value{
 A converted nlmixr model function
@@ -59,7 +62,7 @@ model({
   })
 }
 
-f_new_pop <- nn_converter_nlmixr(f_ode_pop,pop = TRUE)
+f_new_pop <- nn_converter_nlmixr(f_ode_pop,pop_only = TRUE)
 
 fit_pop <- nlmixr2(f_new_pop,data,est="bobyqa")
 
@@ -77,7 +80,7 @@ f_ode <- function(){
   })
 }
 
-f_new <- nn_converter_nlmixr(f_ode,pop = FALSE, pre_fixef = fit_pop$fixef)
+f_new <- nn_converter_nlmixr(f_ode,pop_only = FALSE, pre_fixef = fit_pop$fixef)
 }
 }
 \author{

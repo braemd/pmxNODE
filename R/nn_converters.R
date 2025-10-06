@@ -14,13 +14,14 @@
 #' }
 #' 
 #' @param f_ode (nlmixr model function) Model function of nlmixr type with NN functions
-#' @param pop (boolean) If the generated nlmixr model function should be a fit without (TRUE) or with (FALSE)
+#' @param pop_only (boolean) If the generated nlmixr model function should be a fit without (TRUE) or with (FALSE)
 #' inter-individual variability on NN parameters
 #' @param theta_scale (numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
 #' initialized between -0.3 and 0.3
 #' @param eta_scale (numeric) Initial standard deviation of random effects on NN parameters, default is 0.1
 #' @param pre_fixef (named vector) Specific initial values for typical parameters, can be obtained from a run nlmixr model (e.g., run_1) through
 #' \emph{run_1$fixef}
+#' @param seed (numeric) Seed for random parameter initialization.
 #' @return A converted nlmixr model function
 #' @examples 
 #' \dontrun{
@@ -37,7 +38,7 @@
 #'   })
 #' }
 #' 
-#' f_new_pop <- nn_converter_nlmixr(f_ode_pop,pop = TRUE)
+#' f_new_pop <- nn_converter_nlmixr(f_ode_pop,pop_only = TRUE)
 #' 
 #' fit_pop <- nlmixr2(f_new_pop,data,est="bobyqa")
 #' 
@@ -55,12 +56,13 @@
 #'   })
 #' }
 #' 
-#' f_new <- nn_converter_nlmixr(f_ode,pop = FALSE, pre_fixef = fit_pop$fixef)
+#' f_new <- nn_converter_nlmixr(f_ode,pop_only = FALSE, pre_fixef = fit_pop$fixef)
 #' }
 #' @author Dominic Bräm
 #' @export
-nn_converter_nlmixr <- function(f_ode,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pre_fixef=NULL){
-  set.seed(1908)
+nn_converter_nlmixr <- function(f_ode,pop_only=FALSE,theta_scale=0.1,eta_scale=0.1,pre_fixef=NULL,seed=1908){
+  set.seed(seed)
+  pop <- pop_only
   
   f_parse <- deparse(f_ode,width.cutoff = 500)
   
@@ -95,7 +97,7 @@ nn_converter_nlmixr <- function(f_ode,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pr
     theta_inis[[i]] <- nn_theta_initializer_nlmixr(number=nn_numbers[i],xmini=min_states[i],
                                                    xmaxi=max_states[i],theta_scale=theta_scale,
                                                    time_nn=time_nns[i],pre_fixef=pre_fixef,
-                                                   n_hidden=nn_nhiddens[i])
+                                                   n_hidden=nn_nhiddens[i],act=nn_acts[i])
   }
   
   if(!pop){
@@ -186,26 +188,28 @@ nn_converter_nlmixr <- function(f_ode,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pr
 #' Note: Converted NONMEM model file will be saved under \emph{unconverted_file}_converted.ctl
 #' 
 #' @param ctl_path (string) (Path/)Name of the unconverted NONMEM model file
-#' @param pop (boolean) If the generated NONMEM model file should be a fit without (TRUE) or with (FALSE)
+#' @param pop_only (boolean) If the generated NONMEM model file should be a fit without (TRUE) or with (FALSE)
 #' inter-individual variability on NN parameters
 #' @param theta_scale (numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
 #' initialized between -0.3 and 0.3
 #' @param eta_scale (numeric) Initial standard deviation of random effects on NN parameters, default is 0.1
 #' @param pre_fixef (named vector) Specific initial values for typical parameters, can be optained with the 
 #' \emph{nn_prefix_extractor_nm} function from the results file of a previous NONMEM run
+#' @param seed (numeric) Seed for random parameter initialization.
 #' @return Saving a converted NONMEM model file under \emph{ctl_path}_converted.ctl
 #' @examples
 #' \dontrun{
-#' nn_converter_nm("nm_example_model.ctl",pop=TRUE)
+#' nn_converter_nm("nm_example_model.ctl",pop_only = TRUE)
 #' 
 #' est_parms <- pre_fixef_extractor_nm("nm_example_model_converted.res")
 #' 
-#' nn_converter_nm("nm_example_model.ctl",pop=FALSE,pre_fixef=est_parms)
+#' nn_converter_nm("nm_example_model.ctl",pop_only = FALSE,pre_fixef=est_parms)
 #' }
 #' @author Dominic Bräm
 #' @export
-nn_converter_nm <- function(ctl_path,pop=FALSE,theta_scale=0.1,eta_scale=0.001,pre_fixef=NULL){
-  set.seed(1908)
+nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.001,pre_fixef=NULL,seed=1908){
+  set.seed(seed)
+  pop <- pop_only
   
   f_parse <- readLines(ctl_path)
   
@@ -253,7 +257,7 @@ nn_converter_nm <- function(ctl_path,pop=FALSE,theta_scale=0.1,eta_scale=0.001,p
     theta_inis[[i]] <- nn_theta_initializer_nm(number=nn_numbers[i],xmini=min_states[i],
                                                xmaxi=max_states[i],theta_scale=theta_scale,
                                                time_nn=time_nns[i],pre_fixef=pre_fixef,
-                                               n_hidden=nn_nhiddens[i])
+                                               n_hidden=nn_nhiddens[i],act=nn_acts[i])
   }
   
   eta_defs <- vector("list", length = length(nn_numbers))
@@ -366,7 +370,7 @@ nn_converter_nm <- function(ctl_path,pop=FALSE,theta_scale=0.1,eta_scale=0.001,p
 #' 
 #' 
 #' @param mlx_path (string) (Path/)Name of the unconverted Monolix model file
-#' @param pop (boolean) If the generated Monolix \emph{.mlxtran} file should be a fit without (TRUE) or with (FALSE)
+#' @param pop_only (boolean) If the generated Monolix \emph{.mlxtran} file should be a fit without (TRUE) or with (FALSE)
 #' inter-individual variability on NN parameters
 #' @param theta_scale (numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
 #' initialized between -0.3 and 0.3
@@ -383,22 +387,24 @@ nn_converter_nm <- function(ctl_path,pop=FALSE,theta_scale=0.1,eta_scale=0.001,p
 #' ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, cens, limit, regressor, nominaltime, admid, rate, tinf, ss, ii, addl, date
 #' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
 #' @param mapping (list) List of mapping between model outputs and observation IDs
+#' @param seed (numeric) Seed for random parameter initialization.
 #' @return Saving a converted Monolix model file under \emph{mlx_path}_converted.txt and optionally a Monolix file (\emph{mlx_name}.mlxtran)
 #' if \emph{gen_mlx_file}=TRUE
 #' @examples
 #' \dontrun{
-#' nn_converter_mlx("mlx_model2.txt",pop=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
+#' nn_converter_mlx("mlx_model2.txt",pop_only=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
 #' 
 #' est_parms <- pre_fixef_extractor_mlx("mlx_model2_time_nn_mlx_file_pop.mlxtran")
 #' 
-#' nn_converter_mlx("mlx_model2.txt",pop=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
+#' nn_converter_mlx("mlx_model2.txt",pop_only=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
 #' }
 #' @author Dominic Bräm
 #' @export
-nn_converter_mlx <- function(mlx_path,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pre_fixef=NULL,
+nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.1,pre_fixef=NULL,
                              gen_mlx_file=FALSE,mlx_name=NULL,data_file=NULL,header_types=NULL,
-                             obs_types=NULL,mapping=NULL){
-  set.seed(1908)
+                             obs_types=NULL,mapping=NULL,seed=1908){
+  set.seed(seed)
+  pop <- pop_only
   
   f_parse <- readLines(mlx_path)
   
@@ -446,7 +452,7 @@ nn_converter_mlx <- function(mlx_path,pop=FALSE,theta_scale=0.1,eta_scale=0.1,pr
     theta_inis[[i]] <- nn_theta_initializer_mlx(number=nn_numbers[i],xmini=min_states[i],
                                                 xmaxi=max_states[i],theta_scale=theta_scale,
                                                 time_nn=time_nns[i],pre_fixef=pre_fixef,
-                                                n_hidden=nn_nhiddens[i])
+                                                n_hidden=nn_nhiddens[i],act=nn_acts[i])
   }
   
   f_parse_new <- nn_reducer(f_parse)
