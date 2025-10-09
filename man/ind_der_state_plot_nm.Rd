@@ -15,7 +15,8 @@ ind_der_state_plot_nm(
   time_nn = FALSE,
   ribbon = TRUE,
   act = "ReLU",
-  beta = 20
+  beta = 20,
+  transform = NULL
 )
 }
 \arguments{
@@ -39,7 +40,12 @@ extracted through the \emph{indparm_extractor_nm} function. For optionality, see
 \item{ribbon}{(boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 displayed as individual spaghetti plot (FALSE)}
 
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
+\item{transform}{(string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
+"1/(1+exp(-NN))" for sigmoidal transformation.}
 }
 \value{
 Displaying derivative versus state plot
