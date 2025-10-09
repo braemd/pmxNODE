@@ -73,7 +73,7 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
 #' }
 #' @author Dominic Bräm
 der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file=NULL,
-                             length_out=100,time_nn=FALSE,act="ReLU",beta=20,transorm=NULL){
+                             length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(est_parms) & is.null(mlx_file)){
     error_msg <- "Either estimated parameters or monolix file must be given"
     stop(error_msg)
