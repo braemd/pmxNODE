@@ -61,9 +61,12 @@ or \strong{ind} if \emph{pop=FALSE} in \emph{nn_converter_mlx}.
 }
 \examples{
 \dontrun{
-mlx_model_initializer(model_name=mlx_name,model_file=file_name_new,data_file=data_file,header_types=header_types,
-parm_names=model_parms[1],parm_inis=model_parms[2],theta_names=theta_defs,theta_inis=theta_inis,pop=pop,pre_fixef=pre_fixef,
-omega_inis=eta_scale,obs_types=obs_types,mapping=mapping)
+mlx_model_initializer(model_name=mlx_name,model_file=file_name_new,
+                      data_file=data_file,header_types=header_types,
+                      parm_names=model_parms[1],parm_inis=model_parms[2],
+                      theta_names=theta_defs,theta_inis=theta_inis,pop=pop,
+                      pre_fixef=pre_fixef,omega_inis=eta_scale,
+                      obs_types=obs_types,mapping=mapping)
 }
 }
 \author{

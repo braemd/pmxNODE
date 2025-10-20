@@ -8,7 +8,8 @@
 #' @return NN function as string in form of "NN1(state=t,min_init=1,max_init=5)"
 #' @examples 
 #' \dontrun{
-#' nns <- nn_extractor("dxdt = NN1(state=C,min_init=1,max_init=5) + NN2(state=A,min_init=1,max_init=5) - kel*x")
+#' nns <- nn_extractor("dxdt = NN1(state=C,min_init=1,max_init=5) +
+#'                             NN2(state=A,min_init=1,max_init=5) - kel*x")
 #' }
 #' @author Dominic Bräm
 nn_extractor <- function(text){
@@ -137,7 +138,8 @@ nn_nhidden_extractor <- function(text){
 #' @return List of boolean expression whether NN should be treated as time-NN (TRUE) or not (FALSE)
 #' @examples 
 #' \dontrun{
-#' time_nns <- nn_time_nn_extractor(list("NN1(state=C,min_init=1,max_init=5)","NN2(state=t,min_init=1,max_init=5,time_nn=TRUE)"))
+#' time_nns <- nn_time_nn_extractor(list("NN1(state=C,min_init=1,max_init=5)",
+#'                                       "NN2(state=t,min_init=1,max_init=5,time_nn=TRUE)"))
 #' }
 #' @author Dominic Bräm
 nn_time_nn_extractor <- function(text){

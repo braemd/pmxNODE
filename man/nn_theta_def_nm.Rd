@@ -12,6 +12,8 @@ nn_theta_def_nm(number, theta_start, n_hidden = 5, time_nn = FALSE)
 \item{theta_start}{(numeric) Number with which to start the THETA count of NN parameters}
 
 \item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
+
+\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 }
 \value{
 Vector with all NN parameter THETA definitions for a NN

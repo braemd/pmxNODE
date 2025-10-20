@@ -13,7 +13,8 @@ der_vs_state_mlx(
   length_out = 100,
   time_nn = FALSE,
   act = "ReLU",
-  beta = 20
+  beta = 20,
+  transform = NULL
 )
 }
 \arguments{
@@ -29,8 +30,14 @@ der_vs_state_mlx(
 
 \item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
 
-\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
-#' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
+
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
+\item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
+\item{transform}{(string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
+"1/(1+exp(-NN))" for sigmoidal transformation.}
 }
 \value{
 Dataframe with columns for the state and the corresponding derivatives

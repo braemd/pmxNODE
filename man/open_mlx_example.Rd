@@ -4,7 +4,7 @@
 \alias{open_mlx_example}
 \title{Open Monolix example model}
 \usage{
-open_mlx_example(model = "mlx_theophylline_model.txt", pkg_name = "pmxNODE")
+open_mlx_example(model = "mlx_theophylline_model.txt")
 }
 \arguments{
 \item{model}{(string) (Path/)Name of Monolix model to open}

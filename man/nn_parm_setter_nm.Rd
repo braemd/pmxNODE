@@ -25,6 +25,8 @@ or whether model is fitted with inter-individual variability (FALSE)}
   \item \dQuote{prop} is of form W = lW * EXP(etaW)
   \item \dQuote{add} is of form W = lW + etaW
 }}
+
+\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 }
 \value{
 List of parameter definition to be used in the $PK section of the NONMEM model

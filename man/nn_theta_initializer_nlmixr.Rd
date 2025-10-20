@@ -30,6 +30,10 @@ nn_theta_initializer_nlmixr(
 \item{pre_fixef}{(named vector) Vector of pre-defined initial values}
 
 \item{time_nn}{(boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)}
+
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
+\item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
 }
 \value{
 Vector of initial typical NN parameters for one specific NN

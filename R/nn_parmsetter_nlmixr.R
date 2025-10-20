@@ -19,6 +19,8 @@
 #' @param theta_scale (numeric) Scale for input-hidden-weights initialization
 #' @param pre_fixef (named vector) Vector of pre-defined initial values
 #' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
+#' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Vector of initial typical NN parameters for one specific NN
 #' @examples 
 #' \dontrun{
@@ -46,7 +48,7 @@ nn_theta_initializer_nlmixr <- function(number,xmini,xmaxi,n_hidden=5,theta_scal
   } else{
     if(time_nn){
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
-      acts <- runif(n_hidden, min = xmini, max = xmaxi)
+      acts <- stats::runif(n_hidden, min = xmini, max = xmaxi)
       b1s <- round(acts * w1s^2,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       
@@ -61,7 +63,7 @@ nn_theta_initializer_nlmixr <- function(number,xmini,xmaxi,n_hidden=5,theta_scal
       inis <- unlist(list(w1inis,b1inis,w2inis))
     } else{
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
-      acts <- runif(n_hidden, min = xmini, max = xmaxi)
+      acts <- stats::runif(n_hidden, min = xmini, max = xmaxi)
       b1s <- round(-acts * w1s,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       b2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),1) * theta_scale
@@ -91,6 +93,7 @@ nn_theta_initializer_nlmixr <- function(number,xmini,xmaxi,n_hidden=5,theta_scal
 #' @param number (string) Name of the NN, e.g., \dQuote{1} for NN1(...)
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param eta_scale (numeric) Initial standard deviation of random effects on NN parameters
+#' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
 #' @return Vector of initial random effects on NN parameters for one specific NN
 #' @examples 
 #' \dontrun{
@@ -135,6 +138,7 @@ nn_eta_initializer_nlmixr <- function(number,n_hidden=5,eta_scale=0.1,time_nn=FA
 #'   \item \dQuote{add} is of form W = lW + etaW
 #' }
 #' Defaul value is \dQuote{prop}
+#' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
 #' @return List of parameter definition to be used in the \emph{model} section of the nlmixr model
 #' @examples 
 #' \dontrun{

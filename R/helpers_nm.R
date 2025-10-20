@@ -184,7 +184,9 @@ indparm_extractor_nm <- function(res_file,phi_file){
 #' @return NULL
 #' @examples 
 #' \dontrun{
-#' run_nm("./test/nm_test.ctl","c:/nm75g64/run/nmfe75",parralel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30", data_file="~/Test/test/test_data.csv")
+#' run_nm("./test/nm_test.ctl","c:/nm75g64/run/nmfe75",
+#'        parralel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
+#'        data_file="~/Test/test/test_data.csv")
 #' }
 #' @author Dominic Bräm
 #' @export

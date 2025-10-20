@@ -14,7 +14,8 @@ der_state_plot_nm(
   time_nn = FALSE,
   act = "ReLU",
   plot_type = c("base", "ggplot"),
-  beta = 20
+  beta = 20,
+  transform = NULL
 )
 }
 \arguments{
@@ -28,11 +29,18 @@ der_state_plot_nm(
 
 \item{nm_res_file}{(string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.}
 
+\item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
+
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
+
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
 
 \item{plot_type}{(string) What plot type should be used; "base" or "ggplot"}
 
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
+\item{transform}{(string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
+"1/(1+exp(-NN))" for sigmoidal transformation.}
 }
 \value{
 Displaying derivative versus state plot; returns ggplot-object if \emph{plot_type="ggplot"}
@@ -46,7 +54,10 @@ Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments a
 }
 \examples{
 \dontrun{
-der_state_plot <- der_state_plot_nm(nn="c",min_state=0,max_state=10,nm_res_file="nm_example1_model_converted_ind.res",plot_type="ggplot")
+der_state_plot <- der_state_plot_nm(nn="c",
+                                    min_state=0,max_state=10,
+                                    nm_res_file="nm_example1_model_converted_ind.res",
+                                    plot_type="ggplot")
 }
 }
 \author{

@@ -26,6 +26,8 @@ or whether model is fitted with inter-individual variability (FALSE)}
   \item \dQuote{add} is of form W = lW + etaW
 }
 Defaul value is \dQuote{prop}}
+
+\item{time_nn}{(boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)}
 }
 \value{
 List of parameter definition to be used in the \emph{model} section of the nlmixr model

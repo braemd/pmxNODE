@@ -14,7 +14,8 @@ ind_der_state_plot_mlx(
   act = "ReLU",
   ribbon = TRUE,
   length_out = 100,
-  beta = 20
+  beta = 20,
+  transform = NULL
 )
 }
 \arguments{
@@ -31,12 +32,17 @@ extracted through the \emph{indparm_extractor_mlx} function. For optionality, se
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
 \item{ribbon}{(boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 displayed as individual spaghetti plot (FALSE)}
 
 \item{length_out}{(numeric) Number of points between min_state and max_state}
 
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
+\item{transform}{(string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
+"1/(1+exp(-NN))" for sigmoidal transformation.}
 }
 \value{
 Displaying derivative versus state plot
@@ -50,7 +56,9 @@ Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are 
 }
 \examples{
 \dontrun{
-der_state_plot <- ind_der_state_plot_mlx(nn="c",min_state=0,max_state=10,mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",)
+der_state_plot <- ind_der_state_plot_mlx(nn="c",
+                                         min_state=0,max_state=10,
+                                         mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",)
 }
 }
 \author{

@@ -383,7 +383,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' \emph{gen_mlx_file}=TRUE, name of the Monolix file will be \emph{unconverted_model_name}_\strong{mlx_file}_\strong{pop/ind}.mlxtran,
 #' with pop or ind depending whether \emph{pop}=TRUE or \emph{pop}=FALSE,respectively.
 #' @param data_file (string) Required if \emph{gen_mlx_file}=TRUE, (Path/)Name of the data file to be used
-#' @param header_types (vector) Required if \emph{gen_mlx_file}=TRUE, Vector of strings describing column types of data.\n Possible header types: 
+#' @param header_types (vector) Required if \emph{gen_mlx_file}=TRUE, Vector of strings describing column types of data. Possible header types: 
 #' ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, cens, limit, regressor, nominaltime, admid, rate, tinf, ss, ii, addl, date
 #' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
 #' @param mapping (list) List of mapping between model outputs and observation IDs
@@ -392,11 +392,18 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' if \emph{gen_mlx_file}=TRUE
 #' @examples
 #' \dontrun{
-#' nn_converter_mlx("mlx_model2.txt",pop_only=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
+#' nn_converter_mlx("mlx_model2.txt",
+#'                  pop_only=TRUE,gen_mlx_file=TRUE,
+#'                  data_file="TMDD_dataset.csv",
+#'                  header_types=c("id","time","amount","observation"))
 #' 
 #' est_parms <- pre_fixef_extractor_mlx("mlx_model2_time_nn_mlx_file_pop.mlxtran")
 #' 
-#' nn_converter_mlx("mlx_model2.txt",pop_only=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
+#' nn_converter_mlx("mlx_model2.txt",
+#'                  pop_only=FALSE,gen_mlx_file=TRUE,
+#'                  data_file="TMDD_dataset.csv",
+#'                  header_types=c("id","time","amount","observation"),
+#'                  pre_fixef=est_parms)
 #' }
 #' @author Dominic Bräm
 #' @export

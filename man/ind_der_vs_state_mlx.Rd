@@ -13,7 +13,8 @@ ind_der_vs_state_mlx(
   time_nn = FALSE,
   length_out = 100,
   act = "ReLU",
-  beta = 20
+  beta = 20,
+  transform = NULL
 )
 }
 \arguments{
@@ -32,7 +33,12 @@ extracted through the \emph{indparm_extractor_mlx} function. For optionality, se
 
 \item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
 
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
+\item{transform}{(string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
+"1/(1+exp(-NN))" for sigmoidal transformation.}
 }
 \value{
 Dataframe with columns for the state and the corresponding individual derivatives

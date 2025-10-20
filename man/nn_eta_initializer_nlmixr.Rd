@@ -17,6 +17,8 @@ nn_eta_initializer_nlmixr(
 \item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{eta_scale}{(numeric) Initial standard deviation of random effects on NN parameters}
+
+\item{time_nn}{(boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)}
 }
 \value{
 Vector of initial random effects on NN parameters for one specific NN

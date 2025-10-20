@@ -6,6 +6,7 @@
 #' 
 #' @param number (string) Name of the NN, e.g., \dQuote{1} for NN1(...)
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
+#' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector with all NN parameter names
 #' @examples 
 #' \dontrun{
@@ -46,6 +47,8 @@ nn_theta_def_mlx <- function(number,n_hidden=5,time_nn=FALSE){
 #' @param theta_scale (numeric) Scale for input-hidden-weights initialization
 #' @param pre_fixef (named vector) Vector of pre-defined initial values
 #' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
+#' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Vector of initial NN parameter values for one specific NN
 #' @examples 
 #' \dontrun{
@@ -72,7 +75,7 @@ nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
   } else{
     if(time_nn){
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
-      acts <- runif(n_hidden, min = xmini, max = xmaxi)
+      acts <- stats::runif(n_hidden, min = xmini, max = xmaxi)
       b1s <- round(acts * w1s^2,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       
@@ -83,7 +86,7 @@ nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
       inis <- unlist(list(w1s,b1s,w2s))
     } else{
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
-      acts <- runif(n_hidden, min = xmini, max = xmaxi)
+      acts <- stats::runif(n_hidden, min = xmini, max = xmaxi)
       b1s <- round(-acts * w1s,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       b2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),1) * theta_scale

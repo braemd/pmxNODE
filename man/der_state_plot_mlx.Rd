@@ -14,7 +14,8 @@ der_state_plot_mlx(
   act = "ReLU",
   length_out = 100,
   plot_type = c("base", "ggplot"),
-  beta = 20
+  beta = 20,
+  transform = NULL
 )
 }
 \arguments{
@@ -30,11 +31,16 @@ der_state_plot_mlx(
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
 \item{length_out}{(numeric) Number of points between min_state and max_state}
 
 \item{plot_type}{(string) What plot type should be used; "base" or "ggplot"}
 
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
+
+\item{transform}{(string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
+"1/(1+exp(-NN))" for sigmoidal transformation.}
 }
 \value{
 Displaying derivative versus state plot; returns ggplot-object if \emph{plot_type="ggplot"}
@@ -47,7 +53,10 @@ Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are 
 }
 \examples{
 \dontrun{
-der_state_plot <- der_state_plot_mlx(nn="c",min_state=0,max_state=10,mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",plot_type="ggplot")
+der_state_plot <- der_state_plot_mlx(nn="c",
+                                     min_state=0,max_state=10,
+                                     mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",
+                                     plot_type="ggplot")
 }
 }
 \author{
