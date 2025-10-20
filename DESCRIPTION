@@ -6,7 +6,7 @@ Authors@R: c(person("Dominic", "Bräm", role = c("aut", "cre"),
     email = "domi.braem@hotmail.com", comment = c(ORCID = "0000-0001-9094-8361")),
     person("Bernhard", "Steiert", role = c("ctb")),
     person("Gilbert", "Koch", role = c("ctb")),
-    person("Matthew","Fidler", role = c("ctb")))
+    person("Matthew","Fidler", role = c("ctb"), comment=c(ORCID="0000-0001-8538-6691")))
 Description: This package allows easy implementation of Neural Ordinary Differential Equations (NODEs) in pharmacometric software such as Monolix, NONMEM, and nlmxir2.
 Author: Dominic Bräm [aut, cre] (<https://orcid.org/0000-0001-9094-8361>),
   Bernhard Steiert [ctb],
