@@ -392,11 +392,18 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' if \emph{gen_mlx_file}=TRUE
 #' @examples
 #' \dontrun{
-#' nn_converter_mlx("mlx_model2.txt",pop_only=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
+#' nn_converter_mlx("mlx_model2.txt",
+#'                  pop_only=TRUE,gen_mlx_file=TRUE,
+#'                  data_file="TMDD_dataset.csv",
+#'                  header_types=c("id","time","amount","observation"))
 #' 
 #' est_parms <- pre_fixef_extractor_mlx("mlx_model2_time_nn_mlx_file_pop.mlxtran")
 #' 
-#' nn_converter_mlx("mlx_model2.txt",pop_only=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
+#' nn_converter_mlx("mlx_model2.txt",
+#'                  pop_only=FALSE,gen_mlx_file=TRUE,
+#'                  data_file="TMDD_dataset.csv",
+#'                  header_types=c("id","time","amount","observation"),
+#'                  pre_fixef=est_parms)
 #' }
 #' @author Dominic Bräm
 #' @export

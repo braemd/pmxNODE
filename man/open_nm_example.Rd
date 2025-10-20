@@ -4,7 +4,7 @@
 \alias{open_nm_example}
 \title{Open NONMEM example model}
 \usage{
-open_nm_example(model = "nm_theophylline_model.ctl", pkg_name = "pmxNODE")
+open_nm_example(model = "nm_theophylline_model.ctl")
 }
 \arguments{
 \item{model}{(string) (Path/)Name of NONMEM model to open}

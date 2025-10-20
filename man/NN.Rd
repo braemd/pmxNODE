@@ -46,6 +46,12 @@ strictly negative (default is FALSE)}
 \item{pop}{(boolean) If the generated nlmixr model function should
 be a fit without (TRUE) or with (FALSE).  Default is FALSE.}
 
+\item{eta_model}{(string)
+\itemize{
+  \item \dQuote{prop} is of form W = lW * EXP(etaW)
+  \item \dQuote{add} is of form W = lW + etaW
+}}
+
 \item{theta_scale}{(numeric) Scale in which typical NN parameter values are initialized, default is 0.1, i.e., weights are 
 initialized between -0.3 and 0.3}
 
@@ -54,8 +60,7 @@ initialized between -0.3 and 0.3}
 \item{pre_fixef}{(named vector) Specific initial values for typical parameters, can be obtained from a run nlmixr model (e.g., run_1) through
 \emph{run_1$fixef}}
 
-\item{iniDf}{the initialization \code{data.frame}, if \code{NULL} query using
-\code{rxUdfUiIniDf()}}
+\item{iniDf}{iniDf}
 }
 \value{
 A list with the before and replace elements and iniDf to

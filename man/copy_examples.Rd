@@ -35,7 +35,8 @@ Either \emph{examples}, \emph{example_nr}, \emph{example_software}, or \emph{exa
 }
 \examples{
 \dontrun{
-copy_examples("path/to/target/folder",examples = c("data_example1_mlx.csv","mlx_example1_model.txt"))
+copy_examples("path/to/target/folder",
+              examples = c("data_example1_mlx.csv","mlx_example1_model.txt"))
 copy_examples("path/to/target/folder",example_nr = 1)
 copy_examples("path/to/target/folder",example_software = "Monolix")
 copy_examples("path/to/target/folder",example_nr = 1, example_software = "NONMEM")

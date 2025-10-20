@@ -42,7 +42,9 @@ model_parm_extractor_mlx <- function(text){
 #' @return The Monolix model including all non-NN and NN parameters in \emph{input = ...}
 #' @examples 
 #' \dontrun{
-#' new_model <- model_parm_updater_mlx(list("input = {V,kel}"),list("V","kel"),list("W1","b1","W2","b2"))
+#' new_model <- model_parm_updater_mlx(list("input = {V,kel}"),
+#'                                     list("V","kel"),
+#'                                     list("W1","b1","W2","b2"))
 #' }
 #' @author Dominic Bräm
 model_parm_updater_mlx <- function(text,model_parm_names,nn_thetas){
@@ -89,9 +91,12 @@ model_parm_updater_mlx <- function(text,model_parm_names,nn_thetas){
 #' @return NA
 #' @examples 
 #' \dontrun{
-#' mlx_model_initializer(model_name=mlx_name,model_file=file_name_new,data_file=data_file,header_types=header_types,
-#' parm_names=model_parms[1],parm_inis=model_parms[2],theta_names=theta_defs,theta_inis=theta_inis,pop=pop,pre_fixef=pre_fixef,
-#' omega_inis=eta_scale,obs_types=obs_types,mapping=mapping)
+#' mlx_model_initializer(model_name=mlx_name,model_file=file_name_new,
+#'                       data_file=data_file,header_types=header_types,
+#'                       parm_names=model_parms[1],parm_inis=model_parms[2],
+#'                       theta_names=theta_defs,theta_inis=theta_inis,pop=pop,
+#'                       pre_fixef=pre_fixef,omega_inis=eta_scale,
+#'                       obs_types=obs_types,mapping=mapping)
 #' }
 #' @author Dominic Bräm
 mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
@@ -113,29 +118,29 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
   }
   
   if(!is.null(obs_types) & is.null(mapping)){
-    newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,observationTypes=obs_types))
+    lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,observationTypes=obs_types))
   } else if(!is.null(obs_types) & !is.null(mapping)){
-    newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,
+    lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,
                                                    observationTypes=obs_types,mapping=mapping))
   } else{
-    newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types))
+    lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types))
   }
   
-  setConditionalDistributionSamplingSettings(enableMaxIterations=TRUE,nbMaxIterations=500)
+  lixoftConnectors::setConditionalDistributionSamplingSettings(enableMaxIterations=TRUE,nbMaxIterations=500)
   
   if(pop){
-    setPopulationParameterEstimationSettings(variability = "decreasing")
+    lixoftConnectors::setPopulationParameterEstimationSettings(variability = "decreasing")
   }
   
   if(pop){
     nn_var_set <- as.list(rep(FALSE,length(theta_names)))
     names(nn_var_set) <- theta_names
-    setIndividualParameterVariability(nn_var_set)
+    lixoftConnectors::setIndividualParameterVariability(nn_var_set)
   }
   
   nn_dist_set <- as.list(rep("normal",length(theta_names)))
   names(nn_dist_set) <- theta_names
-  setIndividualParameterDistribution(nn_dist_set)
+  lixoftConnectors::setIndividualParameterDistribution(nn_dist_set)
   
   if(is.null(pre_fixef)){
     if(length(parm_names) != 0){
@@ -196,7 +201,7 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
     
   }
   
-  obs_model <- getContinuousObservationModel()
+  obs_model <- lixoftConnectors::getContinuousObservationModel()
   n_obs <- length(obs_model$errorModel)
   if(n_obs>1){
     error_parms <- paste0(c("a","b","c"),rep(1:n_obs,each=3))
@@ -215,9 +220,9 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
   
   mlx_inis$initialValue <- as.numeric(mlx_inis$initialValue)
   
-  setPopulationParameterInformation(mlx_inis)
+  lixoftConnectors::setPopulationParameterInformation(mlx_inis)
   
-  saveProject(paste0(model_name,".mlxtran"))
+  lixoftConnectors::saveProject(paste0(model_name,".mlxtran"))
   print(paste0("Monolix file saved under: ",model_name))
   
 }
@@ -251,7 +256,7 @@ pre_fixef_extractor_mlx <- function(model_name){
     stop("No population estimates available for provided Monolix file")
   }
   
-  parm_table <- read.table(pop_file_path,header=T,sep=",")
+  parm_table <- utils::read.table(pop_file_path,header=T,sep=",")
   
   pop_parm_table <- parm_table[grepl("_pop",parm_table$parameter),]
   
@@ -288,7 +293,7 @@ indparm_extractor_mlx <- function(model_name){
     stop("No individual estimates available for provided Monolix file")
   }
   
-  parm_table <- read.table(ind_file_path,header=T,sep=",")
+  parm_table <- utils::read.table(ind_file_path,header=T,sep=",")
   
   ind_parm_table <- parm_table[,grepl("id|_mode",colnames(parm_table))]
   
@@ -301,7 +306,7 @@ indparm_extractor_mlx <- function(model_name){
 #' 
 #' All paths must be given in R-style, i.e., slashes instead of backslashes. Paths can be absolute or relative.
 #' 
-#' @param ctl_file (string) Absolute or relative Path/Name of Monolix file to run. Must be in R-style, i.e., path must be with
+#' @param mlx_file (string) Absolute or relative Path/Name of Monolix file to run. Must be in R-style, i.e., path must be with
 #' slashes. File must be given with file extension, e.g., monolix_file\strong{.mlxtran}
 #' @return NULL
 #' @examples 
@@ -317,8 +322,8 @@ run_mlx <- function(mlx_file){
   if(!("lixoftConnectors" %in% .packages())){
     stop("lixoftConnectors must first be initialized. Use software_initializer(...) prior to use run_mlx")
   }
-  loadProject(mlx_file)
-  runScenario()
-  saveProject()
+  lixoftConnectors::loadProject(mlx_file)
+  lixoftConnectors::runScenario()
+  lixoftConnectors::saveProject()
   print("Monolix run and saved")
 }

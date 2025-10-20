@@ -36,6 +36,8 @@ extracted through the \emph{indparm_extractor_nlmixr} function. For optionality,
 \item{ribbon}{(boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 displayed as individual spaghetti plot (FALSE)}
 
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
 }
 \value{

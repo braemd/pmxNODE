@@ -25,6 +25,8 @@ derivative_calc_mlx(
 
 \item{time_nn}{(boolean) Whether the NN is a time-dependent NN and negative weights should be applied from input to hidden layer. Default values is FALSE.}
 
+\item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
+
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
 }
 \value{

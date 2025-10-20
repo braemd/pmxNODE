@@ -24,6 +24,8 @@ or whether model is fitted with inter-individual variability (FALSE)}
 \item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{eta_scale}{(numeric) Initial standard deviation of random effects, default value is 0.1}
+
+\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 }
 \value{
 Vector of initial NN parameter ETA values for one specific NN

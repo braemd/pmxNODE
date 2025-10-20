@@ -21,7 +21,9 @@ Update a Monolix model input to define non-NN and NN parameters as model inputs
 }
 \examples{
 \dontrun{
-new_model <- model_parm_updater_mlx(list("input = {V,kel}"),list("V","kel"),list("W1","b1","W2","b2"))
+new_model <- model_parm_updater_mlx(list("input = {V,kel}"),
+                                    list("V","kel"),
+                                    list("W1","b1","W2","b2"))
 }
 }
 \author{

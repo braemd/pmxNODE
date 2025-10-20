@@ -46,6 +46,14 @@ nn_nlmixr_reset <- function() {
 #'
 #' @param pop (boolean) If the generated nlmixr model function should
 #'   be a fit without (TRUE) or with (FALSE).  Default is FALSE.
+#'   
+#' @param eta_model (string)
+#' \itemize{
+#'   \item \dQuote{prop} is of form W = lW * EXP(etaW)
+#'   \item \dQuote{add} is of form W = lW + etaW
+#' }
+#'
+#' @param iniDf iniDf
 #'
 #' @inheritParams nn_converter_nlmixr
 #'

@@ -31,7 +31,7 @@ indparm_extractor_nlmixr <- function(fit_obj){
   nn_ran_names <- unlist(lapply(nn_names,function(x) paste0(c("eta.W","eta.b"),x)))
   nn_ran_names <- paste(nn_ran_names,collapse = "|")
   
-  est_parms <- coef(fit_obj)
+  est_parms <- stats::coef(fit_obj)
   fixeds <- est_parms[["fixed"]]
   nn_fixeds <- fixeds[grep(nn_fix_names,names(fixeds))]
   randoms <- est_parms[["random"]]
@@ -61,6 +61,7 @@ indparm_extractor_nlmixr <- function(fit_obj){
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Dataframe with columns for the state and the corresponding derivatives
 #' @examples 
@@ -107,6 +108,7 @@ der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_o
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Dataframe with columns for the state and the corresponding individual derivatives
 #' @examples 
@@ -158,14 +160,19 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,f
 #' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through \emph{fit$fixef}. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
+#' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param plot_type (string) What plot type should be used; "base" or "ggplot"
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Displaying derivative versus state plot; returns ggplot-object if \emph{plot_type="ggplot"}
 #' @examples 
 #' \dontrun{
 #' pop_fit <- nlmixr2(node_model_pop,data=data,est="bobyqa")
-#' der_state_plot <- der_state_plot_nlmixr(nn="c",min_state=0,max_state=10,fit_obj=pop_fit,plot_type="ggplot")
+#' der_state_plot <- der_state_plot_nlmixr(nn="c",
+#'                                         min_state=0,max_state=10,
+#'                                         fit_obj=pop_fit,
+#'                                         plot_type="ggplot")
 #' }
 #' @author Dominic Bräm
 #' @export
@@ -182,7 +189,7 @@ der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit
     error_msg <- "Please provide valid plot type, i.e., base or ggplot"
     stop(error_msg)
   }
-  if(!("ggplot2" %in% installed.packages())){
+  if(!("ggplot2" %in% utils::installed.packages())){
     error_msg <- "To return a ggplot, the package ggplot2 must be installed"
     stop(error_msg)
   }
@@ -217,6 +224,7 @@ der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit
 #' @param ribbon (boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 #' displayed as individual spaghetti plot (FALSE)
 #' @param length_out (numeric) Number of points between min_state and max_state
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Displaying derivative versus state plot
 #' @examples 
@@ -239,7 +247,7 @@ ind_der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL
   if(ribbon){
     mins <- data.frame(mins=apply(data[,-1],1,min))
     maxs <- data.frame(maxs=apply(data[,-1],1,max))
-    medians <- data.frame(medians=apply(data[,-1],1,median))
+    medians <- data.frame(medians=apply(data[,-1],1,stats::median))
     states <- data.frame(states=data[,1])
     plot_data <- cbind(states,medians,mins,maxs)
     p <- ggplot(plot_data) + geom_ribbon(aes(x=states,ymin=mins,ymax=maxs),alpha=0.3) + 

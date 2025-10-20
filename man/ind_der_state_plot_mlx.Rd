@@ -56,7 +56,9 @@ Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are 
 }
 \examples{
 \dontrun{
-der_state_plot <- ind_der_state_plot_mlx(nn="c",min_state=0,max_state=10,mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",)
+der_state_plot <- ind_der_state_plot_mlx(nn="c",
+                                         min_state=0,max_state=10,
+                                         mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",)
 }
 }
 \author{

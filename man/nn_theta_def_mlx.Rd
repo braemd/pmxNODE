@@ -10,6 +10,8 @@ nn_theta_def_mlx(number, n_hidden = 5, time_nn = FALSE)
 \item{number}{(string) Name of the NN, e.g., \dQuote{1} for NN1(...)}
 
 \item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
+
+\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 }
 \value{
 Vector with all NN parameter names

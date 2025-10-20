@@ -11,6 +11,7 @@
 #' @param number (string) Name of the NN, e.g., \dQuote{1} for NN1(...)
 #' @param theta_start (numeric) Number with which to start the THETA count of NN parameters
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
+#' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector with all NN parameter THETA definitions for a NN
 #' @examples 
 #' \dontrun{
@@ -54,8 +55,9 @@ nn_theta_def_nm <- function(number,theta_start,n_hidden=5,time_nn=FALSE){
 #' X is equal to 3
 #' 
 #' @param number (string) Name of the NN, e.g., \dQuote{1} for NN1(...)
-#' @param theta_start (numeric) Number with which to start the ETA count of NN parameters
+#' @param eta_start (numeric) Number with which to start the ETA count of NN parameters
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
+#' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector with all NN parameter ETA definitions for a NN
 #' @examples 
 #' \dontrun{
@@ -105,6 +107,8 @@ nn_eta_def_nm <- function(number,eta_start,n_hidden=5,time_nn=FALSE){
 #' @param theta_scale (numeric) Scale for input-hidden-weights initialization
 #' @param pre_fixef (named vector) Vector of pre-defined initial values
 #' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
+#' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
+#' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Vector of initial NN parameter THETA values for one specific NN
 #' @examples 
 #' \dontrun{
@@ -136,7 +140,7 @@ nn_theta_initializer_nm <- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
   } else{
     if(time_nn){
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
-      acts <- runif(n_hidden, min = xmini, max = xmaxi)
+      acts <- stats::runif(n_hidden, min = xmini, max = xmaxi)
       b1s <- round(acts * w1s^2,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       
@@ -151,7 +155,7 @@ nn_theta_initializer_nm <- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
       inis <- unlist(list(w1inis,b1inis,w2inis))
     } else{
       w1s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = T) * theta_scale
-      acts <- runif(n_hidden, min = xmini, max = xmaxi)
+      acts <- stats::runif(n_hidden, min = xmini, max = xmaxi)
       b1s <- round(-acts * w1s,3)
       w2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),n_hidden,replace = F) * theta_scale
       b2s <- sample(c(-3,-2,-2,-1,-1,-1,1,1,1,2,2,3),1) * theta_scale
@@ -188,6 +192,7 @@ nn_theta_initializer_nm <- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
 #' or whether model is fitted with inter-individual variability (FALSE)
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param eta_scale (numeric) Initial standard deviation of random effects, default value is 0.1
+#' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector of initial NN parameter ETA values for one specific NN
 #' @examples 
 #' \dontrun{
@@ -268,6 +273,7 @@ nn_eta_initializer_nm <- function(number,theta_inis,pop=FALSE,n_hidden=5,eta_sca
 #'   \item \dQuote{prop} is of form W = lW * EXP(etaW)
 #'   \item \dQuote{add} is of form W = lW + etaW
 #' }
+#' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return List of parameter definition to be used in the $PK section of the NONMEM model
 #' @examples 
 #' \dontrun{

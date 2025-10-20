@@ -2,12 +2,11 @@
 % Please edit documentation in R/initialize_software.R
 \name{software_initializer}
 \alias{software_initializer}
-\title{Initialize software}
+\title{Initialize software (Suspended)}
 \usage{
 software_initializer(
   software = c("Monolix", "nlmixr", "NONMEM"),
-  mlx_path = NULL,
-  mlx_instal_path = NULL
+  mlx_path = NULL
 )
 }
 \arguments{
@@ -15,9 +14,6 @@ software_initializer(
 
 \item{mlx_path}{(string) Required if \emph{software="Monolix"}; path to Monolix location (under Windows usually 
 C:/ProgramData/Lixoft/MonolixSuiteXXXX with XXXX as the version)}
-
-\item{mlx_instal_path}{(string) Required if \emph{software="Monolix"} and lixoftConnectors package not yet installed. Path to the 
-"lixoftConnectors.tar.gz" file, under Windows usually located at C:/ProgramData/Lixoft/MonolixSuiteXXXX/connectors/lixoftConnectors.tar.gz}
 }
 \value{
 Initialization of software
@@ -27,11 +23,8 @@ Initialize the pharmacometric software you want to use (Monolix, nlmixr or NONME
 can be used for Monolix and nlmixr.
 }
 \details{
-For NONMEM, no additional steps need to be done.\cr
-For nlmixr, the nlmixr2 package is loaded. If nlmixr2 is not yet installed, it will install previous to loading. Note that automatic installation is only available for R versions 4.2 and higher. \cr
 For Monolix, the lixoftConnectors package is loaded. For loading, the path to the Monolix location (under Windows usually 
-C:/ProgramData/Lixoft/MonolixSuiteXXXX with XXXX as the version) is required. If lixoftConnectors is not yet installed, it
-will install previous to loading, including its dependencies 'RJSONIO', 'ggplot2', and 'gridExtra'. \cr
+C:/ProgramData/Lixoft/MonolixSuiteXXXX with XXXX as the version) is required.
 Note: nlmixr2 and lixoftConnectors share function \emph{getData}. If both, nlmixr and Monolix, get initialized, \emph{getData}
 will be used from the package initialized second
 }
@@ -40,7 +33,6 @@ will be used from the package initialized second
 software_initializer(software="NONMEM")
 software_initializer(software="nlmixr")
 software_initializer(software="Monolix",mlx_path="C:/ProgramData/Lixoft/MonolixSuite2021R2")
-software_initializer(software="Monolix",mlx_path="C:/ProgramData/Lixoft/MonolixSuite2021R2",mlx_instal_path="C:/ProgramData/Lixoft/MonolixSuite2021R2/connectors/lixoftConnectors.tar.gz")
 }
 }
 \author{

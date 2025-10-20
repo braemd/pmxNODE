@@ -42,7 +42,7 @@ with pop or ind depending whether \emph{pop}=TRUE or \emph{pop}=FALSE,respective
 
 \item{data_file}{(string) Required if \emph{gen_mlx_file}=TRUE, (Path/)Name of the data file to be used}
 
-\item{header_types}{(vector) Required if \emph{gen_mlx_file}=TRUE, Vector of strings describing column types of data.\n Possible header types: 
+\item{header_types}{(vector) Required if \emph{gen_mlx_file}=TRUE, Vector of strings describing column types of data. Possible header types: 
 ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, cens, limit, regressor, nominaltime, admid, rate, tinf, ss, ii, addl, date}
 
 \item{obs_types}{(list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations}
@@ -92,11 +92,18 @@ Note: Converted Monolix model file will be saved under \emph{unconverted_file}_c
 }
 \examples{
 \dontrun{
-nn_converter_mlx("mlx_model2.txt",pop_only=TRUE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"))
+nn_converter_mlx("mlx_model2.txt",
+                 pop_only=TRUE,gen_mlx_file=TRUE,
+                 data_file="TMDD_dataset.csv",
+                 header_types=c("id","time","amount","observation"))
 
 est_parms <- pre_fixef_extractor_mlx("mlx_model2_time_nn_mlx_file_pop.mlxtran")
 
-nn_converter_mlx("mlx_model2.txt",pop_only=FALSE,gen_mlx_file=TRUE,data_file="TMDD_dataset.csv",header_types=c("id","time","amount","observation"),pre_fixef=est_parms)
+nn_converter_mlx("mlx_model2.txt",
+                 pop_only=FALSE,gen_mlx_file=TRUE,
+                 data_file="TMDD_dataset.csv",
+                 header_types=c("id","time","amount","observation"),
+                 pre_fixef=est_parms)
 }
 }
 \author{

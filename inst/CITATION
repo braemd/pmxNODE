@@ -1,5 +1,5 @@
 bibentry(bibtype = "Article",
-         title = "Low-dimensional neural ODEs and their application in pharmacokinetics",
+         title = "Low-dimensional neural ordinary differential equations accounting for inter-individual variability implemented in Monolix and NONMEM",
          author = c(person(c("Dominic", "S."), "Bräm"),
                     person("Bernhard","Steiert"),
                     person("Marc","Pfister"),

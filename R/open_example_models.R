@@ -11,7 +11,8 @@
 #' open_mlx_example()
 #' }
 #' @author Dominic Bräm
-open_mlx_example <- function(model="mlx_theophylline_model.txt",pkg_name = "pmxNODE"){
+open_mlx_example <- function(model="mlx_theophylline_model.txt"){
+  pkg_name <- "pmxNODE"
   lib_path <- .libPaths()
   pkg_path <- lib_path[unlist(lapply(lib_path,function(x) pkg_name %in% dir(x)))]
   if(length(pkg_path) > 1){
@@ -34,7 +35,8 @@ open_mlx_example <- function(model="mlx_theophylline_model.txt",pkg_name = "pmxN
 #' open_nm_example()
 #' }
 #' @author Dominic Bräm
-open_nm_example <- function(model="nm_theophylline_model.ctl", pkg_name = "pmxNODE"){
+open_nm_example <- function(model="nm_theophylline_model.ctl"){
+  pkg_name <- "pmxNODE"
   lib_path <- .libPaths()
   pkg_path <- lib_path[unlist(lapply(lib_path,function(x) pkg_name %in% dir(x)))]
   if(length(pkg_path) > 1){

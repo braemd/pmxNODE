@@ -14,7 +14,7 @@ der_vs_state_mlx(
   time_nn = FALSE,
   act = "ReLU",
   beta = 20,
-  transorm = NULL
+  transform = NULL
 )
 }
 \arguments{

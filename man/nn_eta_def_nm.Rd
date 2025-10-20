@@ -9,9 +9,11 @@ nn_eta_def_nm(number, eta_start, n_hidden = 5, time_nn = FALSE)
 \arguments{
 \item{number}{(string) Name of the NN, e.g., \dQuote{1} for NN1(...)}
 
+\item{eta_start}{(numeric) Number with which to start the ETA count of NN parameters}
+
 \item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
-\item{theta_start}{(numeric) Number with which to start the ETA count of NN parameters}
+\item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 }
 \value{
 Vector with all NN parameter ETA definitions for a NN

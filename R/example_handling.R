@@ -45,7 +45,8 @@ get_example_list <- function(pkg_name = "pmxNODE"){
 #' @return Copied examples in specified folder.
 #' @examples 
 #' \dontrun{
-#' copy_examples("path/to/target/folder",examples = c("data_example1_mlx.csv","mlx_example1_model.txt"))
+#' copy_examples("path/to/target/folder",
+#'               examples = c("data_example1_mlx.csv","mlx_example1_model.txt"))
 #' copy_examples("path/to/target/folder",example_nr = 1)
 #' copy_examples("path/to/target/folder",example_software = "Monolix")
 #' copy_examples("path/to/target/folder",example_nr = 1, example_software = "NONMEM")
