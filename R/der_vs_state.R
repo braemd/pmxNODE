@@ -55,8 +55,9 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
 #' Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
@@ -73,8 +74,12 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
 #' ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
 #' }
 #' @author Dominic Bräm
-der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file=NULL,
+der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,
                              length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
+  if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
+    error_msg <- "Either inputs or both, min_state and max_state, must be given"
+    stop(error_msg)
+  }
   if(is.null(est_parms) & is.null(mlx_file)){
     error_msg <- "Either estimated parameters or monolix file must be given"
     stop(error_msg)
@@ -92,7 +97,9 @@ der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file
     est_parms <- pre_fixef_extractor_mlx(mlx_file)
   }
   names(est_parms) <- gsub("_pop","",names(est_parms))
-  inputs <- seq(min_state,max_state,length.out=length_out)
+  if(is.null(inputs)){
+    inputs <- seq(min_state,max_state,length.out=length_out)
+  }
   outputs <- derivative_calc_mlx(nn_name,est_parms,inputs,time_nn=time_nn,act=act,beta=beta)
   if(!is.null(transform)){
     if(!is.character(transform)){
@@ -123,8 +130,9 @@ der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file
 #' Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
@@ -141,8 +149,12 @@ der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file
 #' derivative_data <- ind_der_vs_state_mlx(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
 #' }
 #' @author Dominic Bräm
-ind_der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,
+ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,
                                  length_out=100,act="ReLU",beta=20,transform=NULL){
+  if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
+    error_msg <- "Either inputs or both, min_state and max_state, must be given"
+    stop(error_msg)
+  }
   if(is.null(est_parms) & is.null(mlx_file)){
     error_msg <- "Either estimated parameters or monolix file must be given"
     stop(error_msg)
@@ -155,7 +167,9 @@ ind_der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_
     est_parms <- indparm_extractor_mlx(mlx_file)
   }
   names(est_parms) <- gsub("_pop","",names(est_parms))
-  inputs <- seq(min_state,max_state,length.out=length_out)
+  if(is.null(inputs)){
+    inputs <- seq(min_state,max_state,length.out=length_out)
+  }
   outputs <- apply(est_parms,1,function(x){
     names(x) <- gsub("_mode","",names(x))
     out <- derivative_calc_mlx(nn_name,x,inputs,time_nn=time_nn,act=act,beta=beta)
@@ -190,8 +204,9 @@ ind_der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_
 #' Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
@@ -212,9 +227,9 @@ ind_der_vs_state_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
-der_state_plot_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,act="ReLU",
+der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,act="ReLU",
                                length_out=100,plot_type=c("base","ggplot"),beta=20,transform=NULL){
-  data <- der_vs_state_mlx(nn_name=nn_name,min_state=min_state,max_state=max_state,
+  data <- der_vs_state_mlx(nn_name=nn_name,min_state=min_state,max_state=max_state,inputs=inputs,
                            est_parms=est_parms,mlx_file=mlx_file,time_nn=time_nn,length_out=length_out,
                            act=act,beta=beta,transform=transform)
   
@@ -249,8 +264,9 @@ der_state_plot_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_fi
 #' Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
@@ -274,9 +290,10 @@ der_state_plot_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_fi
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyr starts_with
 #' @export
-ind_der_state_plot_mlx <- function(nn_name,min_state,max_state,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,act="ReLU",
+ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,
+                                   mlx_file=NULL,time_nn=FALSE,act="ReLU",
                                ribbon=TRUE,length_out=100,beta=20,transform=NULL){
-  data <- ind_der_vs_state_mlx(nn_name=nn_name,min_state=min_state,max_state=max_state,
+  data <- ind_der_vs_state_mlx(nn_name=nn_name,min_state=min_state,max_state=max_state,inputs=inputs,
                            est_parms=est_parms,mlx_file=mlx_file,time_nn=time_nn,length_out=length_out,
                            act=act,beta=beta,transform=transform)
   
@@ -366,8 +383,9 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
 #' Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
@@ -384,8 +402,12 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
 #' ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
 #' }
 #' @author Dominic Bräm
-der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_file=NULL,
+der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
                             length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
+  if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
+    error_msg <- "Either inputs or both, min_state and max_state, must be given"
+    stop(error_msg)
+  }
   if(is.null(est_parms) & is.null(nm_res_file)){
     error_msg <- "Either estimated parameters or NONMEM results file must be given"
     stop(error_msg)
@@ -406,7 +428,9 @@ der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_fi
     num_est_parms <- ifelse(is.na(as.numeric(est_parms)),0,as.numeric(est_parms))
   })
   names(num_est_parms) <- names(est_parms)
-  inputs <- seq(min_state,max_state,length.out=length_out)
+  if(is.null(inputs)){
+    inputs <- seq(min_state,max_state,length.out=length_out)
+  }
   outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,time_nn=time_nn,act=act,beta=beta)
   if(!is.null(transform)){
     if(!is.character(transform)){
@@ -436,8 +460,9 @@ der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_fi
 #' Either \emph{est_parms} or \emph{nm_res_file} and \emph{nm_phi_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nm} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
@@ -455,8 +480,12 @@ der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_fi
 #' derivative_data <- ind_der_vs_state_nm(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
 #' }
 #' @author Dominic Bräm
-ind_der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_file=NULL,
+ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
                                 nm_phi_file=NULL,length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
+  if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
+    error_msg <- "Either inputs or both, min_state and max_state, must be given"
+    stop(error_msg)
+  }
   if(is.null(est_parms) & (is.null(nm_res_file) | is.null(nm_phi_file))){
     error_msg <- "Either estimated parameters or NONMEM results and phi file must be given"
     stop(error_msg)
@@ -474,7 +503,9 @@ ind_der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_re
     est_parms <- indparm_extractor_nm(nm_res_file,nm_phi_file)
   }
   num_est_parms <- est_parms
-  inputs <- seq(min_state,max_state,length.out=length_out)
+  if(is.null(inputs)){
+    inputs <- seq(min_state,max_state,length.out=length_out)
+  }
   outputs <- apply(num_est_parms,1,function(x) {
     x <- as.numeric(x)
     names(x) <- colnames(num_est_parms)
@@ -512,8 +543,9 @@ ind_der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_re
 #' Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_nm} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
@@ -533,7 +565,7 @@ ind_der_vs_state_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_re
 #' }
 #' @author Dominic Bräm
 #' @export
-der_state_plot_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_file=NULL,
+der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
                               length_out=100,time_nn=FALSE,act="ReLU",plot_type=c("base","ggplot"),beta=20,transform=NULL){
   data <- der_vs_state_nm(nn_name=nn_name,min_state=min_state,max_state=max_state,
                            est_parms=est_parms,nm_res_file=nm_res_file,length_out=length_out,
@@ -570,8 +602,9 @@ der_state_plot_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_
 #' Either \emph{est_parms} or \emph{nm_res_file} and \emph{nm_phi_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nm} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
@@ -596,7 +629,7 @@ der_state_plot_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyr starts_with
 #' @export
-ind_der_state_plot_nm <- function(nn_name,min_state,max_state,est_parms=NULL,nm_res_file=NULL,
+ind_der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
                                   nm_phi_file=NULL,length_out=100,time_nn=FALSE,ribbon=TRUE,act="ReLU",beta=20,
                                   transform=NULL){
   data <- ind_der_vs_state_nm(nn_name=nn_name,min_state=min_state,max_state=max_state,
