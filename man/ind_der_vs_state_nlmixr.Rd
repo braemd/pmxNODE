@@ -6,8 +6,9 @@
 \usage{
 ind_der_vs_state_nlmixr(
   nn_name,
-  min_state,
-  max_state,
+  min_state = NULL,
+  max_state = NULL,
+  inputs = NULL,
   est_parms = NULL,
   fit_obj = NULL,
   length_out = 100,
@@ -19,9 +20,11 @@ ind_der_vs_state_nlmixr(
 \arguments{
 \item{nn_name}{(string) Name of the NN, e.g., \dQuote{c} for NNc(...)}
 
-\item{min_state}{(numeric) Value of minimal state for which the derivative should be calculated}
+\item{min_state}{(numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)}
 
-\item{max_state}{(numeric) Value of maximal state for which the derivative should be calculated}
+\item{max_state}{(numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)}
+
+\item{inputs}{(numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)}
 
 \item{est_parms}{(named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.}

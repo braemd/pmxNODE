@@ -55,8 +55,9 @@ indparm_extractor_nlmixr <- function(fit_obj){
 #' Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters form \emph{fit$fixef}. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
@@ -71,8 +72,12 @@ indparm_extractor_nlmixr <- function(fit_obj){
 #' ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
 #' }
 #' @author Dominic Bräm
-der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_obj=NULL,
+der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
                             length_out=100,time_nn=FALSE,act="ReLU",beta=20){
+  if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
+    error_msg <- "Either inputs or both, min_state and max_state, must be given"
+    stop(error_msg)
+  }
   if(is.null(est_parms) & is.null(fit_obj)){
     error_msg <- "Either estimated parameters or nlmixr fit object must be given"
     stop(error_msg)
@@ -85,9 +90,12 @@ der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_o
     est_parms <- `$`(fit_obj,"fixef")
   } else if(!is.numeric(est_parms)){
     error_msg <- "Given estimated parameters are not numeric"
+    stop(error_msg)
   }
   num_est_parms <- est_parms
-  inputs <- seq(min_state,max_state,length.out=length_out)
+  if(is.null(inputs)){
+    inputs <- seq(min_state,max_state,length.out=length_out)
+  }
   outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,time_nn=time_nn,act=act,beta=beta)
   out <- data.frame(state=inputs,
                     derivatives=outputs)
@@ -101,8 +109,9 @@ der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_o
 #' Either \emph{est_parms} or \emph{nm_res_file} and \emph{nm_phi_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
@@ -118,8 +127,12 @@ der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_o
 #' derivative_data <- ind_der_vs_state_nlmixr(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
 #' }
 #' @author Dominic Bräm
-ind_der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_obj=NULL,
+ind_der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
                                 length_out=100,time_nn=FALSE,act="ReLU",beta=20){
+  if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
+    error_msg <- "Either inputs or both, min_state and max_state, must be given"
+    stop(error_msg)
+  }
   if(is.null(est_parms) & is.null(fit_obj)){
     error_msg <- "Either estimated parameters or nlmixr fit object must be given"
     stop(error_msg)
@@ -135,7 +148,9 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,f
   }
   
   num_est_parms <- est_parms
-  inputs <- seq(min_state,max_state,length.out=length_out)
+  if(is.null(inputs)){
+    inputs <- seq(min_state,max_state,length.out=length_out)
+  }
   outputs <- apply(num_est_parms,1,function(x) {
     x <- as.numeric(x)
     names(x) <- colnames(num_est_parms)
@@ -153,11 +168,12 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,f
 #' 
 #' This functions allows to generate a derivative versus state plot for a neural network from a NODE in nlmixr2
 #' 
-#' Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
+#' Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through \emph{fit$fixef}. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
@@ -176,7 +192,7 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,f
 #' }
 #' @author Dominic Bräm
 #' @export
-der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_obj=NULL,
+der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
                               length_out=100,time_nn=FALSE,act="ReLU",plot_type=c("base","ggplot"),beta=20){
   data <- der_vs_state_nlmixr(nn_name=nn_name,min_state=min_state,max_state=max_state,
                           est_parms=est_parms,fit_obj=fit_obj,length_out=length_out,
@@ -215,8 +231,9 @@ der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit
 #' Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
 #' @param nn_name (string) Name of the NN, e.g., \dQuote{c} for NNc(...)
-#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated
-#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated
+#' @param min_state (numeric) Value of minimal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param max_state (numeric) Value of maximal state for which the derivative should be calculated (optional if inputs is given, ignored if inputs is defined)
+#' @param inputs (numeric vector) Vector of input values for which derivatives should be calculated (optional if min_state and max_state is given)
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
@@ -238,7 +255,7 @@ der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit
 #' @importFrom tidyr pivot_longer
 #' @importFrom tidyr starts_with
 #' @export
-ind_der_state_plot_nlmixr <- function(nn_name,min_state,max_state,est_parms=NULL,fit_obj=NULL,
+ind_der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
                                   length_out=100,time_nn=FALSE,ribbon=TRUE,act="ReLU",beta=20){
   data <- ind_der_vs_state_nlmixr(nn_name=nn_name,min_state=min_state,max_state=max_state,
                               est_parms=est_parms,fit_obj=fit_obj,
