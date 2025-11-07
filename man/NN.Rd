@@ -106,5 +106,6 @@ f_ode_pop()
 
 }
 \author{
-Matthew L Fidler (uses the same functions `nn_generator_nlmixr`, written by Dominic Bräm)
+Matthew L Fidler (uses the same functions
+  `nn_generator_nlmixr`, written by Dominic Bräm)
 }
