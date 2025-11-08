@@ -1,0 +1,17 @@
+DESCRIPTION:
+A NODE for iv drug administration with concentration and time-dependent NN.
+Volume of distribution is estimated; initial value for V is 2.
+
+[LONGITUDINAL]
+input = {V=2}
+
+PK:
+; PK model definition
+depot(target=C)
+
+EQUATION:
+ddt_C = NNc(state=C,min_init=0.5,max_init=10) + amtDose * NNct(state=t,min_init=0.5,max_init=10,time_nn=TRUE)
+Cc = C/V
+
+OUTPUT:
+output = Cc
