@@ -70,7 +70,7 @@ A list with the before and replace elements and iniDf to
 Neural Network ODE language in nlmixr2 langauage
 }
 \examples{
-
+\dontrun{
  if (requireNamespace("rxode2", quietly = TRUE)) {
 
 # Called directly, this isn't that interesting, but can show what
@@ -103,7 +103,7 @@ f_ode_pop()
 # in rxode2.  This only works if you load rxode2/nlmixr2 and pmxNODE
 
 }
-
+}
 }
 \author{
 Matthew L Fidler (uses the same functions

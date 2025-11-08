@@ -68,7 +68,7 @@ nn_nlmixr_reset <- function() {
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
 #'  if (requireNamespace("rxode2", quietly = TRUE)) {
 #'
 #' # Called directly, this isn't that interesting, but can show what
@@ -101,7 +101,7 @@ nn_nlmixr_reset <- function() {
 #' # in rxode2.  This only works if you load rxode2/nlmixr2 and pmxNODE
 #'
 #' }
-#'
+#' }
 NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
                act=c("ReLU", "Softplus"),
                time_nn=FALSE,
@@ -352,7 +352,7 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
 #'   neural-network components.
 #' @author Matthew L. Fidler
 #' @examples
-#'
+#' \dontrun{
 #' f_ode_pop <- function(){
 #'   ini({
 #'     lV <- 1
@@ -367,7 +367,7 @@ NN <- function(number=1,state="t",min_init=0.5,max_init=10, n_hidden=5,
 #' }
 #'
 #' f_ode_pop() %>% NNbsv(.2, warn=TRUE)
-#'
+#' }
 #' @export
 NNbsv <- function(ui, val=0.1, str="%s <- l%s*exp(eta.%s)",
                   warn=FALSE) {

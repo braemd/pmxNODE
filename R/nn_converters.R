@@ -211,7 +211,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
   set.seed(seed)
   pop <- pop_only
   
-  f_parse <- readLines(ctl_path)
+  f_parse <- readLines(ctl_path, warn = FALSE)
   
   states_corrections <- state_correcter_nm(f_parse)
   f_parse <- states_corrections[[1]]
@@ -413,7 +413,7 @@ nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0
   set.seed(seed)
   pop <- pop_only
   
-  f_parse <- readLines(mlx_path)
+  f_parse <- readLines(mlx_path, warn = FALSE)
   
   nns <- unlist(nn_extractor(f_parse))
   nn_tests <- unlist(lapply(nns,nn_tester))

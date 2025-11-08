@@ -29,7 +29,7 @@ This only changes the Neural Network model to add between subject
 variability.  It assumes the following parameter structure
 }
 \examples{
-
+\dontrun{
 f_ode_pop <- function(){
   ini({
     lV <- 1
@@ -44,7 +44,7 @@ f_ode_pop <- function(){
 }
 
 f_ode_pop() \%>\% NNbsv(.2, warn=TRUE)
-
+}
 }
 \author{
 Matthew L. Fidler
