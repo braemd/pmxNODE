@@ -89,7 +89,7 @@ der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,e
       error_msg <- "mlx_file must be path and name of mlxtran file"
       stop(error_msg)
     }
-    file_path <- paste0(tools::file_path_sans_ext(mlx_file),"/populationParameters.txt")
+    file_path <- file.path(tools::file_path_sans_ext(mlx_file),"populationParameters.txt")
     if(!file.exists(file_path)){
       error_msg <- paste("No population estimates available for",mlx_file)
       stop(error_msg)

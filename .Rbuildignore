@@ -1,6 +1,10 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^LICENSE.md
-^README.Rmd
-^Vignettes
-^tests
+^LICENSE\.md$
+^README\.Rmd$
+^tests/testthat/test-nlmixr2\.R$
+^\.git$
+^\.gitignore$
+^\.Rhistory$
+^doc$
+^Meta$

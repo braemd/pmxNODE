@@ -1,0 +1,211 @@
+---
+title: "pmxNODE in NONMEM"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pmxNODE in NONMEM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE
+)
+```
+
+<div style="display: flex; align-items: center; justify-content: space-between;">
+  <img src="figures/pmxNODE_sticker_4.png" style="width: 120px; margin-left: 1em; border:none;" />
+</div>
+
+## About pmxNODE
+pmxNODE is a package to facilitate the application of neural ordinary differential equations and the integration of neural networks in pharmacometric modeling software, including Monolix, NONMEM, and nlmixr2. It allows to utilize NN functions that are not commonly available in said pharmacometric software. The way pmxNODE works is that it translates NN functions into explicit equations that describe the calculations within a neural network, described in the publication *Low-dimensional Neural ODEs accounting for inter-individual variability implemented in Monolix and NONMEM* by Bräm, Steiert, Steffens, Pfister, and Koch (doi:...). It further allows to automatically initialize the neural network parameters, following the initialization approach presented in the publication above.
+
+## General workflow
+The general workflow for NONMEM with pmxNODE consists of few steps:
+
+* Write a NONMEM model file, as you would do normaly. However, you can utilize NN functions in your model code, e.g., for complex or unknown model parts.
+
+* Convert the written model file with the `nn_converter_nm`{.R} function from the pmxNODE package.
+
+* We suggest to fit the model to the data first without inter-individual variability on neural networks parameters (argument *pop = True* in the `nn_converter_nm`{.R} function) and add the random effects in a second run, where parameters were initialized with last estimates.
+
+## Package loading and initialization
+We first need to load the pmxNODE package. Since we don't rely on other R-packages (except ggplot for plotting), nothing more needs to be done.
+
+```{r, echo = T, results = 'hide'}
+library(pmxNODE)
+library(ggplot2)
+```
+
+## Examples
+Some examples are available in the pmxNODE package. To see all example files, you can use the `get_example_list`{.R} function. To copy an example to a folder of your choice, you can use the `copy_example`{.R} function. After calling the `copy_examples`{.R} function, two files should be in the target folder, a data file and a NONMEM model file.
+
+```{r, echo = T, results = 'hide', eval = F}
+get_example_list()
+
+copy_examples(
+  target_folder = "~/pmxNODE",
+  example_nr = 1,
+  example_software = "NONMEM"
+)
+```
+
+Let's have a look at the model file:
+```{r, echo=F, results='asis'}
+model_text <- readLines(system.file("extdata","nm_example1_model.ctl", package = "pmxNODE"),warn = F)[17:18]
+cat("```txt\n","...\n",paste(model_text, collapse = "\n"),"\n...", "\n```")
+```
+
+
+## Converting and population fit
+Before fitting the model, it needs to be converted with the `nn_converter_nm`{.R} function. In addition to the path/file name of the unconverted NONMEM model, the argument on including inter-individual variability for the neural network parameters is required. The name of the converted NONMEM model file is automatically generated based on the unconverted NONMEM model file. Note that a suffix is added to the file name, either *\_converted_pop* if *pop_only = TRUE* or *\_converted_ind* if *pop_only = FALSE*.
+
+In order to find the path to the NONMEM executable, you can utilize the `find_nmfe`{.R} function.
+
+```{r, echo = T, results = 'hide', eval = F}
+nn_converter_nm(ctl_path = "~/pmxNODE/nm_example1_model.ctl",
+                 pop_only = TRUE)
+```
+
+Now the converted model file has included all the code needed for the NODE:
+```{r, echo=F, results='asis'}
+model_text <- readLines(system.file("extdata","nm_example1_model_converted_ind.ctl", package = "pmxNODE"),warn = F)[113:147]
+cat("```txt\n","...\n",paste(model_text, collapse = "\n"),"\n...", "\n```")
+```
+
+The model can be automatically run from R with the function `run_nm`{.R} from the pmxNODE package. If multiple cores are available, you can run the model in parallel with the *parallel_command* argument. If you would like to save the results in a new folder, you can set *create_dir = TRUE* and give the path and name of the data file.
+
+```{r, echo = T, results = 'hide', eval = F}
+nmfe_path <- find_nmfe()
+
+run_nm(ctl_file = "~/pmxNODE/nm_example1_model_converted_pop.ctl",
+       nm_path = nmfe_path,
+       parralel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
+       create_dir = TRUE,
+       data_file = "~/pmxNODE/data_example1_nm.csv")
+```
+
+## Converting and individual fit
+In order to get the parameter estimations from the population fit (without inter-individual variability), the `pre_fixef_extractor_nm`{.R} function can be utilized.
+
+These parameter estimates can be given as additional argument *pre_fixef* to the `nn_converter_nm`{.R} function. To include inter-individual variability, the population argument is set to false (*pop_only = FALSE*) in the `nn_converter_nm`{.R} function.
+
+The final model with inter-individual variability can then be fitted again with the `run_nm`{.R} function.
+
+```{r, echo = T, results = 'hide', eval = F}
+est_parms <- pre_fixef_extractor_nm("~/pmxNODE/nm_example1_model_converted_pop/nm_example1_model_converted_pop.res")
+
+nn_converter_nm(ctl_path = "~/pmxNODE/nm_example1_model.ctl",
+                 pop_only = FALSE,
+                 pre_fixef = est_parms)
+
+run_nm(ctl_file = "~/pmxNODE/nm_example1_model_converted_ind.ctl",
+       nm_path = nmfe_path,
+       parralel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
+       create_dir = TRUE,
+       data_file = "~/pmxNODE/data_example1_nm.csv")
+```
+
+## Predictions
+We can check now the predictions from the NODE model.
+```{r, echo = T, eval = F}
+predictions <- read.table("~/pmxNODE/nm_example1_model_converted_ind/nm_example1.tab", header = T, skip = 1)
+predictions <- predictions[predictions$AMT == 0,]
+```
+```{r, include=FALSE}
+predictions <- read.table(system.file("extdata", "nm_example1.tab", package = "pmxNODE"), header=T,skip=1)
+predictions <- predictions[predictions$AMT == 0,]
+```
+
+```{r, echo = T}
+predictions <- predictions[predictions$AMT == 0,]
+
+ggplot(predictions) +
+  geom_point(aes(x = TIME, y = DV)) +
+  geom_line(aes(x = TIME, y = IPRED), color = "blue") +
+  geom_line(aes(x = TIME, y = PRED), color = "red") +
+  facet_wrap(~ID)
+
+ggplot(predictions) +
+  geom_point(aes(x = DV,y = PRED)) +
+  geom_abline(slope = 1, intercept = 0)
+
+ggplot(predictions) +
+  geom_point(aes(x = DV,y = IPRED)) +
+  geom_abline(slope = 1, intercept = 0)
+
+ggplot(predictions) +
+  geom_point(aes(x = DV, y = IWRE)) +
+  geom_abline(slope = 0, intercept = 0)
+
+ggplot(predictions) +
+  geom_point(aes(x = TIME, y = IWRE)) +
+  geom_abline(slope = 0, intercept = 0)
+```
+
+## Derivative versus states
+Now if we want to investigate what the NNs in the NODE have learned, we can plot the derivatives versus the states. This visualizes the dynamics on ODE-level identified by the NODE. To functions are available for this, either the *der_state_plot_nm* or the *rhs_plot_nm* functions. The first one generates the derivative vs. state plot for a single NN. The name of the NN, the minimal and maximal input to the NN, and either the estimated parameters or directly the NONMEM results file must be given. Additionally, it needs to be specified if the NN is a time-dependent NN.
+
+```{r,echo = T, eval=F}
+der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res", plot_type = "ggplot")
+der_state_plot_nm("ct", min_state = 0, max_state = 24, nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res", time_nn = TRUE, plot_type = "ggplot")
+```
+
+```{r, echo=FALSE}
+p <- der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), plot_type = "ggplot")
+p <- der_state_plot_nm("t", min_state = 0, max_state = 24, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = TRUE, plot_type = "ggplot")
+```
+
+With the second one, the entire right-hand side of a differential equation can be plotted, e.g., the combination of multiple NNs or NNs combined with mechanistic parts. The right-hand side equation must be given as a string, the variable for the x-axis needs to be defined, and the inputs must be given as a dataframe with columns for each variable in the right-hand side equation. Additionally, a vector with information concerning time-dependency of the NNs in the right-hand side equation mus be provided or else all NNs are assumed to be non-time-depenedent. Note that for *NNc* inputs, the predictions need to be multiplied with the volume of distribution since the inputs to *NNc* in the model is amount and not concentration.
+```{r, eval=F}
+est_parms <- pre_fixef_extractor_nm("~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res")
+rhs_inputs <- data.frame(id = predictions$ID,
+                         NNc = predictions$PRED*as.numeric(est_parms["V"]),
+                         NNt = predictions$TIME,
+                         dose = 10)
+rhs_plot_nm("NNc + dose * NNct", x_var = "NNc", inputs = rhs_inputs, nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res", time_nn = c(FALSE, TRUE))
+rhs_plot_nm("NNc + dose * NNct", x_var = "NNct", inputs = rhs_inputs, nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res", time_nn = c(FALSE, TRUE))
+```
+
+```{r, echo=FALSE}
+est_parms <- pre_fixef_extractor_nm(system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"))
+rhs_inputs <- data.frame(id = predictions$ID,
+                         NNc = predictions$PRED*as.numeric(est_parms["V"]),
+                         NNt = predictions$TIME,
+                         dose = 10)
+p <- rhs_plot_nm("NNc + dose * NNt", x_var = "NNc", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+p <- rhs_plot_nm("NNc + dose * NNt", x_var = "NNt", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+```
+
+Similar plots can also be generated on individual level.
+```{r,echo = T, eval=F}
+ind_der_state_plot_mlx("c", min_state = 0, max_state = 10,
+                       nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res",
+                       nm_phi_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.phi",
+                       plot_type = "ggplot")
+ind_der_state_plot_mlx("ct", min_state = 0, max_state = 24,
+                       nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res",
+                       nm_phi_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.phi",
+                       time_nn = TRUE, plot_type = "ggplot")
+ind_rhs_plot_mlx("NNc + dose * NNt", x_var = "NNc", group = "id", inputs = rhs_inputs,
+                       nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res",
+                       nm_phi_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.phi",
+                       time_nn = c(FALSE, TRUE))
+ind_rhs_plot_mlx("NNc + dose * NNt", x_var = "NNt", group = "id", inputs = rhs_inputs,
+                       nm_res_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.res",
+                       nm_phi_file = "~/pmxNODE/nm_example1_model_converted_ind/nm_example1_model_converted_ind.phi",
+                       time_nn = c(FALSE, TRUE))
+```
+
+```{r, echo=FALSE}
+p <- ind_der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+                           nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"))
+p <- ind_der_state_plot_nm("t", min_state = 0, max_state = 24, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+                           nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"), time_nn = TRUE)
+p <- ind_rhs_plot_nm("NNc + dose * NNt", x_var = "NNc", group = "id", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+                           nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+p <- ind_rhs_plot_nm("NNc + dose * NNt", x_var = "NNt", group = "id", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+                           nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+```

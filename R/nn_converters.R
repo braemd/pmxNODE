@@ -479,7 +479,7 @@ nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0
   
   if(gen_mlx_file){
     if(!("lixoftConnectors" %in% .packages())){
-      stop("lixoftConnectors must first be initialized. Use software_initializer(...) prior to use nn_converter_mlx with gen_mlx_file=TRUE")
+      stop("lixoftConnectors must first be loaded and initialized.")
     }
     if(is.null(mlx_name)){
       mlx_name <- paste0(file_name[1],"_mlx_file")
