@@ -42,6 +42,6 @@ open_nm_example <- function(model="nm_theophylline_model.ctl"){
   if(length(pkg_path) > 1){
     pkg_path <- pkg_path[1]
   }
-  file_path <- paste0(pkg_path,"/",pkg_name,"/",model)
+  file_path <- file.path(pkg_path,pkg_name,model)
   shell(file_path,wait=F)
 }

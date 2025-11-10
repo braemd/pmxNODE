@@ -16,27 +16,27 @@ test_that("Convert NNs in Monolix",{
 
 test_that("Derivative calculations in Monolix",{
   der_data_mlx <- pmxNODE:::der_vs_state_mlx("c",min_state = 0, max_state = 0,
-                                             mlx_file = test_path("testresults/mlx_example1_ind.mlxtran"))
+                                             mlx_file = test_path("testr/mlx_example1_ind.mlxtran"))
   
   ind_der_data_mlx <- pmxNODE:::ind_der_vs_state_mlx("c",min_stat = 0, max_state = 10,
-                                                     mlx_file = test_path("testresults/mlx_example1_ind.mlxtran"))
+                                                     mlx_file = test_path("testr/mlx_example1_ind.mlxtran"))
   
   der_data_t_mlx <- pmxNODE:::der_vs_state_mlx("ct",min_state = 0, max_state = 10, time_nn = T,
-                                               mlx_file = test_path("testresults/mlx_example1_ind.mlxtran"))
+                                               mlx_file = test_path("testr/mlx_example1_ind.mlxtran"))
   
   ind_der_data_t_mlx <- pmxNODE:::ind_der_vs_state_mlx("ct",min_stat = 0, max_state = 10, time_nn = T,
-                                                       mlx_file = test_path("testresults/mlx_example1_ind.mlxtran"))
+                                                       mlx_file = test_path("testr/mlx_example1_ind.mlxtran"))
   
-  der_data_ref <- read.table(test_path("testresults/mlx_example1_ind_der-data_c_ref.txt"),
+  der_data_ref <- read.table(test_path("testr/mlx_example1_ind_der-data_c_ref.txt"),
                              sep = ",", header = T)
   
-  ind_der_data_ref <- read.table(test_path("testresults/mlx_example1_ind_ind-der-data_c_ref.txt"),
+  ind_der_data_ref <- read.table(test_path("testr/mlx_example1_ind_ind-der-data_c_ref.txt"),
                              sep = ",", header = T)
   
-  der_data_t_ref <- read.table(test_path("testresults/mlx_example1_ind_der-data_t_ref.txt"),
+  der_data_t_ref <- read.table(test_path("testr/mlx_example1_ind_der-data_t_ref.txt"),
                              sep = ",", header = T)
   
-  ind_der_data_t_ref <- read.table(test_path("testresults/mlx_example1_ind_ind-der-data_t_ref.txt"),
+  ind_der_data_t_ref <- read.table(test_path("testr/mlx_example1_ind_ind-der-data_t_ref.txt"),
                              sep = ",", header = T)
   
   testthat::expect_equal(der_data_mlx,der_data_ref)

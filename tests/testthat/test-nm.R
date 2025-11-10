@@ -20,29 +20,29 @@ test_that("Convert NNs in NONMEM",{
 
 test_that("Derivative calculations in NONMEM",{
   der_data_nm <- pmxNODE:::der_vs_state_nm("c",min_state = 0, max_state = 10,
-                                           nm_res_file = test_path("testresults/nm_example1_model_converted_ind.res"))
+                                           nm_res_file = test_path("testr/nm_example1_model_converted_ind.res"))
   
   ind_der_data_nm <- pmxNODE:::ind_der_vs_state_nm("c",min_stat = 0, max_state = 10,
-                                                   nm_res_file = test_path("testresults/nm_example1_model_converted_ind.res"),
-                                                   nm_phi_file = test_path("testresults/nm_example1_model_converted_ind.phi"))
+                                                   nm_res_file = test_path("testr/nm_example1_model_converted_ind.res"),
+                                                   nm_phi_file = test_path("testr/nm_example1_model_converted_ind.phi"))
   
   der_data_t_nm <- pmxNODE:::der_vs_state_nm("t",min_state = 0, max_state = 10, time_nn = T,
-                                             nm_res_file = test_path("testresults/nm_example1_model_converted_ind.res"))
+                                             nm_res_file = test_path("testr/nm_example1_model_converted_ind.res"))
   
   ind_der_data_t_nm <- pmxNODE:::ind_der_vs_state_nm("t",min_stat = 0, max_state = 10, time_nn = T,
-                                                     nm_res_file = test_path("testresults/nm_example1_model_converted_ind.res"),
-                                                     nm_phi_file = test_path("testresults/nm_example1_model_converted_ind.phi"))
+                                                     nm_res_file = test_path("testr/nm_example1_model_converted_ind.res"),
+                                                     nm_phi_file = test_path("testr/nm_example1_model_converted_ind.phi"))
   
-  der_data_ref <- read.table(test_path("testresults/nm_example1_ind_der-data_c_ref.txt"),
+  der_data_ref <- read.table(test_path("testr/nm_example1_ind_der-data_c_ref.txt"),
                              sep = ",", header = T)
   
-  ind_der_data_ref <- read.table(test_path("testresults/nm_example1_ind_ind-der-data_c_ref.txt"),
+  ind_der_data_ref <- read.table(test_path("testr/nm_example1_ind_ind-der-data_c_ref.txt"),
                                  sep = ",", header = T)
   
-  der_data_t_ref <- read.table(test_path("testresults/nm_example1_ind_der-data_t_ref.txt"),
+  der_data_t_ref <- read.table(test_path("testr/nm_example1_ind_der-data_t_ref.txt"),
                                sep = ",", header = T)
   
-  ind_der_data_t_ref <- read.table(test_path("testresults/nm_example1_ind_ind-der-data_t_ref.txt"),
+  ind_der_data_t_ref <- read.table(test_path("testr/nm_example1_ind_ind-der-data_t_ref.txt"),
                                    sep = ",", header = T)
   
   testthat::expect_equal(der_data_nm,der_data_ref)

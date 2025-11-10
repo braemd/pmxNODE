@@ -18,7 +18,7 @@ All paths must be given in R-style, i.e., slashes instead of backslashes. Paths 
 }
 \examples{
 \dontrun{
-fun_mlx("mlx_file.mlxtran")
+run_mlx("mlx_file.mlxtran")
 }
 }
 \author{

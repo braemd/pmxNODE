@@ -23,7 +23,7 @@ get_example_list <- function(pkg_name = "pmxNODE"){
   if(length(pkg_path) > 1){
     pkg_path <- pkg_path[1]
   }
-  ex_files <- list.files(paste0(pkg_path,"/",pkg_name),"example")
+  ex_files <- list.files(file.path(pkg_path,pkg_name),"example")
   return(ex_files)
 }
 
@@ -62,7 +62,7 @@ copy_examples <- function(target_folder,examples=NULL,example_nr=NULL,example_so
   if(length(pkg_lib_path) > 1){
     pkg_lib_path <- pkg_lib_path[1]
   }
-  pkg_path <- paste0(pkg_lib_path,"/",pkg_name)
+  pkg_path <- file.path(pkg_lib_path,pkg_name)
   ex_files <- list.files(pkg_path,"example")
   if(!is.null(examples)){
     ex_exist_to_copy <- examples %in% ex_files
@@ -71,14 +71,14 @@ copy_examples <- function(target_folder,examples=NULL,example_nr=NULL,example_so
       stop(paste0("Not all examples exist, only following examples exist: ",paste(ex_files,collapse = ", ")))
     }
     ex_files_to_copy_names <- ex_files[ex_files_to_copy]
-    paths_to_copy <- paste0(pkg_path,"/",ex_files_to_copy_names)
+    paths_to_copy <- file.path(pkg_path,ex_files_to_copy_names)
     file.copy(paths_to_copy,target_folder)
   } else if(!is.null(example_nr) & is.null(example_software)){
     if(!(example_nr %in% 1:4)){
       stop("Only example numbers between 1 and 4 are available")
     }
     ex_files_to_copy_names <- ex_files[grepl(as.character(example_nr),ex_files)]
-    paths_to_copy <- paste0(pkg_path,"/",ex_files_to_copy_names)
+    paths_to_copy <- file.path(pkg_path,ex_files_to_copy_names)
     file.copy(paths_to_copy,target_folder)
   } else if(is.null(example_nr) & !is.null(example_software)){
     if(example_software == "Monolix"){
@@ -89,7 +89,7 @@ copy_examples <- function(target_folder,examples=NULL,example_nr=NULL,example_so
       stop("example_software argument must be either Monolix or NONMEM")
     }
     ex_files_to_copy_names <- ex_files[grepl(software_abbreviation,ex_files)]
-    paths_to_copy <- paste0(pkg_path,"/",ex_files_to_copy_names)
+    paths_to_copy <- file.path(pkg_path,ex_files_to_copy_names)
     file.copy(paths_to_copy,target_folder)
   } else if(!is.null(example_nr) & !is.null(example_software)){
     if(!(example_nr %in% 1:4)){
@@ -103,7 +103,7 @@ copy_examples <- function(target_folder,examples=NULL,example_nr=NULL,example_so
       stop("example_software argument must be either Monolix or NONMEM")
     }
     ex_files_to_copy_names <- ex_files[grepl(software_abbreviation,ex_files) & grepl(as.character(example_nr),ex_files)]
-    paths_to_copy <- paste0(pkg_path,"/",ex_files_to_copy_names)
+    paths_to_copy <- file.path(pkg_path,ex_files_to_copy_names)
     file.copy(paths_to_copy,target_folder)
   } else if(is.null(example_nr) & is.null(example_software)){
     stop("No examples copied, please provide either examples, example_nr, or/and example_software")

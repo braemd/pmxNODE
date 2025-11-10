@@ -250,7 +250,7 @@ pre_fixef_extractor_mlx <- function(model_name){
   }
   
   file_path <- gsub("\\.mlxtran","",model_name)
-  pop_file_path <- paste0(file_path,"/populationParameters.txt")
+  pop_file_path <- file.path(file_path,"populationParameters.txt")
   
   if(!file.exists(pop_file_path)){
     stop("No population estimates available for provided Monolix file")
@@ -287,7 +287,7 @@ indparm_extractor_mlx <- function(model_name){
   }
   
   file_path <- gsub("\\.mlxtran","",model_name)
-  ind_file_path <- paste0(file_path,"/IndividualParameters/estimatedIndividualParameters.txt")
+  ind_file_path <- file.path(file_path,"IndividualParameters","estimatedIndividualParameters.txt")
   
   if(!file.exists(ind_file_path)){
     stop("No individual estimates available for provided Monolix file")
@@ -311,7 +311,7 @@ indparm_extractor_mlx <- function(model_name){
 #' @return NULL
 #' @examples 
 #' \dontrun{
-#' fun_mlx("mlx_file.mlxtran")
+#' run_mlx("mlx_file.mlxtran")
 #' }
 #' @author Dominic Bräm
 #' @export
@@ -320,7 +320,7 @@ run_mlx <- function(mlx_file){
     stop("Monolix file does not exist in given directory")
   }
   if(!("lixoftConnectors" %in% .packages())){
-    stop("lixoftConnectors must first be initialized. Use software_initializer(...) prior to use run_mlx")
+    stop("lixoftConnectors must first be loaded and initialized.")
   }
   lixoftConnectors::loadProject(mlx_file)
   lixoftConnectors::runScenario()

@@ -1,0 +1,152 @@
+<DATAFILE>
+
+[FILEINFO]
+file='data_example1_mlx.csv'
+delimiter = comma
+header = {ID, TIME, AMT, DV}
+
+[CONTENT]
+ID = {use=identifier}
+TIME = {use=time}
+AMT = {use=amount}
+DV = {use=observation, name=DV, type=continuous}
+
+<MODEL>
+
+[INDIVIDUAL]
+input = {V_pop, omega_V, Wc_11_pop, omega_Wc_11, Wc_12_pop, omega_Wc_12, Wc_13_pop, omega_Wc_13, Wc_14_pop, omega_Wc_14, Wc_15_pop, omega_Wc_15, Wc_21_pop, omega_Wc_21, Wc_22_pop, omega_Wc_22, Wc_23_pop, omega_Wc_23, Wc_24_pop, omega_Wc_24, Wc_25_pop, omega_Wc_25, Wct_11_pop, omega_Wct_11, Wct_12_pop, omega_Wct_12, Wct_13_pop, omega_Wct_13, Wct_14_pop, omega_Wct_14, Wct_15_pop, omega_Wct_15, Wct_21_pop, omega_Wct_21, Wct_22_pop, omega_Wct_22, Wct_23_pop, omega_Wct_23, Wct_24_pop, omega_Wct_24, Wct_25_pop, omega_Wct_25, bc_11_pop, omega_bc_11, bc_12_pop, omega_bc_12, bc_13_pop, omega_bc_13, bc_14_pop, omega_bc_14, bc_15_pop, omega_bc_15, bc_21_pop, omega_bc_21, bct_11_pop, omega_bct_11, bct_12_pop, omega_bct_12, bct_13_pop, omega_bct_13, bct_14_pop, omega_bct_14, bct_15_pop, omega_bct_15, bct_21_pop, omega_bct_21}
+
+DEFINITION:
+V = {distribution=logNormal, typical=V_pop, sd=omega_V}
+Wc_11 = {distribution=normal, typical=Wc_11_pop, sd=omega_Wc_11}
+Wc_12 = {distribution=normal, typical=Wc_12_pop, sd=omega_Wc_12}
+Wc_13 = {distribution=normal, typical=Wc_13_pop, sd=omega_Wc_13}
+Wc_14 = {distribution=normal, typical=Wc_14_pop, sd=omega_Wc_14}
+Wc_15 = {distribution=normal, typical=Wc_15_pop, sd=omega_Wc_15}
+Wc_21 = {distribution=normal, typical=Wc_21_pop, sd=omega_Wc_21}
+Wc_22 = {distribution=normal, typical=Wc_22_pop, sd=omega_Wc_22}
+Wc_23 = {distribution=normal, typical=Wc_23_pop, sd=omega_Wc_23}
+Wc_24 = {distribution=normal, typical=Wc_24_pop, sd=omega_Wc_24}
+Wc_25 = {distribution=normal, typical=Wc_25_pop, sd=omega_Wc_25}
+Wct_11 = {distribution=normal, typical=Wct_11_pop, sd=omega_Wct_11}
+Wct_12 = {distribution=normal, typical=Wct_12_pop, sd=omega_Wct_12}
+Wct_13 = {distribution=normal, typical=Wct_13_pop, sd=omega_Wct_13}
+Wct_14 = {distribution=normal, typical=Wct_14_pop, sd=omega_Wct_14}
+Wct_15 = {distribution=normal, typical=Wct_15_pop, sd=omega_Wct_15}
+Wct_21 = {distribution=normal, typical=Wct_21_pop, sd=omega_Wct_21}
+Wct_22 = {distribution=normal, typical=Wct_22_pop, sd=omega_Wct_22}
+Wct_23 = {distribution=normal, typical=Wct_23_pop, sd=omega_Wct_23}
+Wct_24 = {distribution=normal, typical=Wct_24_pop, sd=omega_Wct_24}
+Wct_25 = {distribution=normal, typical=Wct_25_pop, sd=omega_Wct_25}
+bc_11 = {distribution=normal, typical=bc_11_pop, sd=omega_bc_11}
+bc_12 = {distribution=normal, typical=bc_12_pop, sd=omega_bc_12}
+bc_13 = {distribution=normal, typical=bc_13_pop, sd=omega_bc_13}
+bc_14 = {distribution=normal, typical=bc_14_pop, sd=omega_bc_14}
+bc_15 = {distribution=normal, typical=bc_15_pop, sd=omega_bc_15}
+bc_21 = {distribution=normal, typical=bc_21_pop, sd=omega_bc_21}
+bct_11 = {distribution=normal, typical=bct_11_pop, sd=omega_bct_11}
+bct_12 = {distribution=normal, typical=bct_12_pop, sd=omega_bct_12}
+bct_13 = {distribution=normal, typical=bct_13_pop, sd=omega_bct_13}
+bct_14 = {distribution=normal, typical=bct_14_pop, sd=omega_bct_14}
+bct_15 = {distribution=normal, typical=bct_15_pop, sd=omega_bct_15}
+bct_21 = {distribution=normal, typical=bct_21_pop, sd=omega_bct_21}
+
+[LONGITUDINAL]
+input = {a, b}
+
+file = 'mlx_example1_model_converted.txt'
+
+DEFINITION:
+DV = {distribution=normal, prediction=Cc, errorModel=combined1(a, b)}
+
+<FIT>
+data = DV
+model = DV
+
+<PARAMETER>
+V_pop = {value=1.9073569993774, method=MLE}
+Wc_11_pop = {value=-0.111427976363982, method=MLE}
+Wc_12_pop = {value=0.0661950468849544, method=MLE}
+Wc_13_pop = {value=-0.263653490054728, method=MLE}
+Wc_14_pop = {value=0.151529061610366, method=MLE}
+Wc_15_pop = {value=0.346981329912155, method=MLE}
+Wc_21_pop = {value=0.149260786602151, method=MLE}
+Wc_22_pop = {value=0.131307501674079, method=MLE}
+Wc_23_pop = {value=-0.156420996844034, method=MLE}
+Wc_24_pop = {value=-0.23467231062465, method=MLE}
+Wc_25_pop = {value=-0.134690099668737, method=MLE}
+Wct_11_pop = {value=0.0582964073744233, method=MLE}
+Wct_12_pop = {value=-0.246984093324864, method=MLE}
+Wct_13_pop = {value=0.434764141093221, method=MLE}
+Wct_14_pop = {value=-0.105411721519374, method=MLE}
+Wct_15_pop = {value=-0.0006572426435548, method=MLE}
+Wct_21_pop = {value=-0.1672060600869, method=MLE}
+Wct_22_pop = {value=-0.0107321631620189, method=MLE}
+Wct_23_pop = {value=-0.108668773839486, method=MLE}
+Wct_24_pop = {value=-0.137886164054515, method=MLE}
+Wct_25_pop = {value=0.530420008336438, method=MLE}
+a = {value=1, method=MLE}
+b = {value=0.3, method=MLE}
+bc_11_pop = {value=0.756816430577557, method=MLE}
+bc_12_pop = {value=-0.790081688070377, method=MLE}
+bc_13_pop = {value=0.132542039097668, method=MLE}
+bc_14_pop = {value=-0.0831745497505685, method=MLE}
+bc_15_pop = {value=-0.672700620932192, method=MLE}
+bc_21_pop = {value=-0.13423797293355, method=MLE}
+bct_11_pop = {value=0.0308347889890973, method=MLE}
+bct_12_pop = {value=0.772625862638473, method=MLE}
+bct_13_pop = {value=0.219552138518794, method=MLE}
+bct_14_pop = {value=0.0811729426641036, method=MLE}
+bct_15_pop = {value=0.467016446230784, method=MLE}
+bct_21_pop = {value=-0.250186363740994, method=MLE}
+c = {value=1, method=FIXED}
+omega_V = {value=1, method=MLE}
+omega_Wc_11 = {value=0.1, method=MLE}
+omega_Wc_12 = {value=0.1, method=MLE}
+omega_Wc_13 = {value=0.1, method=MLE}
+omega_Wc_14 = {value=0.1, method=MLE}
+omega_Wc_15 = {value=0.1, method=MLE}
+omega_Wc_21 = {value=0.1, method=MLE}
+omega_Wc_22 = {value=0.1, method=MLE}
+omega_Wc_23 = {value=0.1, method=MLE}
+omega_Wc_24 = {value=0.1, method=MLE}
+omega_Wc_25 = {value=0.1, method=MLE}
+omega_Wct_11 = {value=0.1, method=MLE}
+omega_Wct_12 = {value=0.1, method=MLE}
+omega_Wct_13 = {value=0.1, method=MLE}
+omega_Wct_14 = {value=0.1, method=MLE}
+omega_Wct_15 = {value=0.1, method=MLE}
+omega_Wct_21 = {value=0.1, method=MLE}
+omega_Wct_22 = {value=0.1, method=MLE}
+omega_Wct_23 = {value=0.1, method=MLE}
+omega_Wct_24 = {value=0.1, method=MLE}
+omega_Wct_25 = {value=0.1, method=MLE}
+omega_bc_11 = {value=0.1, method=MLE}
+omega_bc_12 = {value=0.1, method=MLE}
+omega_bc_13 = {value=0.1, method=MLE}
+omega_bc_14 = {value=0.1, method=MLE}
+omega_bc_15 = {value=0.1, method=MLE}
+omega_bc_21 = {value=0.1, method=MLE}
+omega_bct_11 = {value=0.1, method=MLE}
+omega_bct_12 = {value=0.1, method=MLE}
+omega_bct_13 = {value=0.1, method=MLE}
+omega_bct_14 = {value=0.1, method=MLE}
+omega_bct_15 = {value=0.1, method=MLE}
+omega_bct_21 = {value=0.1, method=MLE}
+
+<MONOLIX>
+
+[TASKS]
+populationParameters()
+individualParameters(method = {conditionalMean, conditionalMode })
+fim(run = false,method = StochasticApproximation)
+logLikelihood(run = false,method = ImportanceSampling)
+plotResult(method = {indfits, obspred, vpc, parameterdistribution, covariatemodeldiagnosis, randomeffects, covariancemodeldiagnosis, residualsscatter, residualsdistribution, saemresults })
+
+[SETTINGS]
+GLOBAL:
+exportpath = 'mlx_example1_ind'
+
+INDIVIDUAL:
+enablemaxiterations = yes
+

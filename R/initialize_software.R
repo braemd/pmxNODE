@@ -24,7 +24,11 @@ software_initializer <- function(software=c("Monolix","nlmixr","NONMEM"),mlx_pat
   software <- match.arg(software)
   if(software == "Monolix"){
     if(requireNamespace("lixoftConnectors",quietly = T)){
-      lixoftConnectors::initializeLixoftConnectors(software = "monolix", path = mlx_path)
+      if("lixoftConnectors" %in% .packages()){
+        lixoftConnectors::initializeLixoftConnectors(software = "monolix", path = mlx_path)
+      } else{
+        stop("Please load the lixoftConnectors package via library first")
+      }
     } else{
       stop("lixoftConnectors is not installed. Please install lixoftConnectors before using pmxNODE with Monolix. (See Lixoft website for instructions)")
     }

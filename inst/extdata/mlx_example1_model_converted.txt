@@ -1,0 +1,29 @@
+DESCRIPTION:
+A NODE for iv drug administration with concentration and time-dependent NN.
+Volume of distribution is estimated; initial value for V is 2.
+
+[LONGITUDINAL]
+input = {V,Wc_11,Wc_12,Wc_13,Wc_14,Wc_15,bc_11,bc_12,bc_13,bc_14,bc_15,Wc_21,Wc_22,Wc_23,Wc_24,Wc_25,bc_21,Wct_11,Wct_12,Wct_13,Wct_14,Wct_15,bct_11,bct_12,bct_13,bct_14,bct_15,Wct_21,Wct_22,Wct_23,Wct_24,Wct_25,bct_21}
+
+PK:
+; PK model definition
+depot(target=C)
+
+EQUATION:
+hc_1 = max(0,Wc_11 * C + bc_11)
+hc_2 = max(0,Wc_12 * C + bc_12)
+hc_3 = max(0,Wc_13 * C + bc_13)
+hc_4 = max(0,Wc_14 * C + bc_14)
+hc_5 = max(0,Wc_15 * C + bc_15)
+NNc = Wc_21 * hc_1 + Wc_22 * hc_2 + Wc_23 * hc_3 + Wc_24 * hc_4 + Wc_25 * hc_5 + bc_21
+hct_1 = max(0,-(Wct_11^2) * t + bct_11)
+hct_2 = max(0,-(Wct_12^2) * t + bct_12)
+hct_3 = max(0,-(Wct_13^2) * t + bct_13)
+hct_4 = max(0,-(Wct_14^2) * t + bct_14)
+hct_5 = max(0,-(Wct_15^2) * t + bct_15)
+NNct = Wct_21 * hct_1 + Wct_22 * hct_2 + Wct_23 * hct_3 + Wct_24 * hct_4 + Wct_25 * hct_5 + bct_21
+ddt_C = NNc + amtDose * NNct
+Cc = C/V
+
+OUTPUT:
+output = Cc

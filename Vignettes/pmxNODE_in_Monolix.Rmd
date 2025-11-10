@@ -1,0 +1,197 @@
+---
+title: "pmxNODE in Monolix"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pmxNODE in Monolix}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  warning = FALSE
+)
+```
+
+<div style="display: flex; align-items: center; justify-content: space-between;">
+  <img src="figures/pmxNODE_sticker_4.png" style="width: 120px; margin-left: 1em; border:none;" />
+</div>
+
+## About pmxNODE
+pmxNODE is a package to facilitate the application of neural ordinary differential equations and the integration of neural networks in pharmacometric modeling software, including Monolix, NONMEM, and nlmixr2. It allows to utilize NN functions that are not commonly available in said pharmacometric software. The way pmxNODE works is that it translates NN functions into explicit equations that describe the calculations within a neural network, described in the publication *Low-dimensional Neural ODEs accounting for inter-individual variability implemented in Monolix and NONMEM* by Bräm, Steiert, Steffens, Pfister, and Koch (https://doi.org/10.1002/psp4.13265). It further allows to automatically initialize the neural network parameters, following the initialization approach presented in the publication above.
+
+## General workflow
+The general workflow for Monolix with pmxNODE consists of few steps:
+
+* Write a Monolix model file, as you would do normaly. However, you can utilize NN functions in your model code, e.g., for complex or unknown model parts.
+
+* Convert the written model file with the `nn_converter_mlx`{.R} function from the pmxNODE package. This function can also directly generate a *.mlxtran* file with automatically initialized model parameters.
+
+* We suggest to fit the model to the data first without inter-individual variability on neural networks parameters (argument *pop_only = True* in the `nn_converter_mlx`{.R} function) and add the random effects in a second run, where parameters were initialized with last estimates.
+
+## Package loading and initialization
+We first need to load the pmxNODE package. Since the automated generation of *.mlxtran* files is done with the lixoftConnectors package, this also needs to be loaded and initialized. The installation instructions are provided on the MonolixSuite-website.
+
+```{r, include=FALSE}
+library(pmxNODE)
+library(ggplot2)
+```
+
+
+```{r, echo = T, results = 'hide', eval=FALSE}
+library(pmxNODE)
+library(ggplot2)
+library(lixoftConnectors)
+initializeLixoftConnectors("monolix", path = "C:/ProgramData/Lixoft/MonolixSuite2021R2")
+```
+
+## Examples
+Some examples are available in the pmxNODE package. To see all example files, you can use the `get_example_list`{.R} function. To copy an example to a folder of your choice, you can use the `copy_example`{.R} function. After calling the `copy_examples`{.R} function, two files should be in the target folder, a data file and a Monolix model file.
+
+```{r, echo = T, results = 'hide', eval = F}
+get_example_list()
+
+copy_examples(
+  target_folder = "~/pmxNODE",
+  example_nr = 1,
+  example_software = "Monolix"
+)
+```
+
+Let's have a look at the model file:
+```{r, echo=F, results='asis'}
+model_text <- readLines(system.file("extdata","mlx_example1_model.txt", package = "pmxNODE"),warn = F)
+cat("```txt\n", paste(model_text, collapse = "\n"), "\n```")
+```
+
+
+## Converting and population fit
+Before fitting the model, it needs to be converted with the `nn_converter_mlx`{.R} function. In addition to the path/file name of the unconverted Monolix model and the argument on including inter-individual variability for the neural network parameters, a Monolix *.mlxtran* file can be automatically generated with the *gen_mlx_file = TRUE* argument. In order to do so, a data file and the header types must be provided. If no file name for the new Monolix file is given through the *mlx_name* argument, the Monolix file name is automatically generated based on the Monolix model file. Note that a suffix is added to the file name, either *\_pop* if *pop_only = TRUE* or *\_ind* if *pop_only = FALSE*.
+
+```{r, echo = T, results = 'hide', eval = F}
+nn_converter_mlx(mlx_path = "~/pmxNODE/mlx_example1_model.txt",
+                 pop_only = TRUE,
+                 gen_mlx_file = TRUE,
+                 mlx_name = "~/pmxNODE/mlx_example1",
+                 data_file = "~/pmxNODE/data_example1_mlx.csv",
+                 header_types = c("id","time","amount","observation"))
+```
+
+Now the converted model file has included all the code needed for the NODE:
+
+```{r, echo=F, results='asis'}
+model_text <- readLines(system.file("extdata","mlx_example1_model_converted.txt", package = "pmxNODE"),warn = F)
+cat("```txt\n", paste(model_text, collapse = "\n"), "\n```")
+```
+
+The model can be automatically run from R with the function `run_mlx`{.R} from the pmxNODE package.
+
+```{r, echo = T, results = 'hide', eval = F}
+run_mlx("~/pmxNODE/mlx_example1_pop.mlxtran")
+```
+
+
+## Converting and individual fit
+In order to get the parameter estimations from the population fit (without inter-individual variability), the `pre_fixef_extractor_mlx`{.R} function can be utilized.
+
+These parameter estimates can be given as additional argument *pre_fixef* to the `nn_converter_mlx`{.R} function. To include inter-individual variability, the population argument is set to false (*pop_only = FALSE*) in the `nn_converter_mlx`{.R} function.
+
+The final model with inter-individual variability can then be fitted again with the `run_mlx`{.R} function.
+
+```{r, echo = T, results = 'hide', eval = F}
+est_parms <- pre_fixef_extractor_mlx("~/pmxNODE/mlx_example1_pop.mlxtran")
+
+nn_converter_mlx(mlx_path = "~/pmxNODE/mlx_example1_model.txt",
+                 pop_only = FALSE,
+                 pre_fixef = est_parms,
+                 gen_mlx_file = TRUE,
+                 mlx_name = "~/pmxNODE/mlx_example1",
+                 data_file = "~/pmxNODE/data_example1_mlx.csv",
+                 header_types = c("id","time","amount","observation"))
+
+run_mlx("~/pmxNODE/mlx_example1_ind.mlxtran")
+```
+
+## Predictions
+We can check now the predictions from the NODE model.
+```{r, echo = T, eval = F}
+predictions <- read.table("~/pmxNODE/mlx_example1_ind/predictions.txt", header = T, sep = ",")
+```
+```{r, include=FALSE}
+predictions <- read.table(system.file("extdata","mlx_example1_ind","predictions.txt",package = "pmxNODE"),header=T,sep=",")
+```
+
+```{r, echo = T}
+ggplot(predictions) +
+  geom_point(aes(x = time, y = DV)) +
+  geom_line(aes(x = time, y = indivPred_mode), color = "blue") +
+  geom_line(aes(x = time, y = popPred), color = "red") +
+  facet_wrap(~id)
+
+ggplot(predictions) +
+  geom_point(aes(x = DV,y = popPred)) +
+  geom_abline(slope = 1, intercept = 0)
+
+ggplot(predictions) +
+  geom_point(aes(x = DV,y = indivPred_mode)) +
+  geom_abline(slope = 1, intercept = 0)
+
+ggplot(predictions) +
+  geom_point(aes(x = DV, y = indWRes_mode)) +
+  geom_abline(slope = 0, intercept = 0)
+
+ggplot(predictions) +
+  geom_point(aes(x = time, y = indWRes_mode)) +
+  geom_abline(slope = 0, intercept = 0)
+```
+
+## Derivative versus states
+Now if we want to investigate what the NNs in the NODE have learned, we can plot the derivatives versus the states. This visualizes the dynamics on ODE-level identified by the NODE. To functions are available for this, either the *der_state_plot_mlx* or the *rhs_plot_mlx* functions. The first one generates the derivative vs. state plot for a single NN. The name of the NN, the minimal and maximal input to the NN, and either the estimated parameters or directly the name of the fitted Monolix file must be given. Additionally, it needs to be specified if the NN is a time-dependent NN.
+
+```{r,echo = T, eval=F}
+der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", plot_type = "ggplot")
+der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", time_nn = TRUE, plot_type = "ggplot")
+```
+
+```{r, echo=FALSE}
+p <- der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), plot_type = "ggplot")
+p <- der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = TRUE, plot_type = "ggplot")
+```
+
+With the second one, the entire right-hand side of a differential equation can be plotted, e.g., the combination of multiple NNs or NNs combined with mechanistic parts. The right-hand side equation must be given as a string, the variable for the x-axis needs to be defined, and the inputs must be given as a dataframe with columns for each variable in the right-hand side equation. Additionally, a vector with information concerning time-dependency of the NNs in the right-hand side equation mus be provided or else all NNs are assumed to be non-time-depenedent. Note that for *NNc* inputs, the predictions need to be multiplied with the volume of distribution since the inputs to *NNc* in the model is amount and not concentration.
+```{r, eval=F}
+est_parms <- pre_fixef_extractor_mlx("~/pmxNODE/mlx_example1_ind.mlxtran")
+rhs_inputs <- data.frame(id = predictions$id,
+                         NNc = predictions$popPred*est_parms["V_pop"],
+                         NNct = predictions$time,
+                         dose = 10)
+rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", inputs = rhs_inputs, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", time_nn = c(FALSE, TRUE))
+rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", inputs = rhs_inputs, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", time_nn = c(FALSE, TRUE))
+```
+
+```{r, echo=FALSE}
+est_parms <- pre_fixef_extractor_mlx(system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"))
+rhs_inputs <- data.frame(id = predictions$id,
+                         NNc = predictions$popPred*est_parms["V_pop"],
+                         NNct = predictions$time,
+                         dose = 10)
+p <- rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+p <- rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+```
+
+Similar plots can also be generated on individual level.
+```{r,echo = T, eval=F}
+ind_der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", plot_type = "ggplot")
+ind_der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", time_nn = TRUE, plot_type = "ggplot")
+ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", group = "id", inputs = rhs_inputs, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", time_nn = c(FALSE, TRUE))
+ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", group = "id", inputs = rhs_inputs, mlx_file = "~/pmxNODE/mlx_example1_ind.mlxtran", time_nn = c(FALSE, TRUE))
+```
+
+```{r, echo=FALSE}
+p <- ind_der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"))
+p <- ind_der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = TRUE)
+p <- ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", group = "id", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+p <- ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", group = "id", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+```

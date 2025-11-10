@@ -50,7 +50,7 @@ state_correcter_nm <- function(text){
 #' @author Dominic Bräm
 #' @export
 pre_fixef_extractor_nm <- function(res_path){
-  res_file <- readLines(res_path)
+  res_file <- readLines(res_path, warn = FALSE)
   
   theta_start <- grep("\\$THETA",res_file)
   omega_start <- grep("\\$OMEGA",res_file)
@@ -191,6 +191,10 @@ indparm_extractor_nm <- function(res_file,phi_file){
 #' @author Dominic Bräm
 #' @export
 run_nm <- function(ctl_file,nm_path,parralel_command=NULL,create_dir=TRUE,data_file=NULL){
+  if(.Platform$OS.type != "windows"){
+    error_msg <- "run_nm currently only implemented for Windows."
+    stop(error_msg)
+  }
   nm_path <- gsub("/","\\\\",nm_path)
   parralel_command <- gsub("/","\\\\",parralel_command)
   if(!file.exists(ctl_file)){
@@ -259,6 +263,10 @@ run_nm <- function(ctl_file,nm_path,parralel_command=NULL,create_dir=TRUE,data_f
 #' @author Dominic Bräm
 #' @export
 find_nmfe <- function(root="C:/"){
+  if(.Platform$OS.type != "windows"){
+    error_msg <- "find_nmfe currently only implemented for Windows."
+    stop(error_msg)
+  }
   dir_list_root <- list.dirs(path = root,full.names = T, recursive = FALSE)
   nm_root <- dir_list_root[grep("nm\\d",dir_list_root)]
   nm_run <- paste0(nm_root,"/run")
