@@ -36,7 +36,7 @@ Generate the explicit code for a NN in nlmixr
 \details{
 Structure of one unit in the hidden layer: \cr
 h1 = W1 * state + b1 \cr
-if(h1 < 0) {h1 <- 0} \cr
+if(h1 < 0) \{h1 <- 0\} \cr
 h2 = W2 * state + b2 \cr
 ... \cr
 NN = h1 + h2 + ...
