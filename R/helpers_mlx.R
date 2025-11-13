@@ -103,127 +103,131 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
                                   parm_names,parm_inis,theta_names,theta_inis,
                                   pop=FALSE,omega_inis=NULL,pre_fixef=NULL,obs_types=NULL,mapping=NULL){
   
-  parm_names <- unlist(parm_names)
-  parm_inis <- unlist(parm_inis)
-  theta_names <- unlist(theta_names)
-  theta_inis <- unlist(theta_inis)
-  
-  header_possibilites <- c("ignore", "id", "time", "observation", "amount", "contcov",
-                           "catcov", "occ", "evid", "mdv", "obsid", "cens", "limit",
-                           "regressor", "nominaltime", "admid", "rate", "tinf", "ss",
-                           "ii", "addl", "date")
-  
-  if(!all(header_types %in% header_possibilites)){
-    stop(paste0("Header types must be in: ",paste(header_possibilites,collapse = ",")))
-  }
-  
-  if(!is.null(obs_types) & is.null(mapping)){
-    lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,observationTypes=obs_types))
-  } else if(!is.null(obs_types) & !is.null(mapping)){
-    lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,
-                                                   observationTypes=obs_types,mapping=mapping))
-  } else{
-    lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types))
-  }
-  
-  lixoftConnectors::setConditionalDistributionSamplingSettings(enableMaxIterations=TRUE,nbMaxIterations=500)
-  
-  if(pop){
-    lixoftConnectors::setPopulationParameterEstimationSettings(variability = "decreasing")
-  }
-  
-  if(pop){
-    nn_var_set <- as.list(rep(FALSE,length(theta_names)))
-    names(nn_var_set) <- theta_names
-    lixoftConnectors::setIndividualParameterVariability(nn_var_set)
-  }
-  
-  nn_dist_set <- as.list(rep("normal",length(theta_names)))
-  names(nn_dist_set) <- theta_names
-  lixoftConnectors::setIndividualParameterDistribution(nn_dist_set)
-  
-  if(is.null(pre_fixef)){
-    if(length(parm_names) != 0){
-      model_theta_df <- data.frame(name=paste0(parm_names,"_pop"),
-                            initialValue=parm_inis,
-                            method="MLE")
+  if(requireNamespace("lixoftConnectors", quietly = TRUE)){
+    parm_names <- unlist(parm_names)
+    parm_inis <- unlist(parm_inis)
+    theta_names <- unlist(theta_names)
+    theta_inis <- unlist(theta_inis)
+    
+    header_possibilites <- c("ignore", "id", "time", "observation", "amount", "contcov",
+                             "catcov", "occ", "evid", "mdv", "obsid", "cens", "limit",
+                             "regressor", "nominaltime", "admid", "rate", "tinf", "ss",
+                             "ii", "addl", "date")
+    
+    if(!all(header_types %in% header_possibilites)){
+      stop(paste0("Header types must be in: ",paste(header_possibilites,collapse = ",")))
+    }
+    
+    if(!is.null(obs_types) & is.null(mapping)){
+      lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,observationTypes=obs_types))
+    } else if(!is.null(obs_types) & !is.null(mapping)){
+      lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,
+                                                                       observationTypes=obs_types,mapping=mapping))
+    } else{
+      lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types))
+    }
+    
+    lixoftConnectors::setConditionalDistributionSamplingSettings(enableMaxIterations=TRUE,nbMaxIterations=500)
+    
+    if(pop){
+      lixoftConnectors::setPopulationParameterEstimationSettings(variability = "decreasing")
+    }
+    
+    if(pop){
+      nn_var_set <- as.list(rep(FALSE,length(theta_names)))
+      names(nn_var_set) <- theta_names
+      lixoftConnectors::setIndividualParameterVariability(nn_var_set)
+    }
+    
+    nn_dist_set <- as.list(rep("normal",length(theta_names)))
+    names(nn_dist_set) <- theta_names
+    lixoftConnectors::setIndividualParameterDistribution(nn_dist_set)
+    
+    if(is.null(pre_fixef)){
+      if(length(parm_names) != 0){
+        model_theta_df <- data.frame(name=paste0(parm_names,"_pop"),
+                                     initialValue=parm_inis,
+                                     method="MLE")
         
+        model_omega_df <- data.frame(name=paste0("omega_",parm_names),
+                                     initialValue=1,
+                                     method="MLE")
+      }
+      
+      nn_theta_df <- data.frame(name=paste0(theta_names,"_pop"),
+                                initialValue=theta_inis,
+                                method="MLE")
+      
+      if(!pop){
+        nn_omega_df <- data.frame(name=paste0("omega_",theta_names),
+                                  initialValue=omega_inis,
+                                  method="MLE")
+      }
+      
+      if(length(parm_names) != 0){
+        mlx_inis <- rbind(model_theta_df,
+                          nn_theta_df,
+                          model_omega_df)
+      } else{
+        mlx_inis <- nn_theta_df
+      }
+      
+      if(!pop){
+        mlx_inis <- rbind(mlx_inis,
+                          nn_omega_df)
+      }
+    } else{
+      theta_df <- data.frame(name=names(pre_fixef),
+                             initialValue=pre_fixef,
+                             method="MLE")
+      
       model_omega_df <- data.frame(name=paste0("omega_",parm_names),
                                    initialValue=1,
                                    method="MLE")
-    }
-    
-    nn_theta_df <- data.frame(name=paste0(theta_names,"_pop"),
-                             initialValue=theta_inis,
-                             method="MLE")
-    
-    if(!pop){
-      nn_omega_df <- data.frame(name=paste0("omega_",theta_names),
-                                initialValue=omega_inis,
-                                method="MLE")
-    }
-    
-    if(length(parm_names) != 0){
-      mlx_inis <- rbind(model_theta_df,
-                        nn_theta_df,
-                        model_omega_df)
-    } else{
-      mlx_inis <- nn_theta_df
-    }
-    
-    if(!pop){
-      mlx_inis <- rbind(mlx_inis,
-                        nn_omega_df)
-    }
-  } else{
-    theta_df <- data.frame(name=names(pre_fixef),
-                           initialValue=pre_fixef,
-                           method="MLE")
-    
-    model_omega_df <- data.frame(name=paste0("omega_",parm_names),
-                                 initialValue=1,
-                                 method="MLE")
-    
-    if(!pop){
-      nn_omega_df <- data.frame(name=paste0("omega_",theta_names),
-                                initialValue=omega_inis,
-                                method="MLE")
       
-      mlx_inis <- rbind(theta_df,
-                        model_omega_df,
-                        nn_omega_df)
+      if(!pop){
+        nn_omega_df <- data.frame(name=paste0("omega_",theta_names),
+                                  initialValue=omega_inis,
+                                  method="MLE")
+        
+        mlx_inis <- rbind(theta_df,
+                          model_omega_df,
+                          nn_omega_df)
+        
+      } else{
+        mlx_inis <- rbind(theta_df,
+                          model_omega_df)
+      }
       
-    } else{
-      mlx_inis <- rbind(theta_df,
-                        model_omega_df)
+      
     }
     
+    obs_model <- lixoftConnectors::getContinuousObservationModel()
+    n_obs <- length(obs_model$errorModel)
+    if(n_obs>1){
+      error_parms <- paste0(c("a","b","c"),rep(1:n_obs,each=3))
+    } else{
+      error_parms <- c("a","b","c")
+    }
+    error_inits <- rep(c(1,0.3,1),n_obs)
+    error_methods <- rep(c("MLE","MLE","FIXED"),n_obs)
+    error_df <- data.frame(name=error_parms,
+                           initialValue=error_inits,
+                           method=error_methods)
     
-  }
-  
-  obs_model <- lixoftConnectors::getContinuousObservationModel()
-  n_obs <- length(obs_model$errorModel)
-  if(n_obs>1){
-    error_parms <- paste0(c("a","b","c"),rep(1:n_obs,each=3))
+    #error_df not required!?
+    mlx_inis <- rbind(mlx_inis)#,
+    #error_df)
+    
+    mlx_inis$initialValue <- as.numeric(mlx_inis$initialValue)
+    
+    lixoftConnectors::setPopulationParameterInformation(mlx_inis)
+    
+    lixoftConnectors::saveProject(paste0(model_name,".mlxtran"))
+    print(paste0("Monolix file saved under: ",model_name))
   } else{
-    error_parms <- c("a","b","c")
+    stop("lixoftConnectors must first be loaded and initialized.")
   }
-  error_inits <- rep(c(1,0.3,1),n_obs)
-  error_methods <- rep(c("MLE","MLE","FIXED"),n_obs)
-  error_df <- data.frame(name=error_parms,
-                         initialValue=error_inits,
-                         method=error_methods)
-  
-  #error_df not required!?
-  mlx_inis <- rbind(mlx_inis)#,
-                    #error_df)
-  
-  mlx_inis$initialValue <- as.numeric(mlx_inis$initialValue)
-  
-  lixoftConnectors::setPopulationParameterInformation(mlx_inis)
-  
-  lixoftConnectors::saveProject(paste0(model_name,".mlxtran"))
-  print(paste0("Monolix file saved under: ",model_name))
   
 }
 #' Monolix estimations extractor
@@ -319,11 +323,12 @@ run_mlx <- function(mlx_file){
   if(!file.exists(mlx_file)){
     stop("Monolix file does not exist in given directory")
   }
-  if(!("lixoftConnectors" %in% .packages())){
+  if(requireNamespace("lixoftConnectors", quietly = TRUE)){
+    lixoftConnectors::loadProject(mlx_file)
+    lixoftConnectors::runScenario()
+    lixoftConnectors::saveProject()
+    print("Monolix run and saved")
+  } else{
     stop("lixoftConnectors must first be loaded and initialized.")
   }
-  lixoftConnectors::loadProject(mlx_file)
-  lixoftConnectors::runScenario()
-  lixoftConnectors::saveProject()
-  print("Monolix run and saved")
 }

@@ -240,19 +240,20 @@ der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL
     error_msg <- "Please provide valid plot type, i.e., base or ggplot"
     stop(error_msg)
   }
-  if(!("ggplot2" %in% utils::installed.packages())){
-    error_msg <- "To return a ggplot, the package ggplot2 must be installed"
-    stop(error_msg)
-  }
   
   if(plot_type == "base"){
     plot(data$state,data$derivatives,xlab="State",ylab="Derivatives")
   } else if(plot_type == "ggplot"){
-    p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
-      ggplot2::xlab("State") +
-      ggplot2::ylab("Derivatives")
-    print(p)
-    return(p)
+    if(requireNamespace("ggplot2", quietly = TRUE)){
+      p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
+        ggplot2::xlab("State") +
+        ggplot2::ylab("Derivatives")
+      print(p)
+      return(p)
+    } else{
+      error_msg <- "To return a ggplot, the package ggplot2 must be installed"
+      stop(error_msg)
+    }
   }
 }
 
@@ -578,19 +579,20 @@ der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,
     error_msg <- "Please provide valid plot type, i.e., base or ggplot"
     stop(error_msg)
   }
-  if(!("ggplot2" %in% utils::installed.packages())){
-    error_msg <- "To return a ggplot, the package ggplot2 must be installed"
-    stop(error_msg)
-  }
   
   if(plot_type == "base"){
     plot(data$state,data$derivatives,xlab="State",ylab="Derivatives")
   } else if(plot_type == "ggplot"){
-    p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
-      ggplot2::xlab("State") +
-      ggplot2::ylab("Derivatives")
-    print(p)
-    return(p)
+    if(requireNamespace("ggplot2", quietly = TRUE)){
+      p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
+        ggplot2::xlab("State") +
+        ggplot2::ylab("Derivatives")
+      print(p)
+      return(p)
+    } else{
+      error_msg <- "To return a ggplot, the package ggplot2 must be installed"
+      stop(error_msg)
+    }
   }
 }
 
