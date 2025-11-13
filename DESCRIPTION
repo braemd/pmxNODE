@@ -7,7 +7,7 @@ Authors@R: c(person("Dominic", "Bräm", role = c("aut", "cre"),
     person("Bernhard", "Steiert", role = c("ctb")),
     person("Gilbert", "Koch", role = c("ctb")),
     person("Matthew","Fidler", role = c("ctb"), comment=c(ORCID="0000-0001-8538-6691")))
-Description: This package allows easy implementation of Neural Ordinary Differential Equations (NODEs) in pharmacometric software such as Monolix, NONMEM, and nlmxir2.
+Description: This package allows easy implementation of Neural Ordinary Differential Equations (NODEs) in pharmacometric software such as Monolix, NONMEM, and nlmxir2. The main functionality is to automatically generate code in the structural model, describing computations in a neural network. Additionally, parameters and software-settings can be initialized automatically. For utilizing these additional functionalities with Monolix, pmxNODE interfaces with MonolixSuite via the 'lixoftConnectors' package. 'lixoftConnectors' is distributed with MonolixSuite (<https://monolixsuite.slp-software.com/r-functions/2024R1/package-lixoftconnectors>) and is not available from public repositories.
 Author: Dominic Bräm [aut, cre] (<https://orcid.org/0000-0001-9094-8361>),
   Bernhard Steiert [ctb],
   Gilbert Koch [ctb],
@@ -29,6 +29,5 @@ Imports:
     ggplot2,
     checkmate
 Config/testthat/edition: 3
-Config/Needs/website: https://monolixsuite.slp-software.com/r-functions/2024R1/package-lixoftconnectors
 BugReports: https://github.com/braemd/pmxNODE
 VignetteBuilder: knitr
