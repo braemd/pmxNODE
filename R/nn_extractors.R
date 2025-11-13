@@ -134,7 +134,7 @@ nn_nhidden_extractor <- function(text){
 #' Time-dependent NNs have different model structures, i.e., weights from input to hidden layer are set to
 #' negative through w'=-w^2
 #' 
-#' @param text (list of strings) List of strings of NN in form of \emph{NN1(state=t,min_init=1,max_init=5,time_nn=TRUE)}
+#' @param text (list of strings) List of strings of NN in form of \cr \emph{NN1(state=t,min_init=1,max_init=5,time_nn=TRUE)}
 #' @return List of boolean expression whether NN should be treated as time-NN (TRUE) or not (FALSE)
 #' @examples 
 #' \dontrun{

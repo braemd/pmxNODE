@@ -49,7 +49,8 @@ An example of model file could look like following \cr
 \preformatted{lV = THETA(1)} 
 \preformatted{V = lV * EXP(ETA(1))} 
 \preformatted{$DES}
-\preformatted{DADT(1) = NNc(state=A(1),min_init=0.5,max_init=5) + DOSE * NNt(state=T,min_init=1,max_init=5,time_nn=TRUE)} 
+\preformatted{DADT(1) = NNc(state=A(1),min_init=0.5,max_init=5) +}
+\preformatted{               DOSE * NNt(state=T,min_init=1,max_init=5,time_nn=TRUE)} 
 \preformatted{$ERROR} 
 \preformatted{Cc = A(1)/V} 
 \preformatted{Y=Cc*(1+EPS(1)) + EPS(2)} 

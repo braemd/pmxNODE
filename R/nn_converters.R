@@ -158,7 +158,8 @@ nn_converter_nlmixr <- function(f_ode,pop_only=FALSE,theta_scale=0.1,eta_scale=0
 #' \preformatted{lV = THETA(1)} 
 #' \preformatted{V = lV * EXP(ETA(1))} 
 #' \preformatted{$DES}
-#' \preformatted{DADT(1) = NNc(state=A(1),min_init=0.5,max_init=5) + DOSE * NNt(state=T,min_init=1,max_init=5,time_nn=TRUE)} 
+#' \preformatted{DADT(1) = NNc(state=A(1),min_init=0.5,max_init=5) +}
+#' \preformatted{               DOSE * NNt(state=T,min_init=1,max_init=5,time_nn=TRUE)} 
 #' \preformatted{$ERROR} 
 #' \preformatted{Cc = A(1)/V} 
 #' \preformatted{Y=Cc*(1+EPS(1)) + EPS(2)} 
@@ -347,7 +348,8 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' \preformatted{PK:} 
 #' \preformatted{depot(target=C)} 
 #' \preformatted{EQUATION:} 
-#' \preformatted{ddt_C = NN1(state=C,min_init=1,max_init=300) + amtDose * NN2(state=t,min_init=0.5,max_init=50,time_nn=TRUE)} 
+#' \preformatted{ddt_C = NN1(state=C,min_init=1,max_init=300) +}
+#' \preformatted{                amtDose * NN2(state=t,min_init=0.5,max_init=50,time_nn=TRUE)} 
 #' \preformatted{Cc = C/V} 
 #' \preformatted{OUTPUT:} 
 #' \preformatted{output = Cc} 
@@ -365,7 +367,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #'     and consequently all weights from input to hidden layer should be strictly negative.
 #'   }
 #' }
-#'  \cr
+#' 
 #' Note: Converted Monolix model file will be saved under \emph{unconverted_file}_converted.txt
 #' 
 #' 

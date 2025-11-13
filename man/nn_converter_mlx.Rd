@@ -69,7 +69,8 @@ An example of model file could look like following \cr
 \preformatted{PK:} 
 \preformatted{depot(target=C)} 
 \preformatted{EQUATION:} 
-\preformatted{ddt_C = NN1(state=C,min_init=1,max_init=300) + amtDose * NN2(state=t,min_init=0.5,max_init=50,time_nn=TRUE)} 
+\preformatted{ddt_C = NN1(state=C,min_init=1,max_init=300) +}
+\preformatted{                amtDose * NN2(state=t,min_init=0.5,max_init=50,time_nn=TRUE)} 
 \preformatted{Cc = C/V} 
 \preformatted{OUTPUT:} 
 \preformatted{output = Cc} 
@@ -87,7 +88,7 @@ An example of model file could look like following \cr
     and consequently all weights from input to hidden layer should be strictly negative.
   }
 }
- \cr
+
 Note: Converted Monolix model file will be saved under \emph{unconverted_file}_converted.txt
 }
 \examples{
