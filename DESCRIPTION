@@ -29,4 +29,6 @@ Imports:
     ggplot2,
     checkmate
 Config/testthat/edition: 3
+Config/Needs/website: https://monolixsuite.slp-software.com/r-functions/2024R1/package-lixoftconnectors
+BugReports: https://github.com/braemd/pmxNODE
 VignetteBuilder: knitr
