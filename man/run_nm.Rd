@@ -16,9 +16,11 @@ run_nm(
 \item{ctl_file}{(string) Absolute or relative Path/Name of NONMEM file to run. Must be in R-style, i.e., path must be with
 slashes. File must be given with file extension, e.g., nonmem_file\strong{.ctl}}
 
-\item{nm_path}{(string) Absolute or relative Path/Name of NONMEM to be executed, e.g., "C:/nm75g64/run/nmfe75".}
+\item{nm_path}{(string) Absolute or relative Path/Name of NONMEM to be executed, \cr
+e.g., "C:/nm75g64/run/nmfe75".}
 
-\item{parralel_command}{(string) (Optional) Command for parralel NONMEM execution, e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"}
+\item{parralel_command}{(string) (Optional) Command for parralel NONMEM execution, \cr
+e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"}
 
 \item{create_dir}{(boolean) If NONMEM file should be run and saved in new directory. If TRUE, new directory of type 
 \emph{path_to_ctl_file/ctl_name} will be created. Default is TRUE.}

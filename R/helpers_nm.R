@@ -175,8 +175,10 @@ indparm_extractor_nm <- function(res_file,phi_file){
 #' 
 #' @param ctl_file (string) Absolute or relative Path/Name of NONMEM file to run. Must be in R-style, i.e., path must be with
 #' slashes. File must be given with file extension, e.g., nonmem_file\strong{.ctl}
-#' @param nm_path (string) Absolute or relative Path/Name of NONMEM to be executed, e.g., "C:/nm75g64/run/nmfe75".
-#' @param parralel_command (string) (Optional) Command for parralel NONMEM execution, e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"
+#' @param nm_path (string) Absolute or relative Path/Name of NONMEM to be executed, \cr
+#'  e.g., "C:/nm75g64/run/nmfe75".
+#' @param parralel_command (string) (Optional) Command for parralel NONMEM execution, \cr
+#'  e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"
 #' @param create_dir (boolean) If NONMEM file should be run and saved in new directory. If TRUE, new directory of type 
 #' \emph{path_to_ctl_file/ctl_name} will be created. Default is TRUE.
 #' @param data_file (string) Absolute or relative Path/Name of data file to be used in the NONMEM run. Required if \emph{create_dir=}TRUE

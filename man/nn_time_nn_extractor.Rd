@@ -7,7 +7,7 @@
 nn_time_nn_extractor(text)
 }
 \arguments{
-\item{text}{(list of strings) List of strings of NN in form of \emph{NN1(state=t,min_init=1,max_init=5,time_nn=TRUE)}}
+\item{text}{(list of strings) List of strings of NN in form of \cr \emph{NN1(state=t,min_init=1,max_init=5,time_nn=TRUE)}}
 }
 \value{
 List of boolean expression whether NN should be treated as time-NN (TRUE) or not (FALSE)
