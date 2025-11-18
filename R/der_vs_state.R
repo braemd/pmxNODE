@@ -10,15 +10,8 @@
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return A vector of derivatives of the NN for the state values
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_mlx("mlx_example1_ind.mlxtran")
-#' names(est_parms) <- gsub("_pop","",names(est_parms))
-#' inputs <- seq(0,10,length.out=1000)
-#' outputs <- derivative_calc_mlx(nn_name="c",parms=est_parms,inputs=inputs,n_hidden=5)
-#' plot(inputs,outputs)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
     warning(paste0("Only ReLU and Softplus are implemented yet as activation functions\n
@@ -67,13 +60,8 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Dataframe with columns for the state and the corresponding derivatives
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_mlx("mlx_example1_ind.mlxtran")
-#' derivative_data <- der_vs_state_mlx(nn="c",min_state=0,max_state=10,est_parms=est_parms)
-#' ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,
                              length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
@@ -143,12 +131,8 @@ der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,e
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Dataframe with columns for the state and the corresponding individual derivatives
-#' @examples 
-#' \dontrun{
-#' ind_parms <- inparm_extractor_mlx("mlx_example1_ind.mlxtran")
-#' derivative_data <- ind_der_vs_state_mlx(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,
                                  length_out=100,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
@@ -217,13 +201,12 @@ ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NU
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Displaying derivative versus state plot; returns ggplot-object if \emph{plot_type="ggplot"}
-#' @examples 
-#' \dontrun{
+#' @examples
+#' mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
 #' der_state_plot <- der_state_plot_mlx(nn="c",
 #'                                      min_state=0,max_state=10,
-#'                                      mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",
+#'                                      mlx_file=mlx_path,
 #'                                      plot_type="ggplot")
-#' }
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
@@ -248,7 +231,6 @@ der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL
       p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
         ggplot2::xlab("State") +
         ggplot2::ylab("Derivatives")
-      print(p)
       return(p)
     } else{
       error_msg <- "To return a ggplot, the package ggplot2 must be installed"
@@ -280,12 +262,12 @@ der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Displaying derivative versus state plot
-#' @examples 
-#' \dontrun{
+#' @examples
+#' mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
 #' der_state_plot <- ind_der_state_plot_mlx(nn="c",
 #'                                          min_state=0,max_state=10,
-#'                                          mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",)
-#' }
+#'                                          mlx_file=mlx_path)
+#' 
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
@@ -308,7 +290,6 @@ ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=
       geom_line(aes(x=states,y=medians)) +
       xlab("State") +
       ylab("Derivatives")
-    print(p)
     return(p)
   } else{
     plot_data <- tidyr::pivot_longer(data,
@@ -320,7 +301,6 @@ ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=
       xlab("State") +
       ylab("Derivatives") +
       theme(legend.position = "none")
-    print(p)
     return(p)
   }
 }
@@ -338,14 +318,8 @@ ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return A vector of derivatives of the NN for the state values
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_nm("nm_example1_model_converted_ind.res")
-#' inputs <- seq(0,10,length.out=1000)
-#' outputs <- derivative_calc_nm(nn_name="c",parms=est_parms,inputs=inputs,n_hidden=5)
-#' plot(inputs,outputs)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
     warning(paste0("Only ReLU and Softplus are implemented yet as activation functions\n
@@ -396,13 +370,8 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Dataframe with columns for the state and the corresponding derivatives
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_nm("nm_example1_model_converted_ind.res")
-#' derivative_data <- der_vs_state_nm(nn="c",min_state=0,max_state=10,est_parms=est_parms)
-#' ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
                             length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
@@ -475,12 +444,8 @@ der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,es
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Dataframe with columns for the state and the corresponding individual derivatives
-#' @examples 
-#' \dontrun{
-#' ind_parms <- inparm_extractor_nm("nm_example1_ind.res","nm_example1_ind.phi")
-#' derivative_data <- ind_der_vs_state_nm(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
                                 nm_phi_file=NULL,length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
@@ -557,13 +522,12 @@ ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Displaying derivative versus state plot; returns ggplot-object if \emph{plot_type="ggplot"}
-#' @examples 
-#' \dontrun{
+#' @examples
+#' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
 #' der_state_plot <- der_state_plot_nm(nn="c",
 #'                                     min_state=0,max_state=10,
-#'                                     nm_res_file="nm_example1_model_converted_ind.res",
+#'                                     nm_res_file=res_path,
 #'                                     plot_type="ggplot")
-#' }
 #' @author Dominic Bräm
 #' @export
 der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
@@ -587,7 +551,6 @@ der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,
       p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
         ggplot2::xlab("State") +
         ggplot2::ylab("Derivatives")
-      print(p)
       return(p)
     } else{
       error_msg <- "To return a ggplot, the package ggplot2 must be installed"
@@ -620,12 +583,12 @@ der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
 #' @return Displaying derivative versus state plot
-#' @examples 
-#' \dontrun{
+#' @examples
+#' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+#' phi_path <- system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE")
 #' der_state_plot <- ind_der_state_plot_nm(nn="c",min_state=0,max_state=10,
-#'                                         nm_res_file="nm_example1_ind.res",
-#'                                         nm_phi_file="nm_example1_ind.phi")
-#' }
+#'                                         nm_res_file=res_path,
+#'                                         nm_phi_file=phi_path)
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @importFrom tidyr pivot_longer
@@ -649,7 +612,6 @@ ind_der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=N
       geom_line(aes(x=states,y=medians)) +
       xlab("State") +
       ylab("Derivatives")
-    print(p)
     return(p)
   } else{
     plot_data <- tidyr::pivot_longer(data,
@@ -661,7 +623,6 @@ ind_der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=N
       xlab("State") +
       ylab("Derivatives") +
       theme(legend.position = "none")
-    print(p)
     return(p)
   }
   

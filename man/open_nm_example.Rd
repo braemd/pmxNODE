@@ -4,22 +4,21 @@
 \alias{open_nm_example}
 \title{Open NONMEM example model}
 \usage{
-open_nm_example(model = "nm_theophylline_model.ctl")
+open_nm_example(model_nr = 1)
 }
 \arguments{
-\item{model}{(string) (Path/)Name of NONMEM model to open}
+\item{model_nr}{(number) What example number should be read (1-4 available).}
+}
+\value{
+Returns example model text.
 }
 \description{
 Opens unconverted NONMEM example model with NN functions
 }
 \details{
-Currently only \emph{nm_theophylline_model.txt} available
-}
-\examples{
-\dontrun{
-open_nm_example()
-}
+Example numbers 1-4 currently available.
 }
 \author{
 Dominic Bräm
 }
+\keyword{internal}

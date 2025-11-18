@@ -40,11 +40,7 @@ ETAs are fixed to 0 if \cr
   \item the corresponding THETA is fixed to 0 due to non-activity of the neuron
 }
 }
-\examples{
-\dontrun{
-ini_etas <- nn_eta_initializer_nm("1",theta_inis)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

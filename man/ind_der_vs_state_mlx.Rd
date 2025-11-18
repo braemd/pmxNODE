@@ -52,12 +52,7 @@ This functions allows to generate derivative versus state data for a neural netw
 \details{
 Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-ind_parms <- inparm_extractor_mlx("mlx_example1_ind.mlxtran")
-derivative_data <- ind_der_vs_state_mlx(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

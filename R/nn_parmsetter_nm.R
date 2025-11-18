@@ -13,11 +13,8 @@
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector with all NN parameter THETA definitions for a NN
-#' @examples 
-#' \dontrun{
-#' nn_parm_names <- nn_theta_def_nm("1",3)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_theta_def_nm <- function(number,theta_start,n_hidden=5,time_nn=FALSE){
   if(!time_nn){
     w1s <- paste0("lW",number,"_1",1:n_hidden," = THETA(",theta_start:(theta_start+n_hidden-1),")")
@@ -59,11 +56,8 @@ nn_theta_def_nm <- function(number,theta_start,n_hidden=5,time_nn=FALSE){
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector with all NN parameter ETA definitions for a NN
-#' @examples 
-#' \dontrun{
-#' nn_parm_names <- nn_eta_def_nm("1",3)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_eta_def_nm <- function(number,eta_start,n_hidden=5,time_nn=FALSE){
   if(!time_nn){
     w1s <- paste0("etaW",number,"_1",1:n_hidden," = ETA(",eta_start:(eta_start+n_hidden-1),")")
@@ -110,11 +104,8 @@ nn_eta_def_nm <- function(number,eta_start,n_hidden=5,time_nn=FALSE){
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Vector of initial NN parameter THETA values for one specific NN
-#' @examples 
-#' \dontrun{
-#' ini_values <- nn_theta_initializer_nm(number="1",xmini=1,xmaxi=5)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_theta_initializer_nm <- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.1,pre_fixef=NULL,time_nn=FALSE,
                                     act="ReLU",beta=20){
   if(!is.null(pre_fixef)){
@@ -194,11 +185,8 @@ nn_theta_initializer_nm <- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.
 #' @param eta_scale (numeric) Initial standard deviation of random effects, default value is 0.1
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector of initial NN parameter ETA values for one specific NN
-#' @examples 
-#' \dontrun{
-#' ini_etas <- nn_eta_initializer_nm("1",theta_inis)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_eta_initializer_nm <- function(number,theta_inis,pop=FALSE,n_hidden=5,eta_scale=0.1,time_nn=FALSE){
   if(!pop){
     if(is.null(theta_inis)){
@@ -275,10 +263,8 @@ nn_eta_initializer_nm <- function(number,theta_inis,pop=FALSE,n_hidden=5,eta_sca
 #' }
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return List of parameter definition to be used in the $PK section of the NONMEM model
-#' @examples 
-#' \dontrun{
-#' parm_definitions <- nn_parm_setter_nm("1")
-#' }
+#' @author Dominic Bräm
+#' @keywords internal
 nn_parm_setter_nm <- function(number,pop=FALSE,n_hidden=5,eta_model=c("prop","add"),time_nn=FALSE){
   eta_model = match.arg(eta_model)
   #if(!pop){

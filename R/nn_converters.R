@@ -477,7 +477,7 @@ nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0
   file_name_new <- paste0(file_name,"_converted.",file_extension)
   
   writeLines(f_parse_new,con=file_name_new)
-  print(paste0("Converted model file under: ",file_name_new))
+  message(paste0("Converted model file under: ",file_name_new))
   
   if(gen_mlx_file){
     if(!("lixoftConnectors" %in% .packages())){

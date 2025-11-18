@@ -19,11 +19,7 @@ state_correcter_nm(text)
 For NNs to be handled correctly, the state argument may not include brackets. \emph{state_correcter_nm} translates argument
 \emph{state=A(1)} to \emph{state=A1} and \emph{A1=A(1)}
 }
-\examples{
-\dontrun{
-nn_corrections <- state_correcter_nm("NN1(state=A(1),min_init=1,max_init=5)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

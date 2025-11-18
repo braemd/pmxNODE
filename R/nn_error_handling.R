@@ -6,11 +6,8 @@
 #' 
 #' @param text NN function from the un-converted model file, e.g., NN1(state=C,min_init=1,max_init=5)
 #' @return Missing arguments of a NN, \dQuote{None} if all arguments are given
-#' @examples
-#' \dontrun{
-#' missing_args <- nn_tester("NN1(state=C,min_init=1,max_init=5)")
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_tester <- function(text){
   number <- grepl("NN(\\d+)|NN(\\w+)", text)
   state <- grepl("state\\s*=\\s*([^,^\\)]+)", text)
@@ -37,11 +34,8 @@ nn_tester <- function(text){
 #' 
 #' @param nn_tests (list of strings) List of missing arguments for each NN, \dQuote{None} if no arguments are missing for a NN
 #' @return Error: Missing argument; NNX: missing arguments
-#' @examples
-#' \dontrun{
-#' nn_errors(missing_args)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_errors <- function(nn_tests){
   if(all(nn_tests == "None")){
     return()

@@ -22,11 +22,8 @@
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Vector of initial typical NN parameters for one specific NN
-#' @examples 
-#' \dontrun{
-#' ini_values <- nn_theta_initializer_nlmixr(number="1",xmini=1,xmaxi=5)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_theta_initializer_nlmixr <- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.1,pre_fixef=NULL,time_nn=FALSE,
                                         act="ReLU",beta=20){
   if(!is.null(pre_fixef)){
@@ -95,10 +92,8 @@ nn_theta_initializer_nlmixr <- function(number,xmini,xmaxi,n_hidden=5,theta_scal
 #' @param eta_scale (numeric) Initial standard deviation of random effects on NN parameters
 #' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
 #' @return Vector of initial random effects on NN parameters for one specific NN
-#' @examples 
-#' \dontrun{
-#' ini_etas <- nn_eta_initializer_nlmixr("1")
-#' }
+#' @author Dominic Bräm
+#' @keywords internal
 nn_eta_initializer_nlmixr <- function(number,n_hidden=5,eta_scale=0.1,time_nn=FALSE){
   w1s <- rep(1,n_hidden)*eta_scale
   b1s <- rep(1,n_hidden)*eta_scale
@@ -140,10 +135,8 @@ nn_eta_initializer_nlmixr <- function(number,n_hidden=5,eta_scale=0.1,time_nn=FA
 #' Defaul value is \dQuote{prop}
 #' @param time_nn (boolean) Definition whether NN is time-dependent (TRUE) or not (FALSE)
 #' @return List of parameter definition to be used in the \emph{model} section of the nlmixr model
-#' @examples 
-#' \dontrun{
-#' parm_definitions <- nn_parm_setter_nlmixr("1")
-#' }
+#' @author Dominic Bräm
+#' @keywords internal
 nn_parm_setter_nlmixr <- function(number,pop=FALSE,n_hidden=5,eta_model=c("prop","add"),time_nn=FALSE){
   eta_model = match.arg(eta_model)
   if(!pop){

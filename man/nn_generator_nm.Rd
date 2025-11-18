@@ -42,12 +42,7 @@ h2 = 0 \cr
 ... \cr
 NN = h1 + h2 + ... \cr
 }
-\examples{
-\dontrun{
-conc_nn <- nn_generator_nm(1,"C")
-time_nn <- nn_generator_nm(2,"t",time_nn=TRUE)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

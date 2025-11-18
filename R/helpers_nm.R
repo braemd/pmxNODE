@@ -11,11 +11,8 @@
 #'   \item [1] NN with corrected state argument
 #'   \item [2] State translation, e.g., \dQuote{A1=A(1)}
 #' }
-#' @examples
-#' \dontrun{
-#' nn_corrections <- state_correcter_nm("NN1(state=A(1),min_init=1,max_init=5)")
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 state_correcter_nm <- function(text){
   a_state_match <- gregexpr("state\\s*=\\s*A\\(\\d+\\)",text)
   a_state <- unlist(regmatches(text,a_state_match))
@@ -43,10 +40,9 @@ state_correcter_nm <- function(text){
 #' 
 #' @param res_path (string) (Path/)Name of the results file of a NONMEM run, must include file extension, e.g., \dQuote{.res}
 #' @return Named vector with parameter estimates from the previous run
-#' @examples 
-#' \dontrun{
-#' pre_fixef <- prefix_extractor_nm("run_1.res")
-#' }
+#' @examples
+#' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+#' pre_fixef <- pre_fixef_extractor_nm(res_path)
 #' @author Dominic Bräm
 #' @export
 pre_fixef_extractor_nm <- function(res_path){
@@ -104,10 +100,10 @@ pre_fixef_extractor_nm <- function(res_path){
 #' @param res_file (Path/)Name of the results file of a NONMEM run, must include file extension, e.g., \dQuote{.res}
 #' @param phi_file (Path/)Name of the phi file of a NONMEM run, must include file extension, e.g., \dQuote{.phi}
 #' @return Data frame with individual parameter estimates for NN parameters
-#' @examples 
-#' \dontrun{
-#' est_parms <- indparm_extractor_nm("run_1_ind.res","run_1_ind.phi")
-#' }
+#' @examples
+#' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+#' phi_path <- system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE")
+#' est_parms <- indparm_extractor_nm(res_path,phi_path)
 #' @author Dominic Bräm
 #' @export
 indparm_extractor_nm <- function(res_file,phi_file){
@@ -183,7 +179,7 @@ indparm_extractor_nm <- function(res_file,phi_file){
 #' \emph{path_to_ctl_file/ctl_name} will be created. Default is TRUE.
 #' @param data_file (string) Absolute or relative Path/Name of data file to be used in the NONMEM run. Required if \emph{create_dir=}TRUE
 #' as data file will be copied to new directory.
-#' @return NULL
+#' @return No return value, running the specified model in NONMEM via command line.
 #' @examples 
 #' \dontrun{
 #' run_nm("./test/nm_test.ctl","c:/nm75g64/run/nmfe75",
@@ -240,7 +236,7 @@ run_nm <- function(ctl_file,nm_path,parralel_command=NULL,create_dir=TRUE,data_f
   if(create_dir & (dir_exists != 0)){
     warning(paste0("Given directory already exists, new directery was generated at: ",new_dir))
   } else{
-    print(paste0("NONMEM run and saved in: ",new_dir))
+    message(paste0("NONMEM run and saved in: ",new_dir))
   }
 }
 
@@ -275,6 +271,10 @@ find_nmfe <- function(root="C:/"){
   dir_list_run <- dir(path = nm_run,full.names = T, recursive = FALSE)
   nmfe_file <- dir_list_run[grep("nmfe\\d+\\.bat",dir_list_run)]
   nmfe_file_no_ext <- gsub("(.*)\\.bat","\\1",nmfe_file)
+  
+  if(length(nmfe_file_no_ext)==0){
+    stop("No NONMEM nmfe file found")
+  }
   
   return(nmfe_file_no_ext)
 }

@@ -17,12 +17,8 @@
 #' from input to hidden layer through w'=-w^2
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Explicit NN code in nlmixr as list of lines in nlmixr model file
-#' @examples 
-#' \dontrun{
-#' conc_nn <- nn_generator_nlmixr(1,"C")
-#' time_nn <- nn_generator_nlmixr(2,"t",time_nn=TRUE)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_generator_nlmixr <- function(number,state,n_hidden=5,act="ReLU",time_nn=FALSE,beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
     warning(paste0("Only ReLU and Softplus are implemented yet as activation functions\n
@@ -70,12 +66,8 @@ nn_generator_nlmixr <- function(number,state,n_hidden=5,act="ReLU",time_nn=FALSE
 #' from input to hidden layer through w'=-w^2
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Explicit NN code in Monolix as list of lines in Monolix model file
-#' @examples 
-#' \dontrun{
-#' conc_nn <- nn_generator_mlx(1,"C")
-#' time_nn <- nn_generator_mlx(2,"t",time_nn=TRUE)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_generator_mlx <- function(number,state,n_hidden=5,act="ReLU",time_nn=FALSE,beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
     warning(paste0("Only ReLU and Softplus are implemented yet as activation functions\n
@@ -123,12 +115,8 @@ nn_generator_mlx <- function(number,state,n_hidden=5,act="ReLU",time_nn=FALSE,be
 #' from input to hidden layer through w'=-w^2
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Explicit NN code in NONMEM as list of lines in NONMEM model file
-#' @examples 
-#' \dontrun{
-#' conc_nn <- nn_generator_nm(1,"C")
-#' time_nn <- nn_generator_nm(2,"t",time_nn=TRUE)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_generator_nm <- function(number,state,n_hidden=5,act="ReLU",time_nn=FALSE,beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
     warning(paste0("Only ReLU and Softplus are implemented yet as activation functions\n

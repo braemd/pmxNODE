@@ -8,11 +8,8 @@
 #' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @return Vector with all NN parameter names
-#' @examples 
-#' \dontrun{
-#' nn_parm_names <- nn_theta_def_mlx("1")
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 nn_theta_def_mlx <- function(number,n_hidden=5,time_nn=FALSE){
   w1s <- paste0("W",number,"_1",1:n_hidden)
   b1s <- paste0("b",number,"_1",1:n_hidden)
@@ -50,10 +47,8 @@ nn_theta_def_mlx <- function(number,n_hidden=5,time_nn=FALSE){
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Vector of initial NN parameter values for one specific NN
-#' @examples 
-#' \dontrun{
-#' ini_values <- nn_theta_initializer_mlx(number="1",xmini=1,xmaxi=5)
-#' }
+#' @keywords internal
+#' @author Dominic Bräm
 nn_theta_initializer_mlx<- function(number,xmini,xmaxi,n_hidden=5,theta_scale=0.1,pre_fixef=NULL,time_nn=FALSE,
                                     act="ReLU",beta=20){
   if(!is.null(pre_fixef)){

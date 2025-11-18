@@ -55,12 +55,11 @@ This functions allows to generate a derivative versus state plot for a neural ne
 Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
-\dontrun{
+mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
 der_state_plot <- der_state_plot_mlx(nn="c",
                                      min_state=0,max_state=10,
-                                     mlx_file="mlx_example1_model_mlx_file_pop.mlxtran",
+                                     mlx_file=mlx_path,
                                      plot_type="ggplot")
-}
 }
 \author{
 Dominic Bräm

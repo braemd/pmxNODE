@@ -17,9 +17,8 @@ When the Monolix model has been run, this function allows to extract the
 estimated individual parameters (EBEs) from the Monolix run folder.
 }
 \examples{
-\dontrun{
-est_parms <- indparm_extractor_mlx("run_1_ind.mlxtran")
-}
+mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+est_parms <- indparm_extractor_mlx(mlx_path)
 }
 \author{
 Dominic Bräm

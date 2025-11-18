@@ -19,12 +19,7 @@ Extracts, whether a NN should be treated as time-dependent NN
 Time-dependent NNs have different model structures, i.e., weights from input to hidden layer are set to
 negative through w'=-w^2
 }
-\examples{
-\dontrun{
-time_nns <- nn_time_nn_extractor(list("NN1(state=C,min_init=1,max_init=5)",
-                                      "NN2(state=t,min_init=1,max_init=5,time_nn=TRUE)"))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

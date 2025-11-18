@@ -154,8 +154,10 @@ der_state_plot_nm("ct", min_state = 0, max_state = 24, nm_res_file = "~/pmxNODE/
 ```
 
 ```{r, echo=FALSE}
-p <- der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), plot_type = "ggplot")
-p <- der_state_plot_nm("t", min_state = 0, max_state = 24, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = TRUE, plot_type = "ggplot")
+pc <- der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), plot_type = "ggplot")
+pt <- der_state_plot_nm("t", min_state = 0, max_state = 24, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = TRUE, plot_type = "ggplot")
+print(pc)
+print(pt)
 ```
 
 With the second one, the entire right-hand side of a differential equation can be plotted, e.g., the combination of multiple NNs or NNs combined with mechanistic parts. The right-hand side equation must be given as a string, the variable for the x-axis needs to be defined, and the inputs must be given as a dataframe with columns for each variable in the right-hand side equation. Additionally, a vector with information concerning time-dependency of the NNs in the right-hand side equation mus be provided or else all NNs are assumed to be non-time-depenedent. Note that for *NNc* inputs, the predictions need to be multiplied with the volume of distribution since the inputs to *NNc* in the model is amount and not concentration.
@@ -175,8 +177,10 @@ rhs_inputs <- data.frame(id = predictions$ID,
                          NNc = predictions$PRED*as.numeric(est_parms["V"]),
                          NNt = predictions$TIME,
                          dose = 10)
-p <- rhs_plot_nm("NNc + dose * NNt", x_var = "NNc", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = c(FALSE, TRUE))
-p <- rhs_plot_nm("NNc + dose * NNt", x_var = "NNt", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+prhsc <- rhs_plot_nm("NNc + dose * NNt", x_var = "NNc", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+prhst <- rhs_plot_nm("NNc + dose * NNt", x_var = "NNt", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+print(prhsc)
+print(prhst)
 ```
 
 Similar plots can also be generated on individual level.
@@ -200,12 +204,16 @@ ind_rhs_plot_mlx("NNc + dose * NNt", x_var = "NNt", group = "id", inputs = rhs_i
 ```
 
 ```{r, echo=FALSE}
-p <- ind_der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+ipc <- ind_der_state_plot_nm("c", min_state = 0, max_state = 10, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
                            nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"))
-p <- ind_der_state_plot_nm("t", min_state = 0, max_state = 24, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+ipt <- ind_der_state_plot_nm("t", min_state = 0, max_state = 24, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
                            nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"), time_nn = TRUE)
-p <- ind_rhs_plot_nm("NNc + dose * NNt", x_var = "NNc", group = "id", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+iprhsc <- ind_rhs_plot_nm("NNc + dose * NNt", x_var = "NNc", group = "id", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
                            nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"), time_nn = c(FALSE, TRUE))
-p <- ind_rhs_plot_nm("NNc + dose * NNt", x_var = "NNt", group = "id", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
+iprhst <- ind_rhs_plot_nm("NNc + dose * NNt", x_var = "NNt", group = "id", inputs = rhs_inputs, nm_res_file = system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE"),
                            nm_phi_file = system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+print(ipc)
+print(ipt)
+print(iprhsc)
+print(iprhst)
 ```

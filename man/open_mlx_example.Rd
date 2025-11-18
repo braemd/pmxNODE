@@ -4,22 +4,21 @@
 \alias{open_mlx_example}
 \title{Open Monolix example model}
 \usage{
-open_mlx_example(model = "mlx_theophylline_model.txt")
+open_mlx_example(model_nr = 1)
 }
 \arguments{
-\item{model}{(string) (Path/)Name of Monolix model to open}
+\item{model_nr}{(number) What example number should be read (1-4 available).}
+}
+\value{
+Returns example model text.
 }
 \description{
 Opens unconverted Monolix example model with NN functions
 }
 \details{
-Currently only \emph{mlx_theophylline_model.txt} available
-}
-\examples{
-\dontrun{
-open_mlx_example()
-}
+Example numbers 1-4 currently available.
 }
 \author{
 Dominic Bräm
 }
+\keyword{internal}

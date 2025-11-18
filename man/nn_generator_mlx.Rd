@@ -40,12 +40,7 @@ h2 = max(0,W2 * state + b2) \cr
 ... \cr
 NN = h1 + h2 + ...
 }
-\examples{
-\dontrun{
-conc_nn <- nn_generator_mlx(1,"C")
-time_nn <- nn_generator_mlx(2,"t",time_nn=TRUE)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

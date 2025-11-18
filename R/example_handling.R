@@ -12,9 +12,7 @@
 #' @param pkg_name (string) Only required in development phase
 #' @return A list of all examples available
 #' @examples 
-#' \dontrun{
 #' example_list <- get_example_list()
-#' }
 #' @author Dominic Bräm
 #' @export
 get_example_list <- function(pkg_name = "pmxNODE"){

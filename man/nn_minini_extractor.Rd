@@ -15,11 +15,7 @@ Maximal activation point for a NN
 \description{
 Extract the minimal activation point of a NN given as the \emph{min_init} argument in the NN function
 }
-\examples{
-\dontrun{
-min_init <- nn_minini_extractor("NN1(state=C,min_init=1,max_init=5)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

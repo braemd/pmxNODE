@@ -15,11 +15,7 @@ Converted model with \emph{NN1(state=C,min_init=1,max_init=5)} expressed as \emp
 \description{
 Converts NN functions of form \emph{NN1(state=C,min_init=1,max_init=5)} to model usable form of \emph{NN1}.
 }
-\examples{
-\dontrun{
-new_model <- nn_reducer(list("dxdt = NN1(state=C,min_init=1,max_init=5) - kel*x"))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

@@ -15,10 +15,10 @@ rhs_calc_nlmixr(
 )
 }
 \arguments{
-\item{rhs}{(string) String of right-hand side}
+\item{rhs}{(string) String of right-hand side, e.g., "NNc + WT * NNct"}
 
 \item{inputs}{(dataframe) Dataframe of inputs, with corresponding columns (including matching column names 
-for each variable in \emph{rhs}.}
+for each variable in \emph{rhs}, e.g., NNc, WT, and NNct).}
 
 \item{est_parms}{(named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.}
 
@@ -39,18 +39,7 @@ This functions allows to generate right-hand side data, i.e., combined derivativ
 \details{
 Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-pop_fit <- nlmixr2(node_model,data=data,est="bobyqa")
-rhs_data <- rhs_calc_mlx(rhs="NNc + WT * NNct",
-                         inputs = data.frame(NNc = 1:100,
-                                             NNct = seq(0,10,length.out=100),
-                                             WT = rep(50,100)),
-                         est_parms=pop_fit$fixef)
-ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs))
-ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

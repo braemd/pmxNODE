@@ -18,11 +18,7 @@ Raises error if one or more NNs are not complete, i.e., not all required argumen
 \details{
 Currently required arguments are: NN-name NNX(), state (state=), minimal (min_init=) and maximal (max_init=) activation points
 }
-\examples{
-\dontrun{
-nn_errors(missing_args)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

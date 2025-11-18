@@ -38,7 +38,7 @@ extracted through the \emph{indparm_extractor_mlx} function. For optionality, se
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.}
 }
 \value{
-Dataframe with columns for the inputs and the combined right-hand side data.
+ggplot of right-hand side plot for all individuals
 }
 \description{
 This functions allows to generate a right-hand side plot with multiple subjects, i.e., combined derivative data of multiple NNs and base-R operations.
@@ -47,18 +47,22 @@ This functions allows to generate a right-hand side plot with multiple subjects,
 Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
-\dontrun{
-est_parms <- indparm_extractor_mlx("mlx_example1_ind.mlxtran")
-input_data <- read.csv("data_example1_mlx.csv") \%>\%
-                  mutate(NNc = indivPred_mode,
-                         NNct = time) \%>\%
-                  select(id,NNc,NNct)
+# Generate individual rhs-plot for predicted observations
+
+mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+data_path <- system.file("extdata","mlx_example1_ind","predictions.txt",package="pmxNODE")
+
+est_parms <- indparm_extractor_mlx(mlx_path)
+
+input_data <- read.table(data_path,sep=",",header=TRUE)[,c("id","indivPred_mode","time")]
+colnames(input_data) <- c("id","NNc","NNct")
+                  
 rhs_plot <- ind_rhs_plot_mlx(rhs="NNc + NNct",
                              x_var = "NNc",
                              group = "id",
                              inputs = input_data,
-                             est_parms=est_parms)
-}
+                             est_parms = est_parms,
+                             time_nn = c(FALSE, TRUE))
 }
 \author{
 Dominic Bräm

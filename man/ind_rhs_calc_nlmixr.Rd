@@ -44,17 +44,7 @@ combined derivative data of multiple NNs and base-R operations.
 \details{
 Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-ind_fit <- nlmxir2(node_model_ind,data=data,est="saem")
-rhs_data <- ind_rhs_calc_mlx(rhs="NNc + NNct",
-                         group = "id",
-                         inputs = input_data,
-                         fit_obj = ind_fit)
-ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs,group=id))
-ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs,group=id))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

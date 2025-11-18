@@ -49,7 +49,7 @@ fits with inter-individual variability (FALSE) should be used}
 \item{mapping}{(list) List of mapping between model outputs and observation IDs}
 }
 \value{
-NA
+No return value, saving a Monolix .mlxtran file.
 }
 \description{
 Initializes a \emph{.mlxtran} file based on a converted model file, data, and initial values
@@ -59,16 +59,7 @@ If no specific file name was given to \emph{nn_converter_mlx} through the \emph{
 the file is standardized to \strong{name of model file}_mlx_file_\strong{pop/ind} where \strong{pop} if \emph{pop=TRUE}
 or \strong{ind} if \emph{pop=FALSE} in \emph{nn_converter_mlx}.
 }
-\examples{
-\dontrun{
-mlx_model_initializer(model_name=mlx_name,model_file=file_name_new,
-                      data_file=data_file,header_types=header_types,
-                      parm_names=model_parms[1],parm_inis=model_parms[2],
-                      theta_names=theta_defs,theta_inis=theta_inis,pop=pop,
-                      pre_fixef=pre_fixef,omega_inis=eta_scale,
-                      obs_types=obs_types,mapping=mapping)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

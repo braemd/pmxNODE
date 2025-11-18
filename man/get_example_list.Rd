@@ -24,9 +24,7 @@ Get a list of examples available in this package
 }
 }
 \examples{
-\dontrun{
 example_list <- get_example_list()
-}
 }
 \author{
 Dominic Bräm

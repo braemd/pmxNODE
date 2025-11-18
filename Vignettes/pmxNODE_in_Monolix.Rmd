@@ -156,8 +156,10 @@ der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = "~/pmxNODE/ml
 ```
 
 ```{r, echo=FALSE}
-p <- der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), plot_type = "ggplot")
-p <- der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = TRUE, plot_type = "ggplot")
+pc <- der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), plot_type = "ggplot")
+pt <- der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = TRUE, plot_type = "ggplot")
+print(pc)
+print(pt)
 ```
 
 With the second one, the entire right-hand side of a differential equation can be plotted, e.g., the combination of multiple NNs or NNs combined with mechanistic parts. The right-hand side equation must be given as a string, the variable for the x-axis needs to be defined, and the inputs must be given as a dataframe with columns for each variable in the right-hand side equation. Additionally, a vector with information concerning time-dependency of the NNs in the right-hand side equation mus be provided or else all NNs are assumed to be non-time-depenedent. Note that for *NNc* inputs, the predictions need to be multiplied with the volume of distribution since the inputs to *NNc* in the model is amount and not concentration.
@@ -177,8 +179,10 @@ rhs_inputs <- data.frame(id = predictions$id,
                          NNc = predictions$popPred*est_parms["V_pop"],
                          NNct = predictions$time,
                          dose = 10)
-p <- rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
-p <- rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+prhsc <- rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+prhst <- rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+print(prhsc)
+print(prhst)
 ```
 
 Similar plots can also be generated on individual level.
@@ -190,8 +194,12 @@ ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", group = "id", inputs = rhs
 ```
 
 ```{r, echo=FALSE}
-p <- ind_der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"))
-p <- ind_der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = TRUE)
-p <- ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", group = "id", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
-p <- ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", group = "id", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+ipc <- ind_der_state_plot_mlx("c", min_state = 0, max_state = 10, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"))
+ipt <- ind_der_state_plot_mlx("ct", min_state = 0, max_state = 24, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = TRUE)
+iprhsc <- ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNc", group = "id", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+iprhst <- ind_rhs_plot_mlx("NNc + dose * NNct", x_var = "NNct", group = "id", inputs = rhs_inputs, mlx_file = system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE"), time_nn = c(FALSE, TRUE))
+print(ipc)
+print(ipt)
+print(iprhsc)
+print(iprhst)
 ```

@@ -15,10 +15,10 @@ rhs_calc_nm(
 )
 }
 \arguments{
-\item{rhs}{(string) String of right-hand side}
+\item{rhs}{(string) String of right-hand side, e.g., "NNc + DOSE * NNct".}
 
 \item{inputs}{(dataframe) Dataframe of inputs, with corresponding columns (including matching column names 
-for each variable in \emph{rhs}.}
+for each variable in \emph{rhs}, e.g., for NNc, DOSE, and NNct).}
 
 \item{est_parms}{(named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.}
 
@@ -39,18 +39,7 @@ This functions allows to generate right-hand side data, i.e., combined derivativ
 \details{
 Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-est_parms <- pre_fixef_extractor_nm("nm_example1_model_converted_ind.res")
-rhs_data <- rhs_calc_nm(rhs="NNc + DOSE * NNct",
-                         inputs = data.frame(NNc = 1:100,
-                                             NNct = seq(0,10,length.out=100),
-                                             DOSE = rep(50,100)),
-                         est_parms=est_parms)
-ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs))
-ggplot(rhs_data) + geom_line(aes(x=NNt,y=rhs))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

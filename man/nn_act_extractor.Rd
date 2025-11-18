@@ -15,11 +15,7 @@ Activation function to be used for a NN
 \description{
 Extract the activation function to be used for a NN given as the \emph{act} argument in the NN function
 }
-\examples{
-\dontrun{
-nn_act <- nn_act_extractor("NN1(state=C,min_init=1,max_init=5,act=ReLU)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

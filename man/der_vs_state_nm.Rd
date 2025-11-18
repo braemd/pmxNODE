@@ -52,13 +52,7 @@ Can also be used for nlmixr2.
 \details{
 Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-est_parms <- pre_fixef_extractor_nm("nm_example1_model_converted_ind.res")
-derivative_data <- der_vs_state_nm(nn="c",min_state=0,max_state=10,est_parms=est_parms)
-ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

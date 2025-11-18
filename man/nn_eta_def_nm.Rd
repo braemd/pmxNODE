@@ -28,11 +28,7 @@ etaV = ETA(1) \cr
 etakel = ETA(2) \cr
 X is equal to 3
 }
-\examples{
-\dontrun{
-nn_parm_names <- nn_eta_def_nm("1",3)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

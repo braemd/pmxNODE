@@ -19,10 +19,8 @@ Monolix run with inter-individual variability and to be then used as \emph{pre_f
 \emph{nn_converter_mlx} function
 }
 \examples{
-\dontrun{
-est_parms <- pre_fixef_extractor_mlx("run_1_pop.mlxtran")
-nn_converter_mlx(...,pre_fixef=est_parms)
-}
+mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+est_parms <- pre_fixef_extractor_mlx(mlx_path)
 }
 \author{
 Dominic Bräm

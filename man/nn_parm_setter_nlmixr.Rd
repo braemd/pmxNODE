@@ -40,8 +40,7 @@ of a nlmixr model
 \emph{eta_model} is currently set to proportional as previous investigations showed better stability of fit
 with this setting
 }
-\examples{
-\dontrun{
-parm_definitions <- nn_parm_setter_nlmixr("1")
+\author{
+Dominic Bräm
 }
-}
+\keyword{internal}
