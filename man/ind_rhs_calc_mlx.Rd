@@ -44,21 +44,7 @@ combined derivative data of multiple NNs and base-R operations.
 \details{
 Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-est_parms <- indparm_extractor_mlx("mlx_example1_ind.mlxtran")
-input_data <- read.csv("data_example1_mlx.csv") \%>\%
-                  mutate(NNc = indivPred_mode,
-                         NNct = time) \%>\%
-                  select(id,NNc,NNct)
-rhs_data <- ind_rhs_calc_mlx(rhs="NNc + NNct",
-                         group = "id",
-                         inputs = input_data,
-                         est_parms=est_parms)
-ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs,group=id))
-ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs,group=id))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

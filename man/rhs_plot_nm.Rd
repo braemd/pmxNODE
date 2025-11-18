@@ -34,7 +34,7 @@ for each variable in \emph{rhs}.}
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.}
 }
 \value{
-Dataframe with columns for the inputs and the combined right-hand side data.
+ggplot of right-hand side data.
 }
 \description{
 This functions allows to generate right-hand side plot, i.e., combined derivative data of multiple NNs and base-R operations.
@@ -43,15 +43,15 @@ This functions allows to generate right-hand side plot, i.e., combined derivativ
 Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
-\dontrun{
-est_parms <- pre_fixef_extractor_mlx("nm_example1_model_converted_ind.res")
+res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+est_parms <- pre_fixef_extractor_nm(res_path)
 rhs_plot <- rhs_plot_nm(rhs="NNc + DOSE * NNt",
                          x_var = "NNc",
                          inputs = data.frame(NNc = 1:100,
-                                             NNct = seq(0,10,length.out=100),
-                                             WT = rep(50,100)),
-                         est_parms=est_parms)
-}
+                                             NNt = seq(0,10,length.out=100),
+                                             DOSE = rep(50,100)),
+                         est_parms=est_parms,
+                         time_nn = c(FALSE, TRUE))
 }
 \author{
 Dominic Bräm

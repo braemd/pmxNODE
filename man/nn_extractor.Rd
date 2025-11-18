@@ -15,12 +15,7 @@ NN function as string in form of "NN1(state=t,min_init=1,max_init=5)"
 \description{
 Extract the entire NN functions from a model file
 }
-\examples{
-\dontrun{
-nns <- nn_extractor("dxdt = NN1(state=C,min_init=1,max_init=5) +
-                            NN2(state=A,min_init=1,max_init=5) - kel*x")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

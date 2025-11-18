@@ -10,6 +10,9 @@ run_mlx(mlx_file)
 \item{mlx_file}{(string) Absolute or relative Path/Name of Monolix file to run. Must be in R-style, i.e., path must be with
 slashes. File must be given with file extension, e.g., monolix_file\strong{.mlxtran}}
 }
+\value{
+No return value, running the specified model in Monolix via lixoftConnectors.
+}
 \description{
 Runs Monolix from R
 }

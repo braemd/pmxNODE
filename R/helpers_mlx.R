@@ -10,10 +10,8 @@
 #'   \item [1] - list of parameter names
 #'   \item [2] - list of initial values
 #'}
-#' @examples 
-#' \dontrun{
-#' model_parms <- model_parm_extractor_mlx(list("input = {V=2,kel=0.1}"))
-#' }
+#' @author Dominic Bräm
+#' @keywords internal
 model_parm_extractor_mlx <- function(text){
   input_line <- grep("input\\s*=\\s*\\{",text)
   input <- text[input_line]
@@ -40,13 +38,8 @@ model_parm_extractor_mlx <- function(text){
 #' @param model_parm_names (list of strings) A list of all non-NN parameters
 #' @param nn_thetas (list of strings) A list of all NN parameters
 #' @return The Monolix model including all non-NN and NN parameters in \emph{input = ...}
-#' @examples 
-#' \dontrun{
-#' new_model <- model_parm_updater_mlx(list("input = {V,kel}"),
-#'                                     list("V","kel"),
-#'                                     list("W1","b1","W2","b2"))
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 model_parm_updater_mlx <- function(text,model_parm_names,nn_thetas){
   input_line <- grep("input\\s*=\\s*\\{",text)
   
@@ -88,17 +81,9 @@ model_parm_updater_mlx <- function(text,model_parm_names,nn_thetas){
 #' @param pre_fixef (named vector) Named vector of all initial values to be used for NN and non-NN parameters
 #' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
 #' @param mapping (list) List of mapping between model outputs and observation IDs
-#' @return NA
-#' @examples 
-#' \dontrun{
-#' mlx_model_initializer(model_name=mlx_name,model_file=file_name_new,
-#'                       data_file=data_file,header_types=header_types,
-#'                       parm_names=model_parms[1],parm_inis=model_parms[2],
-#'                       theta_names=theta_defs,theta_inis=theta_inis,pop=pop,
-#'                       pre_fixef=pre_fixef,omega_inis=eta_scale,
-#'                       obs_types=obs_types,mapping=mapping)
-#' }
+#' @return No return value, saving a Monolix .mlxtran file.
 #' @author Dominic Bräm
+#' @keywords internal
 mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
                                   parm_names,parm_inis,theta_names,theta_inis,
                                   pop=FALSE,omega_inis=NULL,pre_fixef=NULL,obs_types=NULL,mapping=NULL){
@@ -224,7 +209,7 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
     lixoftConnectors::setPopulationParameterInformation(mlx_inis)
     
     lixoftConnectors::saveProject(paste0(model_name,".mlxtran"))
-    print(paste0("Monolix file saved under: ",model_name))
+    message(paste0("Monolix file saved under: ",model_name))
   } else{
     stop("lixoftConnectors must first be loaded and initialized.")
   }
@@ -241,11 +226,9 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
 #' 
 #' @param model_name (string) Name of the Monolix run. Must include \dQuote{.mlxtran}
 #' @return Named vector of Monolix parameter estimations
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_mlx("run_1_pop.mlxtran")
-#' nn_converter_mlx(...,pre_fixef=est_parms)
-#' }
+#' @examples
+#' mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+#' est_parms <- pre_fixef_extractor_mlx(mlx_path)
 #' @author Dominic Bräm
 #' @export
 pre_fixef_extractor_mlx <- function(model_name){
@@ -280,9 +263,8 @@ pre_fixef_extractor_mlx <- function(model_name){
 #' @param model_name (string) Name of the Monolix run. Must include \dQuote{.mlxtran}
 #' @return Data frame with individual parameter estimates (EBEs)
 #' @examples 
-#' \dontrun{
-#' est_parms <- indparm_extractor_mlx("run_1_ind.mlxtran")
-#' }
+#' mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+#' est_parms <- indparm_extractor_mlx(mlx_path)
 #' @author Dominic Bräm
 #' @export
 indparm_extractor_mlx <- function(model_name){
@@ -312,7 +294,7 @@ indparm_extractor_mlx <- function(model_name){
 #' 
 #' @param mlx_file (string) Absolute or relative Path/Name of Monolix file to run. Must be in R-style, i.e., path must be with
 #' slashes. File must be given with file extension, e.g., monolix_file\strong{.mlxtran}
-#' @return NULL
+#' @return No return value, running the specified model in Monolix via lixoftConnectors.
 #' @examples 
 #' \dontrun{
 #' run_mlx("mlx_file.mlxtran")
@@ -327,7 +309,7 @@ run_mlx <- function(mlx_file){
     lixoftConnectors::loadProject(mlx_file)
     lixoftConnectors::runScenario()
     lixoftConnectors::saveProject()
-    print("Monolix run and saved")
+    message("Monolix run and saved")
   } else{
     stop("lixoftConnectors must first be loaded and initialized.")
   }

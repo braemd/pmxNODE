@@ -4,29 +4,19 @@
 #' 
 #' Either \emph{est_parms} or \emph{mlx_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
-#' @param rhs (string) String of right-hand side
+#' @param rhs (string) String of right-hand side, e.g., "NNc + WT * NNct"
 #' @param inputs (dataframe) Dataframe of inputs, with corresponding columns (including matching column names 
-#' for each variable in \emph{rhs}.
+#' for each variable in \emph{rhs}, e.g., NNc, WT, and NNct).
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
 #' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_mlx("mlx_example1_ind.mlxtran")
-#' rhs_data <- rhs_calc_mlx(rhs="NNc + WT * NNct",
-#'                          inputs = data.frame(NNc = 1:100,
-#'                                              NNct = seq(0,10,length.out=100),
-#'                                              WT = rep(50,100)),
-#'                          est_parms=est_parms)
-#' ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs))
-#' ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs))
-#' }
 #' @author Dominic Bräm
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
+#' @keywords internal
 rhs_calc_mlx <- function(rhs,inputs,est_parms=NULL,mlx_file=NULL,time_nn=NULL,
                          act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
@@ -119,17 +109,17 @@ rhs_calc_mlx <- function(rhs,inputs,est_parms=NULL,mlx_file=NULL,time_nn=NULL,
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
-#' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_mlx("mlx_example1_ind.mlxtran")
+#' @return ggplot of right-hand side data.
+#' @examples
+#' mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+#' est_parms <- pre_fixef_extractor_mlx(mlx_path)
 #' rhs_plot <- rhs_plot_mlx(rhs="NNc + WT * NNct",
 #'                          x_var = "NNc",
 #'                          inputs = data.frame(NNc = 1:100,
 #'                                              NNct = seq(0,10,length.out=100),
 #'                                              WT = rep(50,100)),
-#'                          est_parms=est_parms)
-#' }
+#'                          est_parms=est_parms,
+#'                          time_nn = c(FALSE, TRUE))
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
@@ -144,7 +134,6 @@ rhs_plot_mlx <- function(rhs,x_var,inputs,est_parms=NULL,mlx_file=NULL,time_nn=N
                            time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_point(aes(x=.data[[x_var]],y=.data[["rhs"]]))
-  print(p)
   return(p)
 }
 
@@ -154,29 +143,19 @@ rhs_plot_mlx <- function(rhs,x_var,inputs,est_parms=NULL,mlx_file=NULL,time_nn=N
 #' 
 #' Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
-#' @param rhs (string) String of right-hand side
+#' @param rhs (string) String of right-hand side, e.g., "NNc + DOSE * NNct".
 #' @param inputs (dataframe) Dataframe of inputs, with corresponding columns (including matching column names 
-#' for each variable in \emph{rhs}.
+#' for each variable in \emph{rhs}, e.g., for NNc, DOSE, and NNct).
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
 #' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_nm("nm_example1_model_converted_ind.res")
-#' rhs_data <- rhs_calc_nm(rhs="NNc + DOSE * NNct",
-#'                          inputs = data.frame(NNc = 1:100,
-#'                                              NNct = seq(0,10,length.out=100),
-#'                                              DOSE = rep(50,100)),
-#'                          est_parms=est_parms)
-#' ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs))
-#' ggplot(rhs_data) + geom_line(aes(x=NNt,y=rhs))
-#' }
 #' @author Dominic Bräm
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
+#' @keywords internal
 rhs_calc_nm <- function(rhs,inputs,est_parms=NULL,nm_res_file=NULL,time_nn=NULL,
                          act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
@@ -274,17 +253,17 @@ rhs_calc_nm <- function(rhs,inputs,est_parms=NULL,nm_res_file=NULL,time_nn=NULL,
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
-#' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- pre_fixef_extractor_mlx("nm_example1_model_converted_ind.res")
+#' @return ggplot of right-hand side data.
+#' @examples
+#' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+#' est_parms <- pre_fixef_extractor_nm(res_path)
 #' rhs_plot <- rhs_plot_nm(rhs="NNc + DOSE * NNt",
 #'                          x_var = "NNc",
 #'                          inputs = data.frame(NNc = 1:100,
-#'                                              NNct = seq(0,10,length.out=100),
-#'                                              WT = rep(50,100)),
-#'                          est_parms=est_parms)
-#' }
+#'                                              NNt = seq(0,10,length.out=100),
+#'                                              DOSE = rep(50,100)),
+#'                          est_parms=est_parms,
+#'                          time_nn = c(FALSE, TRUE))
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
@@ -299,7 +278,6 @@ rhs_plot_nm <- function(rhs,x_var,inputs,est_parms=NULL,nm_res_file=NULL,time_nn
                            time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_point(aes(x=.data[[x_var]],y=.data[["rhs"]]))
-  print(p)
   return(p)
 }
 
@@ -310,29 +288,19 @@ rhs_plot_nm <- function(rhs,x_var,inputs,est_parms=NULL,nm_res_file=NULL,time_nn
 #' 
 #' Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 #' 
-#' @param rhs (string) String of right-hand side
+#' @param rhs (string) String of right-hand side, e.g., "NNc + WT * NNct"
 #' @param inputs (dataframe) Dataframe of inputs, with corresponding columns (including matching column names 
-#' for each variable in \emph{rhs}.
+#' for each variable in \emph{rhs}, e.g., NNc, WT, and NNct).
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
 #' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' pop_fit <- nlmixr2(node_model,data=data,est="bobyqa")
-#' rhs_data <- rhs_calc_mlx(rhs="NNc + WT * NNct",
-#'                          inputs = data.frame(NNc = 1:100,
-#'                                              NNct = seq(0,10,length.out=100),
-#'                                              WT = rep(50,100)),
-#'                          est_parms=pop_fit$fixef)
-#' ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs))
-#' ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs))
-#' }
 #' @author Dominic Bräm
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
+#' @keywords internal
 rhs_calc_nlmixr <- function(rhs,inputs,est_parms=NULL,fit_obj=NULL,time_nn=NULL,
                          act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
@@ -448,6 +416,5 @@ rhs_plot_nlmixr <- function(rhs,x_var,inputs,est_parms=NULL,fit_obj=NULL,time_nn
                            time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_point(aes(x=.data[[x_var]],y=.data[["rhs"]]))
-  print(p)
   return(p)
 }

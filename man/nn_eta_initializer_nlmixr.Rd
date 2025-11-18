@@ -26,8 +26,7 @@ Vector of initial random effects on NN parameters for one specific NN
 \description{
 Define the standard deviation of random effects on NN parameters for the \emph{ini} section of the nlmixr model
 }
-\examples{
-\dontrun{
-ini_etas <- nn_eta_initializer_nlmixr("1")
+\author{
+Dominic Bräm
 }
-}
+\keyword{internal}

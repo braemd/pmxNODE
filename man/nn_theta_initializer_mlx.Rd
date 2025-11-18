@@ -50,8 +50,7 @@ between \emph{min_init} and \emph{max_init} defined in the un-converter Monolix 
   input to hidden layer are negative
 }
 }
-\examples{
-\dontrun{
-ini_values <- nn_theta_initializer_mlx(number="1",xmini=1,xmaxi=5)
+\author{
+Dominic Bräm
 }
-}
+\keyword{internal}

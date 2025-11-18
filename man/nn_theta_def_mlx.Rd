@@ -19,11 +19,7 @@ Vector with all NN parameter names
 \description{
 Get parameter names for one specific NN in the model, i.e., weight and bias names
 }
-\examples{
-\dontrun{
-nn_parm_names <- nn_theta_def_mlx("1")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

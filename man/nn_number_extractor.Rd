@@ -18,11 +18,7 @@ Extract the name of a NN given as the NN\emph{X} argument
 \details{
 Potentially be moved to argument in NN function in form of NN(\emph{name=1},state=C,min_init=1,max_init=5) at a later stage
 }
-\examples{
-\dontrun{
-nn_name <- nn_number_extractor("NN1(state=C,min_init=1,max_init=5)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

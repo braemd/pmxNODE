@@ -47,13 +47,7 @@ This functions allows to generate derivative versus state data for a neural netw
 \details{
 Either \emph{est_parms} or \emph{fit_obj} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-pop_fit <- nlmixr2(node_model,data=data,est="bobyqa")
-derivative_data <- der_vs_state_nlmixr(nn="c",min_state=0,max_state=10,est_parms=pop_fit$fixef)
-ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

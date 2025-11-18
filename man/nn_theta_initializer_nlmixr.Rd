@@ -51,11 +51,7 @@ the typical NN parameters for the \emph{ini} section of the nlmixr model
   input to hidden layer are negative
 }
 }
-\examples{
-\dontrun{
-ini_values <- nn_theta_initializer_nlmixr(number="1",xmini=1,xmaxi=5)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

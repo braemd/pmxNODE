@@ -15,11 +15,7 @@ State to be used for a NN
 \description{
 Extract the state to be used for a NN given as the \emph{state} argument in the NN function
 }
-\examples{
-\dontrun{
-nn_state <- nn_state_extractor("NN1(state=C,min_init=1,max_init=5)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

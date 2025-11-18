@@ -18,11 +18,7 @@ Extracts the number of units in the hidden layer of a NN given as the n_hidden a
 \details{
 Not yet in use
 }
-\examples{
-\dontrun{
-n_hiddens <- nn_nhidden_extractor("NN1(state=C,min_init=1,max_init=5,n_hidden=6)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

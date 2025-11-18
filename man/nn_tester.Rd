@@ -18,11 +18,7 @@ Tests whether all required arguments are given to each NN
 \details{
 Currently required arguments are: NN-name NNX(), state (state=), minimal (min_init=) and maximal (max_init=) activation points
 }
-\examples{
-\dontrun{
-missing_args <- nn_tester("NN1(state=C,min_init=1,max_init=5)")
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

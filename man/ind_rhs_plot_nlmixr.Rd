@@ -38,7 +38,7 @@ extracted through the \emph{indparm_extractor_nlmixr} function. For optionality,
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.}
 }
 \value{
-Dataframe with columns for the inputs and the combined right-hand side data.
+ggplot of right-hand side for all individuals.
 }
 \description{
 This functions allows to generate a right-hand side plot with multiple subjects, i.e., combined derivative data of multiple NNs and base-R operations.

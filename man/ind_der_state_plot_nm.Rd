@@ -61,11 +61,11 @@ with individual parameter estimates (EBEs).
 Either \emph{est_parms} or \emph{nm_res_file} and \emph{nm_phi_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
-\dontrun{
+res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+phi_path <- system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE")
 der_state_plot <- ind_der_state_plot_nm(nn="c",min_state=0,max_state=10,
-                                        nm_res_file="nm_example1_ind.res",
-                                        nm_phi_file="nm_example1_ind.phi")
-}
+                                        nm_res_file=res_path,
+                                        nm_phi_file=phi_path)
 }
 \author{
 Dominic Bräm

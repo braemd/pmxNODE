@@ -35,15 +35,7 @@ A vector of derivatives of the NN for the state values
 \description{
 Calculate the derivatives from a NN for derivative versus state plots
 }
-\examples{
-\dontrun{
-est_parms <- pre_fixef_extractor_mlx("mlx_example1_ind.mlxtran")
-names(est_parms) <- gsub("_pop","",names(est_parms))
-inputs <- seq(0,10,length.out=1000)
-outputs <- derivative_calc_mlx(nn_name="c",parms=est_parms,inputs=inputs,n_hidden=5)
-plot(inputs,outputs)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

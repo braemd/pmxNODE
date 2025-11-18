@@ -22,9 +22,8 @@ final gradient is equal to 0 are fixed to 0, because a gradient of 0 indicates t
 was inactivated during parameter estimation.
 }
 \examples{
-\dontrun{
-pre_fixef <- prefix_extractor_nm("run_1.res")
-}
+res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+pre_fixef <- pre_fixef_extractor_nm(res_path)
 }
 \author{
 Dominic Bräm

@@ -43,6 +43,6 @@ software_initializer <- function(software=c("Monolix","nlmixr","NONMEM"),mlx_pat
       stop("nlmixr2 not installed. Please install nlmixr2 befor using pmxNODE with nlmixr2.")
     }
   } else if(software == "NONMEM"){
-    print("No additional package to be loaded")
+    message("No additional package to be loaded")
   }
 }

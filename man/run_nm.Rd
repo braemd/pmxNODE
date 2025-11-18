@@ -28,6 +28,9 @@ e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"}
 \item{data_file}{(string) Absolute or relative Path/Name of data file to be used in the NONMEM run. Required if \emph{create_dir=}TRUE
 as data file will be copied to new directory.}
 }
+\value{
+No return value, running the specified model in NONMEM via command line.
+}
 \description{
 Runs NONMEM from R
 }

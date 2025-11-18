@@ -48,13 +48,7 @@ This functions allows to generate derivative versus state data for a neural netw
 \details{
 Either \emph{est_parms} or \emph{nm_res_file} and \emph{nm_phi_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-ind_fit <- nlmixr2(node_model_ind,data=data,est="saem")
-ind_parms <- inparm_extractor_nlmixr(ind_fit)
-derivative_data <- ind_der_vs_state_nlmixr(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

@@ -38,8 +38,7 @@ Define NN parameters consisting of typical parameter and potentially random effe
 \emph{eta_model} is currently set to proportional as previous investigations showed better stability of fit
 with this setting in NONMEM
 }
-\examples{
-\dontrun{
-parm_definitions <- nn_parm_setter_nm("1")
+\author{
+Dominic Bräm
 }
-}
+\keyword{internal}

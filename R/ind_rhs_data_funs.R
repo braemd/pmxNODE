@@ -16,23 +16,10 @@
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
 #' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- indparm_extractor_mlx("mlx_example1_ind.mlxtran")
-#' input_data <- read.csv("data_example1_mlx.csv") %>%
-#'                   mutate(NNc = indivPred_mode,
-#'                          NNct = time) %>%
-#'                   select(id,NNc,NNct)
-#' rhs_data <- ind_rhs_calc_mlx(rhs="NNc + NNct",
-#'                          group = "id",
-#'                          inputs = input_data,
-#'                          est_parms=est_parms)
-#' ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs,group=id))
-#' ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs,group=id))
-#' }
 #' @author Dominic Bräm
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
+#' @keywords internal
 ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_nn=NULL,
                              act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
@@ -149,20 +136,24 @@ ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
-#' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- indparm_extractor_mlx("mlx_example1_ind.mlxtran")
-#' input_data <- read.csv("data_example1_mlx.csv") %>%
-#'                   mutate(NNc = indivPred_mode,
-#'                          NNct = time) %>%
-#'                   select(id,NNc,NNct)
+#' @return ggplot of right-hand side plot for all individuals
+#' @examples
+#' # Generate individual rhs-plot for predicted observations
+#' 
+#' mlx_path <- system.file("extdata","mlx_example1_ind.mlxtran",package="pmxNODE")
+#' data_path <- system.file("extdata","mlx_example1_ind","predictions.txt",package="pmxNODE")
+#' 
+#' est_parms <- indparm_extractor_mlx(mlx_path)
+#' 
+#' input_data <- read.table(data_path,sep=",",header=TRUE)[,c("id","indivPred_mode","time")]
+#' colnames(input_data) <- c("id","NNc","NNct")
+#'                   
 #' rhs_plot <- ind_rhs_plot_mlx(rhs="NNc + NNct",
 #'                              x_var = "NNc",
 #'                              group = "id",
 #'                              inputs = input_data,
-#'                              est_parms=est_parms)
-#' }
+#'                              est_parms = est_parms,
+#'                              time_nn = c(FALSE, TRUE))
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
@@ -177,7 +168,6 @@ ind_rhs_plot_mlx <- function(rhs,x_var,inputs,group,est_parms=NULL,mlx_file=NULL
                            time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_line(aes(x=.data[[x_var]],y=.data[["rhs"]],group=.data[[group]]))
-  print(p)
   return(p)
 }
 
@@ -200,24 +190,10 @@ ind_rhs_plot_mlx <- function(rhs,x_var,inputs,group,est_parms=NULL,mlx_file=NULL
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
 #' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- indparm_extractor_nm("nm_example1_model_converted_ind.res",
-#'                                   "nm_example1_model_converted_ind.phi")
-#' input_data <- read.table("nm_example1.tab",skip=1,header=T) %>%
-#'                   mutate(NNc = IPRED,
-#'                          NNt = TIME) %>%
-#'                   select(ID,NNc,NNt)
-#' rhs_data <- ind_rhs_calc_nm(rhs="NNc + NNt",
-#'                          group = "ID",
-#'                          inputs = input_data,
-#'                          est_parms=est_parms)
-#' ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs,group=id))
-#' ggplot(rhs_data) + geom_line(aes(x=NNt,y=rhs,group=id))
-#' }
 #' @author Dominic Bräm
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
+#' @keywords internal
 ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_phi_file=NULL,time_nn=NULL,
                              act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
@@ -333,21 +309,25 @@ ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
-#' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' est_parms <- indparm_extractor_nm("nm_example1_model_converted_ind.res",
-#'                                   "nm_example1_model_converted_ind.phi")
-#' input_data <- read.table("nm_example1.tab",skip=1,header=T) %>%
-#'                   mutate(NNc = IPRED,
-#'                          NNt = TIME) %>%
-#'                   select(ID,NNc,NNt)
+#' @return ggplot of right-hand side plot for all individuals
+#' @examples
+#' # Generate individual rhs-plot for predicted observations
+#' 
+#' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+#' phi_path <- system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE")
+#' data_path <- system.file("extdata","nm_example1.tab",package="pmxNODE")
+#' 
+#' est_parms <- indparm_extractor_nm(res_path,phi_path)
+#' 
+#' input_data <- read.table(data_path,skip=1,header=TRUE)[,c("ID","IPRED","TIME")]
+#' colnames(input_data) <- c("ID","NNc","NNt")
+#'                   
 #' rhs_plot <- ind_rhs_plot_nm(rhs="NNc + NNt",
 #'                              x_var = "NNc",
 #'                              inputs = input_data,
 #'                              group = "ID",
-#'                              est_parms=est_parms)
-#' }
+#'                              est_parms=est_parms,
+#'                              time_nn = c(FALSE, TRUE))
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
@@ -362,7 +342,6 @@ ind_rhs_plot_nm <- function(rhs,x_var,inputs,group,est_parms=NULL,nm_res_file=NU
                               nm_phi_file = nm_phi_file, time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_line(aes(x=.data[[x_var]],y=.data[["rhs"]],group=.data[[group]]))
-  print(p)
   return(p)
 }
 
@@ -384,19 +363,10 @@ ind_rhs_plot_nm <- function(rhs,x_var,inputs,group,est_parms=NULL,nm_res_file=NU
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
 #' @return Dataframe with columns for the inputs and the combined right-hand side data.
-#' @examples 
-#' \dontrun{
-#' ind_fit <- nlmxir2(node_model_ind,data=data,est="saem")
-#' rhs_data <- ind_rhs_calc_mlx(rhs="NNc + NNct",
-#'                          group = "id",
-#'                          inputs = input_data,
-#'                          fit_obj = ind_fit)
-#' ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs,group=id))
-#' ggplot(rhs_data) + geom_line(aes(x=NNct,y=rhs,group=id))
-#' }
 #' @author Dominic Bräm
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
+#' @keywords internal
 ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,time_nn=NULL,
                              act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
@@ -508,7 +478,7 @@ ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,tim
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
-#' @return Dataframe with columns for the inputs and the combined right-hand side data.
+#' @return ggplot of right-hand side for all individuals.
 #' @examples 
 #' \dontrun{
 #' ind_fit <- nlmxir2(node_model_ind,data=data,est="saem")
@@ -532,6 +502,5 @@ ind_rhs_plot_nlmixr <- function(rhs,x_var,inputs,group,est_parms=NULL,fit_obj=NU
                                time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_line(aes(x=.data[[x_var]],y=.data[["rhs"]],group=.data[[group]]))
-  print(p)
   return(p)
 }

@@ -18,8 +18,7 @@ model_parm_extractor_mlx(text)
 \description{
 Extract model parameters and corresponding initial values from the model input line
 }
-\examples{
-\dontrun{
-model_parms <- model_parm_extractor_mlx(list("input = {V=2,kel=0.1}"))
+\author{
+Dominic Bräm
 }
-}
+\keyword{internal}

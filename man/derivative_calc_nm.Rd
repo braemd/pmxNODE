@@ -35,14 +35,7 @@ A vector of derivatives of the NN for the state values
 \description{
 Calculate the derivatives from a NN for derivative versus state plots. Can also be used for nlmixr2.
 }
-\examples{
-\dontrun{
-est_parms <- pre_fixef_extractor_nm("nm_example1_model_converted_ind.res")
-inputs <- seq(0,10,length.out=1000)
-outputs <- derivative_calc_nm(nn_name="c",parms=est_parms,inputs=inputs,n_hidden=5)
-plot(inputs,outputs)
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

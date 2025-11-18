@@ -47,22 +47,7 @@ combined derivative data of multiple NNs and base-R operations.
 \details{
 Either \emph{est_parms} or \emph{nm_res_file} and \emph{nm_phi_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
-\examples{
-\dontrun{
-est_parms <- indparm_extractor_nm("nm_example1_model_converted_ind.res",
-                                  "nm_example1_model_converted_ind.phi")
-input_data <- read.table("nm_example1.tab",skip=1,header=T) \%>\%
-                  mutate(NNc = IPRED,
-                         NNt = TIME) \%>\%
-                  select(ID,NNc,NNt)
-rhs_data <- ind_rhs_calc_nm(rhs="NNc + NNt",
-                         group = "ID",
-                         inputs = input_data,
-                         est_parms=est_parms)
-ggplot(rhs_data) + geom_line(aes(x=NNc,y=rhs,group=id))
-ggplot(rhs_data) + geom_line(aes(x=NNt,y=rhs,group=id))
-}
-}
 \author{
 Dominic Bräm
 }
+\keyword{internal}

@@ -1,13 +1,13 @@
 Package: pmxNODE
 Type: Package
-Title: Application of NODEs in Monolix, NONMEM, and nlmixr2
+Title: Application of NODEs in 'Monolix', 'NONMEM', and 'nlmixr2'
 Version: 0.1.0
 Authors@R: c(person("Dominic", "Bräm", role = c("aut", "cre"),
     email = "domi.braem@hotmail.com", comment = c(ORCID = "0000-0001-9094-8361")),
     person("Bernhard", "Steiert", role = c("ctb")),
     person("Gilbert", "Koch", role = c("ctb")),
     person("Matthew","Fidler", role = c("ctb"), comment=c(ORCID="0000-0001-8538-6691")))
-Description: An easy-to-use tool for implementing Neural Ordinary Differential Equations (NODEs) in pharmacometric software such as Monolix, NONMEM, and nlmixr2. The main functionality is to automatically generate structural model code describing computations within a neural network. Additionally, parameters and software settings can be initialized automatically. For using these additional functionalities with Monolix, pmxNODE interfaces with MonolixSuite via the lixoftConnectors package. The lixoftConnectors package is distributed with MonolixSuite (https://monolixsuite.slp-software.com/r-functions/2024R1/package-lixoftconnectors) and is not available from public repositories.
+Description: An easy-to-use tool for implementing Neural Ordinary Differential Equations (NODEs) in pharmacometric software such as 'Monolix', 'NONMEM', and 'nlmixr2', see Bräm et al. (2024) <doi:10.1007/s10928-023-09886-4> and Bräm et al. (2025) <doi:10.1002/psp4.13265>. The main functionality is to automatically generate structural model code describing computations within a neural network. Additionally, parameters and software settings can be initialized automatically. For using these additional functionalities with 'Monolix', pmxNODE interfaces with 'MonolixSuite' via the 'lixoftConnectors' package. The 'lixoftConnectors' package is distributed with 'MonolixSuite' (https://monolixsuite.slp-software.com/r-functions/2024R1/package-lixoftconnectors) and is not available from public repositories.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

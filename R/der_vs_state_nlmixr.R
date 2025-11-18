@@ -65,13 +65,8 @@ indparm_extractor_nlmixr <- function(fit_obj){
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Dataframe with columns for the state and the corresponding derivatives
-#' @examples 
-#' \dontrun{
-#' pop_fit <- nlmixr2(node_model,data=data,est="bobyqa")
-#' derivative_data <- der_vs_state_nlmixr(nn="c",min_state=0,max_state=10,est_parms=pop_fit$fixef)
-#' ggplot(derivative_data) + geom_line(aes(x=state,y=derivatives))
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
                             length_out=100,time_nn=FALSE,act="ReLU",beta=20){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
@@ -120,13 +115,8 @@ der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return Dataframe with columns for the state and the corresponding individual derivatives
-#' @examples 
-#' \dontrun{
-#' ind_fit <- nlmixr2(node_model_ind,data=data,est="saem")
-#' ind_parms <- inparm_extractor_nlmixr(ind_fit)
-#' derivative_data <- ind_der_vs_state_nlmixr(nn="c",min_state=0,max_state=10,est_parms=ind_parms)
-#' }
 #' @author Dominic Bräm
+#' @keywords internal
 ind_der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
                                 length_out=100,time_nn=FALSE,act="ReLU",beta=20){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
@@ -213,7 +203,6 @@ der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=N
       p <- ggplot2::ggplot(data) + ggplot2::geom_line(aes(x=state,y=derivatives)) +
         ggplot2::xlab("State") +
         ggplot2::ylab("Derivatives")
-      print(p)
       return(p)
     } else{
       error_msg <- "To return a ggplot, the package ggplot2 must be installed"
@@ -272,7 +261,6 @@ ind_der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inpu
       geom_line(aes(x=states,y=medians)) +
       xlab("State") +
       ylab("Derivatives")
-    print(p)
     return(p)
   } else{
     plot_data <- tidyr::pivot_longer(data,
@@ -284,7 +272,6 @@ ind_der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inpu
       xlab("State") +
       ylab("Derivatives") +
       theme(legend.position = "none")
-    print(p)
     return(p)
   }
   

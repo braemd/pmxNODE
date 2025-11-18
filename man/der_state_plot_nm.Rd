@@ -56,12 +56,11 @@ Can also be used for nlmixr2.
 Either \emph{est_parms} or \emph{nm_res_file} must be given. If both arguments are given, \emph{est_parms} is prioritized.
 }
 \examples{
-\dontrun{
+res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
 der_state_plot <- der_state_plot_nm(nn="c",
                                     min_state=0,max_state=10,
-                                    nm_res_file="nm_example1_model_converted_ind.res",
+                                    nm_res_file=res_path,
                                     plot_type="ggplot")
-}
 }
 \author{
 Dominic Bräm

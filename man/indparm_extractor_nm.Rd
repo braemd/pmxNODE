@@ -20,9 +20,9 @@ estimated individual parameters for NN parameters by combining information from 
 the .phi file
 }
 \examples{
-\dontrun{
-est_parms <- indparm_extractor_nm("run_1_ind.res","run_1_ind.phi")
-}
+res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
+phi_path <- system.file("extdata","nm_example1_model_converted_ind.phi",package="pmxNODE")
+est_parms <- indparm_extractor_nm(res_path,phi_path)
 }
 \author{
 Dominic Bräm
