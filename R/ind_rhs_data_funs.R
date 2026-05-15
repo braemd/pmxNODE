@@ -12,6 +12,7 @@
 #' @param est_parms (dataframe; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
@@ -20,7 +21,7 @@
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
 #' @keywords internal
-ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_nn=NULL,
+ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,n_hidden=NULL,time_nn=NULL,
                              act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
   checkmate::assert_character(rhs)
@@ -74,9 +75,18 @@ ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_
       stop(error_msg)
     }
   }
+  if(is.null(n_hidden)){
+    n_hidden <- rep(5,sum(nns))
+  } else{
+    if(length(n_hidden) != sum(nns)){
+      error_msg <- "Either for none or all NNs in rhs n_hidden must be defined"
+      stop(error_msg)
+    }
+  }
   
   time_nn_list <- `[<-`(list(rep(FALSE,length(variables))),nns,time_nn)
   act_list <- `[<-`(list(rep(FALSE,length(variables))),nns,act)
+  n_hidden_list <- `[<-`(list(rep(5,length(variables))),nns,n_hidden)
   
   inputs_split <- split(inputs,inputs[,group])
   parms_split <- split(est_parms,est_parms[,1])
@@ -84,10 +94,11 @@ ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_
   inter_out <- mapply(function(inps,parms){
     inputs_list <- as.list(`colnames<-`(as.data.frame(inps[,variables]),variables))
     parms <- unlist(parms)
-    variables_out <- mapply(function(variable,nn,inputs,time_nn,act) {
+    variables_out <- mapply(function(variable,nn,inputs,time_nn,act,n_hidden) {
       if(nn){
         nn_name <- gsub("NN","",variable)
-        out <- der_vs_state_mlx(nn_name=nn_name,inputs=inputs,est_parms=parms,time_nn=time_nn,act=act)$derivatives
+        out <- der_vs_state_mlx(nn_name=nn_name,inputs=inputs,est_parms=parms,
+                                n_hidden=n_hidden,time_nn=time_nn,act=act)$derivatives
         return(out)
       } else{
         out <- inputs
@@ -98,6 +109,7 @@ ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_
     inputs_list,
     time_nn_list,
     act_list,
+    n_hidden_list,
     SIMPLIFY = FALSE
     )
     
@@ -133,6 +145,7 @@ ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_
 #' @param est_parms (dataframe; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
@@ -157,15 +170,15 @@ ind_rhs_calc_mlx <- function(rhs,inputs,group,est_parms=NULL,mlx_file=NULL,time_
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
-ind_rhs_plot_mlx <- function(rhs,x_var,inputs,group,est_parms=NULL,mlx_file=NULL,time_nn=NULL,
-                         act=NULL,beta=20){
+ind_rhs_plot_mlx <- function(rhs,x_var,inputs,group,est_parms=NULL,mlx_file=NULL,
+                             n_hidden=NULL,time_nn=NULL,act=NULL,beta=20){
   if(!x_var %in% colnames(inputs)){
     error_msg <- "x_var must be the name of a column in the inputs dataframe."
     stop(error_msg)
   }
   
   rhs_data <- ind_rhs_calc_mlx(rhs,inputs,group,est_parms = est_parms, mlx_file = mlx_file,
-                           time_nn = time_nn, act = act, beta = beta)
+                           n_hidden = n_hidden, time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_line(aes(x=.data[[x_var]],y=.data[["rhs"]],group=.data[[group]]))
   return(p)
@@ -186,6 +199,7 @@ ind_rhs_plot_mlx <- function(rhs,x_var,inputs,group,est_parms=NULL,mlx_file=NULL
 #' extracted through the \emph{indparm_extractor_nm} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param nm_phi_file (string; semi-optional) (path)/name of the phi file of a NONMEM run, must include file extension “.phi”. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
@@ -194,8 +208,8 @@ ind_rhs_plot_mlx <- function(rhs,x_var,inputs,group,est_parms=NULL,mlx_file=NULL
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
 #' @keywords internal
-ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_phi_file=NULL,time_nn=NULL,
-                             act=NULL,beta=20){
+ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_phi_file=NULL,
+                            n_hidden=NULL,time_nn=NULL,act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
   checkmate::assert_character(rhs)
   checkmate::assert_character(group)
@@ -246,9 +260,19 @@ ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_
       stop(error_msg)
     }
   }
+  if(is.null(n_hidden)){
+    n_hidden <- rep(5,sum(nns))
+  } else{
+    if(length(n_hidden) != sum(nns)){
+      error_msg <- "Either for none or all NNs in rhs n_hidden must be defined"
+      stop(error_msg)
+    }
+  }
+  
   
   time_nn_list <- `[<-`(list(rep(FALSE,length(variables))),nns,time_nn)
   act_list <- `[<-`(list(rep(FALSE,length(variables))),nns,act)
+  n_hidden_list <- `[<-`(list(rep(5,length(variables))),nns,n_hidden)
   
   inputs_split <- split(inputs,inputs[,group])
   parms_split <- split(est_parms,est_parms[,1])
@@ -256,10 +280,11 @@ ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_
   inter_out <- mapply(function(inps,parms){
     inputs_list <- as.list(`colnames<-`(as.data.frame(inps[,variables]),variables))
     parms <- unlist(parms)
-    variables_out <- mapply(function(variable,nn,inputs,time_nn,act) {
+    variables_out <- mapply(function(variable,nn,inputs,time_nn,act,n_hidden) {
       if(nn){
         nn_name <- gsub("NN","",variable)
-        out <- der_vs_state_nm(nn_name=nn_name,inputs=inputs,est_parms=parms,time_nn=time_nn,act=act)$derivatives
+        out <- der_vs_state_nm(nn_name=nn_name,inputs=inputs,est_parms=parms,
+                               n_hidden=n_hidden,time_nn=time_nn,act=act)$derivatives
         return(out)
       } else{
         out <- inputs
@@ -270,6 +295,7 @@ ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_
     inputs_list,
     time_nn_list,
     act_list,
+    n_hidden_list,
     SIMPLIFY = FALSE
     )
     
@@ -306,6 +332,7 @@ ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_
 #' extracted through the \emph{indparm_extractor_nm} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param nm_phi_file (string; semi-optional) (path)/name of the phi file of a NONMEM run, must include file extension “.phi”. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
@@ -331,15 +358,16 @@ ind_rhs_calc_nm <- function(rhs,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
-ind_rhs_plot_nm <- function(rhs,x_var,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_phi_file=NULL,time_nn=NULL,
-                             act=NULL,beta=20){
+ind_rhs_plot_nm <- function(rhs,x_var,inputs,group,est_parms=NULL,nm_res_file=NULL,nm_phi_file=NULL,
+                            n_hidden=NULL,time_nn=NULL,act=NULL,beta=20){
   if(!x_var %in% colnames(inputs)){
     error_msg <- "x_var must be the name of a column in the inputs dataframe."
     stop(error_msg)
   }
   
   rhs_data <- ind_rhs_calc_nm(rhs,inputs,group,est_parms = est_parms, nm_res_file = nm_res_file,
-                              nm_phi_file = nm_phi_file, time_nn = time_nn, act = act, beta = beta)
+                              nm_phi_file = nm_phi_file, 
+                              n_hidden = n_hidden, time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_line(aes(x=.data[[x_var]],y=.data[["rhs"]],group=.data[[group]]))
   return(p)
@@ -359,6 +387,7 @@ ind_rhs_plot_nm <- function(rhs,x_var,inputs,group,est_parms=NULL,nm_res_file=NU
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
@@ -367,8 +396,8 @@ ind_rhs_plot_nm <- function(rhs,x_var,inputs,group,est_parms=NULL,nm_res_file=NU
 #' @importFrom checkmate assert_data_frame
 #' @importFrom checkmate assert_character
 #' @keywords internal
-ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,time_nn=NULL,
-                             act=NULL,beta=20){
+ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,
+                                n_hidden=NULL,time_nn=NULL,act=NULL,beta=20){
   checkmate::assert_data_frame(inputs)
   checkmate::assert_character(rhs)
   checkmate::assert_character(group)
@@ -416,9 +445,18 @@ ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,tim
       stop(error_msg)
     }
   }
+  if(is.null(n_hidden)){
+    n_hidden <- rep(5,sum(nns))
+  } else{
+    if(length(n_hidden) != sum(nns)){
+      error_msg <- "Either for none or all NNs in rhs n_hidden must be defined"
+      stop(error_msg)
+    }
+  }
   
   time_nn_list <- `[<-`(list(rep(FALSE,length(variables))),nns,time_nn)
   act_list <- `[<-`(list(rep(FALSE,length(variables))),nns,act)
+  n_hidden_list <- `[<-`(list(rep(5,length(variables))),nns,n_hidden)
   
   inputs_split <- split(inputs,inputs[,group])
   parms_split <- split(est_parms,est_parms[,1])
@@ -426,10 +464,11 @@ ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,tim
   inter_out <- mapply(function(inps,parms){
     inputs_list <- as.list(`colnames<-`(as.data.frame(inps[,variables]),variables))
     parms <- unlist(parms)
-    variables_out <- mapply(function(variable,nn,inputs,time_nn,act) {
+    variables_out <- mapply(function(variable,nn,inputs,time_nn,act,n_hidden) {
       if(nn){
         nn_name <- gsub("NN","",variable)
-        out <- der_vs_state_nlmixr(nn_name=nn_name,inputs=inputs,est_parms=parms,time_nn=time_nn,act=act)$derivatives
+        out <- der_vs_state_nlmixr(nn_name=nn_name,inputs=inputs,est_parms=parms,
+                                   n_hidden=n_hidden,time_nn=time_nn,act=act)$derivatives
         return(out)
       } else{
         out <- inputs
@@ -440,6 +479,7 @@ ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,tim
     inputs_list,
     time_nn_list,
     act_list,
+    n_hidden_list,
     SIMPLIFY = FALSE
     )
     
@@ -475,6 +515,7 @@ ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,tim
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5
 #' @param time_nn (boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.
 #' @param act (character vector) Vector for each NN in \emph{rhs} defining the activation function used in the NN. Default value for all NN is "ReLU".
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if any \emph{act} is softplus; Default to 20.
@@ -491,15 +532,15 @@ ind_rhs_calc_nlmixr <- function(rhs,inputs,group,est_parms=NULL,fit_obj=NULL,tim
 #' @author Dominic Bräm
 #' @import ggplot2
 #' @export
-ind_rhs_plot_nlmixr <- function(rhs,x_var,inputs,group,est_parms=NULL,fit_obj=NULL,time_nn=NULL,
-                             act=NULL,beta=20){
+ind_rhs_plot_nlmixr <- function(rhs,x_var,inputs,group,est_parms=NULL,fit_obj=NULL,
+                                n_hidden=NULL,time_nn=NULL,act=NULL,beta=20){
   if(!x_var %in% colnames(inputs)){
     error_msg <- "x_var must be the name of a column in the inputs dataframe."
     stop(error_msg)
   }
   
   rhs_data <- ind_rhs_calc_nlmixr(rhs,inputs,group,est_parms = est_parms, fit_obj = fit_obj,
-                               time_nn = time_nn, act = act, beta = beta)
+                               n_hidden = n_hidden, time_nn = time_nn, act = act, beta = beta)
   
   p <- ggplot(rhs_data) + geom_line(aes(x=.data[[x_var]],y=.data[["rhs"]],group=.data[[group]]))
   return(p)

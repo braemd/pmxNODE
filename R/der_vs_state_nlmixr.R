@@ -61,6 +61,7 @@ indparm_extractor_nlmixr <- function(fit_obj){
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters form \emph{fit$fixef}. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
@@ -68,7 +69,7 @@ indparm_extractor_nlmixr <- function(fit_obj){
 #' @author Dominic Bräm
 #' @keywords internal
 der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
-                            length_out=100,time_nn=FALSE,act="ReLU",beta=20){
+                            length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
     error_msg <- "Either inputs or both, min_state and max_state, must be given"
     stop(error_msg)
@@ -91,7 +92,7 @@ der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
   if(is.null(inputs)){
     inputs <- seq(min_state,max_state,length.out=length_out)
   }
-  outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,time_nn=time_nn,act=act,beta=beta)
+  outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,n_hidden=5,time_nn=time_nn,act=act,beta=beta)
   out <- data.frame(state=inputs,
                     derivatives=outputs)
   return(out)
@@ -111,6 +112,7 @@ der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
 #' extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
@@ -118,7 +120,7 @@ der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
 #' @author Dominic Bräm
 #' @keywords internal
 ind_der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
-                                length_out=100,time_nn=FALSE,act="ReLU",beta=20){
+                                length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
     error_msg <- "Either inputs or both, min_state and max_state, must be given"
     stop(error_msg)
@@ -144,7 +146,7 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs
   outputs <- apply(num_est_parms,1,function(x) {
     x <- as.numeric(x)
     names(x) <- colnames(num_est_parms)
-    out <- derivative_calc_nm(nn_name,x,inputs,time_nn=time_nn,act=act,beta=beta)
+    out <- derivative_calc_nm(nn_name,x,inputs,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   })
   colnames(outputs) <- paste0("id_",est_parms[,"id"])
   out <- data.frame(state=inputs)
@@ -167,6 +169,7 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through \emph{fit$fixef}. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...). For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param plot_type (string) What plot type should be used; "base" or "ggplot"
@@ -183,10 +186,10 @@ ind_der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs
 #' @author Dominic Bräm
 #' @export
 der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
-                              length_out=100,time_nn=FALSE,act="ReLU",plot_type=c("base","ggplot"),beta=20){
+                              length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",plot_type=c("base","ggplot"),beta=20){
   data <- der_vs_state_nlmixr(nn_name=nn_name,min_state=min_state,max_state=max_state,
                           est_parms=est_parms,fit_obj=fit_obj,length_out=length_out,
-                          time_nn=time_nn,act=act,beta=beta)
+                          n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   
   if(length(plot_type)>1){
     plot_type <- "base"
@@ -227,6 +230,7 @@ der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=N
 #' @param est_parms (named vector; semi-optional) A data frame with estimated individual parameters from the NN 
 #' extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.
 #' @param fit_obj (nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param ribbon (boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 #' displayed as individual spaghetti plot (FALSE)
@@ -246,10 +250,10 @@ der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=N
 #' @importFrom tidyr starts_with
 #' @export
 ind_der_state_plot_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,fit_obj=NULL,
-                                  length_out=100,time_nn=FALSE,ribbon=TRUE,act="ReLU",beta=20){
+                                  length_out=100,n_hidden=5,time_nn=FALSE,ribbon=TRUE,act="ReLU",beta=20){
   data <- ind_der_vs_state_nlmixr(nn_name=nn_name,min_state=min_state,max_state=max_state,
                               est_parms=est_parms,fit_obj=fit_obj,
-                              length_out=length_out,time_nn=time_nn,act=act,beta=beta)
+                              length_out=length_out,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   
   if(ribbon){
     mins <- data.frame(mins=apply(data[,-1],1,min))

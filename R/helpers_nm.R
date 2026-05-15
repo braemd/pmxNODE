@@ -39,29 +39,33 @@ state_correcter_nm <- function(text){
 #' was inactivated during parameter estimation.
 #' 
 #' @param res_path (string) (Path/)Name of the results file of a NONMEM run, must include file extension, e.g., \dQuote{.res}
+#' @param fix_zero_grad (boolean) Define whether parameters with zero gradient (deactivated neurons) should be fixed to zero. Default is TRUE.
 #' @return Named vector with parameter estimates from the previous run
 #' @examples
 #' res_path <- system.file("extdata","nm_example1_model_converted_ind.res",package="pmxNODE")
 #' pre_fixef <- pre_fixef_extractor_nm(res_path)
 #' @author Dominic Bräm
 #' @export
-pre_fixef_extractor_nm <- function(res_path){
+pre_fixef_extractor_nm <- function(res_path,fix_zero_grad=TRUE){
   res_file <- readLines(res_path, warn = FALSE)
   
   theta_start <- grep("\\$THETA",res_file)
   omega_start <- grep("\\$OMEGA",res_file)
   
-  theta_lines <- res_file[(theta_start+1):(omega_start-1)]
-  thetas <- theta_lines[grep(".+",theta_lines)]
+  theta_lines <- res_file[(theta_start):(omega_start-1)]
+  theta_lines <- gsub("\\$THETA","",theta_lines)
+  thetas <- theta_lines[grep(" *-?\\d+\\.?\\d*.*",theta_lines)]
   theta_names <- unlist(lapply(thetas,function(x) {
-    names_deffed <- grepl("[^\\[]*\\[(.*)\\]",x)
+    #names_deffed <- grepl("[^\\[]*\\[(.*)\\]",x)
+    names_deffed <- grepl("; *[^ ]+",x)
     if(names_deffed){
-      name <- gsub("[^\\[]*\\[(.*)\\]","\\1",x)
+      x <- gsub("\\[|\\]","",x)
+      #name <- gsub("[^\\[]*\\[(.*)\\]","\\1",x)
+      name <- gsub("[^;]+; *(.+)","\\1",x)
     } else{
       name <- " "
     }
   }))
-  
   
   theta_est_start <- grep("THETA - VECTOR OF FIXED EFFECTS PARAMETERS",res_file)
   omega_est_start <- grep("OMEGA - COV MATRIX FOR RANDOM EFFECTS - ETAS",res_file)
@@ -70,19 +74,26 @@ pre_fixef_extractor_nm <- function(res_path){
   
   theta_est_names_match <- gregexpr("TH\\s*\\d+",theta_est_lines)
   theta_est_names <- unlist(regmatches(theta_est_lines,theta_est_names_match))
-  theta_est_values_match <- gregexpr("-?\\d+\\.?\\d+E[+-]?\\d+",theta_est_lines)
+  theta_est_values_match <- gregexpr("-?\\d+\\.?\\d*E[+-]?\\d+",theta_est_lines)
   theta_est_values <- unlist(regmatches(theta_est_lines,theta_est_values_match))
   
-  grad_start <- max(grep("GRADIENT\\:",res_file))
-  term_start <- grep("\\#TERM\\:",res_file)
-  grad_lines <- res_file[(grad_start):(term_start)]
-  
-  grad_match <- gregexpr("-?\\d+\\.?\\d+E[+-]?\\d+",grad_lines)
-  grads <- unlist(regmatches(grad_lines,grad_match))
-  num_grads <- as.numeric(gsub("[^0-9]","",grads))[1:length(theta_est_names)]
-  zero_grads <- which(num_grads==0)
-  
-  theta_est_values[zero_grads] <- "0 FIX"
+  if(fix_zero_grad){
+    fixed_thetas <- grepl("FIX",thetas)
+    non_fixed_thetas <- !fixed_thetas
+    n_non_fixed_thetas <- sum(non_fixed_thetas)
+    
+    grad_start <- max(grep("GRADIENT\\:",res_file))
+    term_start <- grep("\\#TERM\\:",res_file)
+    grad_lines <- res_file[(grad_start):(term_start)]
+    
+    grad_match <- gregexpr("-?\\d+\\.?\\d+E[+-]?\\d+",grad_lines)
+    grads <- unlist(regmatches(grad_lines,grad_match))
+    num_grads <- as.numeric(gsub("[^0-9]","",grads))[1:length(theta_est_names)]
+    num_grads_thetas <- num_grads[1:n_non_fixed_thetas]
+    zero_grads <- which(num_grads_thetas==0)
+    
+    theta_est_values[non_fixed_thetas][zero_grads] <- "0 FIX"
+  }
   
   names(theta_est_values) <- theta_names[1:length(theta_est_names)]
   return(theta_est_values)
@@ -173,7 +184,7 @@ indparm_extractor_nm <- function(res_file,phi_file){
 #' slashes. File must be given with file extension, e.g., nonmem_file\strong{.ctl}
 #' @param nm_path (string) Absolute or relative Path/Name of NONMEM to be executed, \cr
 #'  e.g., "C:/nm75g64/run/nmfe75".
-#' @param parralel_command (string) (Optional) Command for parralel NONMEM execution, \cr
+#' @param parallel_command (string) (Optional) Command for parallel NONMEM execution, \cr
 #'  e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"
 #' @param create_dir (boolean) If NONMEM file should be run and saved in new directory. If TRUE, new directory of type 
 #' \emph{path_to_ctl_file/ctl_name} will be created. Default is TRUE.
@@ -183,18 +194,18 @@ indparm_extractor_nm <- function(res_file,phi_file){
 #' @examples 
 #' \dontrun{
 #' run_nm("./test/nm_test.ctl","c:/nm75g64/run/nmfe75",
-#'        parralel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
+#'        parallel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
 #'        data_file="~/Test/test/test_data.csv")
 #' }
 #' @author Dominic Bräm
 #' @export
-run_nm <- function(ctl_file,nm_path,parralel_command=NULL,create_dir=TRUE,data_file=NULL){
+run_nm <- function(ctl_file,nm_path,parallel_command=NULL,create_dir=TRUE,data_file=NULL){
   if(.Platform$OS.type != "windows"){
     error_msg <- "run_nm currently only implemented for Windows."
     stop(error_msg)
   }
   nm_path <- gsub("/","\\\\",nm_path)
-  parralel_command <- gsub("/","\\\\",parralel_command)
+  parallel_command <- gsub("/","\\\\",parallel_command)
   if(!file.exists(ctl_file)){
     stop("NONMEM file does not exist in given directory")
   }
@@ -229,8 +240,8 @@ run_nm <- function(ctl_file,nm_path,parralel_command=NULL,create_dir=TRUE,data_f
     new_dir <- ctl_path
   }
   shell_command <- paste0("start cmd.exe /k \"cd ",getwd(), " & cd ",new_dir," &"," ",nm_path," ",ctl_name," ",ctl_name_no_ext,".res\"")
-  if(!is.null(parralel_command)){
-    shell_command <- paste0(shell_command," ",parralel_command)
+  if(!is.null(parallel_command)){
+    shell_command <- paste0(shell_command," ",parallel_command)
   }
   shell(shell_command)
   if(create_dir & (dir_exists != 0)){

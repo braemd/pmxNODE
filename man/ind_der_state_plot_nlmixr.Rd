@@ -12,6 +12,7 @@ ind_der_state_plot_nlmixr(
   est_parms = NULL,
   fit_obj = NULL,
   length_out = 100,
+  n_hidden = 5,
   time_nn = FALSE,
   ribbon = TRUE,
   act = "ReLU",
@@ -33,6 +34,8 @@ extracted through the \emph{indparm_extractor_nlmixr} function. For optionality,
 \item{fit_obj}{(nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.}
 
 \item{length_out}{(numeric) Number of points between min_state and max_state}
+
+\item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 

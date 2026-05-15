@@ -243,7 +243,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
   }
   
   theta_defs <- vector("list", length = length(nn_numbers))
-  n_thetas <- sum(grepl("[^\\$]THETA",f_parse))
+  n_thetas <- sum(grepl("^[^#]*THETA\\(\\d+\\)",f_parse))
   
   for(i in 1:length(nn_numbers)){
     theta_def_out <- nn_theta_def_nm(number=nn_numbers[i],theta_start=n_thetas+1,n_hidden=nn_nhiddens[i],
@@ -262,7 +262,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
   }
   
   eta_defs <- vector("list", length = length(nn_numbers))
-  n_etas <- sum(grepl("(?<!TH)ETA",f_parse,perl = T))
+  n_etas <- sum(grepl("^[^#]*(?<!TH)ETA\\(\\d+\\)",f_parse,perl = T))
   
   for(i in 1:length(nn_numbers)){
     eta_def_out <- nn_eta_def_nm(number=nn_numbers[i],eta_start=n_etas+1,n_hidden=nn_nhiddens[i],
@@ -320,9 +320,9 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
   omega_line <- grep("\\$OMEGA",f_parse_new)
   f_parse_new <- append(f_parse_new," ",after = omega_line-1)
   
-  sigma_line <- grep("\\$SIGMA",f_parse_new)
+  sigma_line <- grep("\\$SIGMA",f_parse_new)[1]
   f_parse_new <- append(f_parse_new,unlist(eta_inis),after = sigma_line-1)
-  sigma_line <- grep("\\$SIGMA",f_parse_new)
+  sigma_line <- grep("\\$SIGMA",f_parse_new)[1]
   f_parse_new <- append(f_parse_new," ",after = sigma_line-1)
   
   ind_pop <- ifelse(pop,"pop","ind")
@@ -465,7 +465,7 @@ nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0
   }
   
   f_parse_new <- nn_reducer(f_parse)
-  f_parse_new <- model_parm_updater_mlx(f_parse_new,model_parms[[1]],theta_defs)
+  f_parse_new <- model_parm_updater_mlx(f_parse_new,model_parms[[1]],model_parms[[3]],theta_defs)
   
   for(i in 1:length(nn_numbers)){
     nx_line_nr <- grep(paste0("NN",nn_numbers[i]),f_parse_new)

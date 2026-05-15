@@ -17,14 +17,32 @@ model_parm_extractor_mlx <- function(text){
   input <- text[input_line]
   
   parm_list <- gsub("input\\s*=\\s*","",input)
+  parm_list <- gsub("[{} ]","",parm_list)
   
-  parms_match <- gregexpr("\\w+\\s*=\\s*[^,^}]+",parm_list)
-  parms <- unlist(regmatches(parm_list,parms_match))
+  parm_split <- strsplit(parm_list,",")[[1]]
   
-  parms_name <- gsub("\\s*=\\s*[^,^}]+","",parms)
-  parms_values <- gsub("\\w+\\s*=\\s*","",parms)
+  est_parms <- grepl("=",parm_split)
+  parms <- parm_split[est_parms]
+  regs <- parm_split[!est_parms]
   
-  out <- list(parms_name,parms_values)
+  n_regs_text <- sum(grepl("use\\s*=\\s*regressor",text))
+  if(n_regs_text != length(regs)){
+    error_msg <- "Number of parameters in input without initial estimate does not match number of regressors"
+    stop(error_msg)
+  }
+  
+  parms_names <- gsub("([^=]+)=.+","\\1",parms)
+  parms_values <- gsub("[^=]+=(.+)","\\1",parms)
+  
+  out <- list(parms_names,parms_values,regs)
+  
+  #parms_match <- gregexpr("\\w+\\s*=\\s*[^,^}]+",parm_list)
+  #parms <- unlist(regmatches(parm_list,parms_match))
+  
+  #parms_name <- gsub("\\s*=\\s*[^,^}]+","",parms)
+  #parms_values <- gsub("\\w+\\s*=\\s*","",parms)
+  
+  #out <- list(parms_name,parms_values)
   return(out)
 }
 
@@ -40,11 +58,11 @@ model_parm_extractor_mlx <- function(text){
 #' @return The Monolix model including all non-NN and NN parameters in \emph{input = ...}
 #' @author Dominic Bräm
 #' @keywords internal
-model_parm_updater_mlx <- function(text,model_parm_names,nn_thetas){
+model_parm_updater_mlx <- function(text,model_parm_names,model_reg_names,nn_thetas){
   input_line <- grep("input\\s*=\\s*\\{",text)
   
-  if(length(model_parm_names)!=0){
-    model_parm_names <- paste(unlist(model_parm_names),collapse = ",")
+  if(length(model_parm_names)!=0 | length(model_reg_names)!=0){
+    model_parm_names <- paste(c(unlist(model_parm_names),unlist(model_reg_names)),collapse = ",")
     nn_thetas <- paste(unlist(nn_thetas),collapse = ",")
     parms <- paste0(model_parm_names,",",nn_thetas)
   } else{

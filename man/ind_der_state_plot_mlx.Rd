@@ -15,6 +15,7 @@ ind_der_state_plot_mlx(
   act = "ReLU",
   ribbon = TRUE,
   length_out = 100,
+  n_hidden = 5,
   beta = 20,
   transform = NULL
 )
@@ -41,6 +42,8 @@ extracted through the \emph{indparm_extractor_mlx} function. For optionality, se
 displayed as individual spaghetti plot (FALSE)}
 
 \item{length_out}{(numeric) Number of points between min_state and max_state}
+
+\item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{beta}{(numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.}
 

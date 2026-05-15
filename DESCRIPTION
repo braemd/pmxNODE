@@ -1,7 +1,7 @@
 Package: pmxNODE
 Type: Package
 Title: Application of NODEs in 'Monolix', 'NONMEM', and 'nlmixr2'
-Version: 0.1.0
+Version: 0.2.1
 Authors@R: c(person("Dominic", "Bräm", role = c("aut", "cre"),
     email = "domi.braem@hotmail.com", comment = c(ORCID = "0000-0001-9094-8361")),
     person("Bernhard", "Steiert", role = c("ctb")),

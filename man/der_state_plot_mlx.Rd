@@ -14,6 +14,7 @@ der_state_plot_mlx(
   time_nn = FALSE,
   act = "ReLU",
   length_out = 100,
+  n_hidden = 5,
   plot_type = c("base", "ggplot"),
   beta = 20,
   transform = NULL
@@ -37,6 +38,8 @@ der_state_plot_mlx(
 \item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
 
 \item{length_out}{(numeric) Number of points between min_state and max_state}
+
+\item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{plot_type}{(string) What plot type should be used; "base" or "ggplot"}
 

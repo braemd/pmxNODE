@@ -12,6 +12,7 @@ der_vs_state_mlx(
   est_parms = NULL,
   mlx_file = NULL,
   length_out = 100,
+  n_hidden = 5,
   time_nn = FALSE,
   act = "ReLU",
   beta = 20,
@@ -32,6 +33,8 @@ der_vs_state_mlx(
 \item{mlx_file}{(string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.}
 
 \item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
+
+\item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 

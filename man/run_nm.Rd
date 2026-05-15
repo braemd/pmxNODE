@@ -7,7 +7,7 @@
 run_nm(
   ctl_file,
   nm_path,
-  parralel_command = NULL,
+  parallel_command = NULL,
   create_dir = TRUE,
   data_file = NULL
 )
@@ -19,7 +19,7 @@ slashes. File must be given with file extension, e.g., nonmem_file\strong{.ctl}}
 \item{nm_path}{(string) Absolute or relative Path/Name of NONMEM to be executed, \cr
 e.g., "C:/nm75g64/run/nmfe75".}
 
-\item{parralel_command}{(string) (Optional) Command for parralel NONMEM execution, \cr
+\item{parallel_command}{(string) (Optional) Command for parallel NONMEM execution, \cr
 e.g., "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30"}
 
 \item{create_dir}{(boolean) If NONMEM file should be run and saved in new directory. If TRUE, new directory of type 
@@ -40,7 +40,7 @@ All paths must be given in R-style, i.e., slashes instead of backslashes. Paths 
 \examples{
 \dontrun{
 run_nm("./test/nm_test.ctl","c:/nm75g64/run/nmfe75",
-       parralel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
+       parallel_command = "-parafile=C:/nm75g64/run/mpiwini8.pnm [nodes]=30",
        data_file="~/Test/test/test_data.csv")
 }
 }

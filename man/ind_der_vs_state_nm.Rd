@@ -13,6 +13,7 @@ ind_der_vs_state_nm(
   nm_res_file = NULL,
   nm_phi_file = NULL,
   length_out = 100,
+  n_hidden = 5,
   time_nn = FALSE,
   act = "ReLU",
   beta = 20,
@@ -36,6 +37,8 @@ extracted through the \emph{indparm_extractor_nm} function. For optionality, see
 \item{nm_phi_file}{(string; semi-optional) (path)/name of the phi file of a NONMEM run, must include file extension “.phi”. For optionality, see \strong{Details}.}
 
 \item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
+
+\item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 
