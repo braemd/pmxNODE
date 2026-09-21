@@ -29,7 +29,11 @@ export(run_mlx)
 export(run_nm)
 export(software_initializer)
 import(ggplot2)
-importFrom(checkmate,assert_character)
-importFrom(checkmate,assert_data_frame)
-importFrom(tidyr,pivot_longer)
-importFrom(tidyr,starts_with)
+importFrom(checkmate,
+  assert_character,
+  assert_data_frame
+)
+importFrom(tidyr,
+  pivot_longer,
+  starts_with
+)

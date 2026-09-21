@@ -11,7 +11,6 @@ Description: An easy-to-use tool for implementing Neural Ordinary Differential E
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 Suggests: 
     rxode2,
     nlmixr2,
@@ -27,3 +26,4 @@ Imports:
 Config/testthat/edition: 3
 BugReports: https://github.com/braemd/pmxNODE/issues
 VignetteBuilder: knitr
+Config/roxygen2/version: 8.1.0

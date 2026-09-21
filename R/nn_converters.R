@@ -389,6 +389,8 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, cens, limit, regressor, nominaltime, admid, rate, tinf, ss, ii, addl, date
 #' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
 #' @param mapping (list) List of mapping between model outputs and observation IDs
+#' @param pmx_parm_dist (named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
+#' all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".
 #' @param seed (numeric) Seed for random parameter initialization.
 #' @return Saving a converted Monolix model file under \emph{mlx_path}_converted.txt and optionally a Monolix file (\emph{mlx_name}.mlxtran)
 #' if \emph{gen_mlx_file}=TRUE
@@ -411,7 +413,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' @export
 nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.1,pre_fixef=NULL,
                              gen_mlx_file=FALSE,mlx_name=NULL,data_file=NULL,header_types=NULL,
-                             obs_types=NULL,mapping=NULL,seed=1908){
+                             obs_types=NULL,mapping=NULL,pmx_parm_dist=NULL,seed=1908){
   set.seed(seed)
   pop <- pop_only
   
@@ -505,7 +507,8 @@ nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0
                           pre_fixef=pre_fixef,
                           omega_inis=eta_scale,
                           obs_types=obs_types,
-                          mapping=mapping)
+                          mapping=mapping,
+                          pmx_parm_dist=pmx_parm_dist)
   }
   
   

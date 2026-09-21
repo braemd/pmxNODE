@@ -17,7 +17,8 @@ mlx_model_initializer(
   omega_inis = NULL,
   pre_fixef = NULL,
   obs_types = NULL,
-  mapping = NULL
+  mapping = NULL,
+  pmx_parm_dist = NULL
 )
 }
 \arguments{
@@ -47,6 +48,9 @@ fits with inter-individual variability (FALSE) should be used}
 \item{obs_types}{(list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations}
 
 \item{mapping}{(list) List of mapping between model outputs and observation IDs}
+
+\item{pmx_parm_dist}{(named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
+all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".}
 }
 \value{
 No return value, saving a Monolix .mlxtran file.

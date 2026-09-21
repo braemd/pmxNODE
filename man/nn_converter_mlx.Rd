@@ -16,6 +16,7 @@ nn_converter_mlx(
   header_types = NULL,
   obs_types = NULL,
   mapping = NULL,
+  pmx_parm_dist = NULL,
   seed = 1908
 )
 }
@@ -48,6 +49,9 @@ ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, c
 \item{obs_types}{(list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations}
 
 \item{mapping}{(list) List of mapping between model outputs and observation IDs}
+
+\item{pmx_parm_dist}{(named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
+all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".}
 
 \item{seed}{(numeric) Seed for random parameter initialization.}
 }

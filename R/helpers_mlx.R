@@ -99,12 +99,15 @@ model_parm_updater_mlx <- function(text,model_parm_names,model_reg_names,nn_thet
 #' @param pre_fixef (named vector) Named vector of all initial values to be used for NN and non-NN parameters
 #' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
 #' @param mapping (list) List of mapping between model outputs and observation IDs
+#' @param pmx_parm_dist (named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
+#' all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".
 #' @return No return value, saving a Monolix .mlxtran file.
 #' @author Dominic Bräm
 #' @keywords internal
 mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
                                   parm_names,parm_inis,theta_names,theta_inis,
-                                  pop=FALSE,omega_inis=NULL,pre_fixef=NULL,obs_types=NULL,mapping=NULL){
+                                  pop=FALSE,omega_inis=NULL,pre_fixef=NULL,obs_types=NULL,mapping=NULL,
+                                  pmx_parm_dist=NULL){
   
   if(requireNamespace("lixoftConnectors", quietly = TRUE)){
     parm_names <- unlist(parm_names)
@@ -145,6 +148,9 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
     nn_dist_set <- as.list(rep("normal",length(theta_names)))
     names(nn_dist_set) <- theta_names
     lixoftConnectors::setIndividualParameterDistribution(nn_dist_set)
+    if(!is.null(pmx_parm_dist)){
+      lixoftConnectors::setIndividualParameterDistribution(pmx_parm_dist)
+    }
     
     if(is.null(pre_fixef)){
       if(length(parm_names) != 0){
