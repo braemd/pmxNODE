@@ -18,6 +18,9 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
             Activation function of NN",nn_name," was set to ReLU"))
     act <- "ReLU"
   }
+  suppressWarnings({
+    parms <- setNames(as.numeric(parms),names(parms))
+  })
   out <- lapply(inputs,function(y){
     out <- with(as.list(c(parms)),{
     if(!time_nn){
@@ -330,6 +333,9 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
             Activation function of NN",nn_name," was set to ReLU"))
     act <- "ReLU"
   }
+  suppressWarnings({
+    parms <- setNames(as.numeric(parms),names(parms))
+  })
   out <- lapply(inputs,function(y){
     out <- with(as.list(c(parms)),{
       if(!time_nn){
