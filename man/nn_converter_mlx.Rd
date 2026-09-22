@@ -14,7 +14,7 @@ nn_converter_mlx(
   mlx_name = NULL,
   data_file = NULL,
   header_types = NULL,
-  obs_types = NULL,
+  data_args = list(),
   mapping = NULL,
   pmx_parm_dist = NULL,
   seed = 1908
@@ -46,7 +46,13 @@ with pop or ind depending whether \emph{pop}=TRUE or \emph{pop}=FALSE,respective
 \item{header_types}{(vector) Required if \emph{gen_mlx_file}=TRUE, Vector of strings describing column types of data. Possible header types: 
 ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, cens, limit, regressor, nominaltime, admid, rate, tinf, ss, ii, addl, date}
 
-\item{obs_types}{(list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations}
+\item{data_args}{(named list) Optional list of additional arguments to data of \emph{newProject} from \emph{lixoftConnectors}, i.e.,
+\itemize{
+   \item \emph{sheet} (string) for the sheet name if data_file is an excel file
+   \item \emph{observationTypes} (list) defining "continuous", "discrete", or "event", default is "continuous"
+   \item \emph{nbSSDoses} (integer) number of steady-state doses if SS column is present
+   \item \emph{regressorsSettings} (character) regressors "lastCarriedForward" or "linearInterpolation"
+}}
 
 \item{mapping}{(list) List of mapping between model outputs and observation IDs}
 

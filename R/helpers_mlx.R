@@ -97,7 +97,13 @@ model_parm_updater_mlx <- function(text,model_parm_names,model_reg_names,nn_thet
 #' fits with inter-individual variability (FALSE) should be used
 #' @param omega_inis (numeric) Initial standard deviation of random effects on NN parameters; standard 0.1 from nn_converter_mlx
 #' @param pre_fixef (named vector) Named vector of all initial values to be used for NN and non-NN parameters
-#' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
+#' @param data_args (named list) Optional list of additional arguments to data of \emph{newProject} from \emph{lixoftConnectors}, i.e.,
+#' \itemize{
+#'    \item \emph{sheet} (string) for the sheet name if data_file is an excel file
+#'    \item \emph{observationTypes} (list) defining "continuous", "discrete", or "event", default is "continuous"
+#'    \item \emph{nbSSDoses} (integer) number of steady-state doses if SS column is present
+#'    \item \emph{regressorsSettings} (character) regressors "lastCarriedForward" or "linearInterpolation"
+#' }
 #' @param mapping (list) List of mapping between model outputs and observation IDs
 #' @param pmx_parm_dist (named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
 #' all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".
@@ -106,7 +112,7 @@ model_parm_updater_mlx <- function(text,model_parm_names,model_reg_names,nn_thet
 #' @keywords internal
 mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
                                   parm_names,parm_inis,theta_names,theta_inis,
-                                  pop=FALSE,omega_inis=NULL,pre_fixef=NULL,obs_types=NULL,mapping=NULL,
+                                  pop=FALSE,omega_inis=NULL,pre_fixef=NULL,data_args=list(),mapping=NULL,
                                   pmx_parm_dist=NULL){
   
   if(requireNamespace("lixoftConnectors", quietly = TRUE)){
@@ -124,13 +130,12 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
       stop(paste0("Header types must be in: ",paste(header_possibilites,collapse = ",")))
     }
     
-    if(!is.null(obs_types) & is.null(mapping)){
-      lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,observationTypes=obs_types))
-    } else if(!is.null(obs_types) & !is.null(mapping)){
-      lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types,
-                                                                       observationTypes=obs_types,mapping=mapping))
+    data_args <- append(list(dataFile=data_file,headerTypes=header_types),data_args)
+    
+    if(!is.null(mapping)){
+      lixoftConnectors::newProject(modelFile = model_file, data = data_args, mapping = mapping)
     } else{
-      lixoftConnectors::newProject(modelFile = model_file, data = list(dataFile=data_file,headerTypes=header_types))
+      lixoftConnectors::newProject(modelFile = model_file, data = data_args)
     }
     
     lixoftConnectors::setConditionalDistributionSamplingSettings(enableMaxIterations=TRUE,nbMaxIterations=500)

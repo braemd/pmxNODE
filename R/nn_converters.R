@@ -387,7 +387,13 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' @param data_file (string) Required if \emph{gen_mlx_file}=TRUE, (Path/)Name of the data file to be used
 #' @param header_types (vector) Required if \emph{gen_mlx_file}=TRUE, Vector of strings describing column types of data. Possible header types: 
 #' ignore, id, time, observation, amount, contcov, catcov, occ, evid, mdv, obsid, cens, limit, regressor, nominaltime, admid, rate, tinf, ss, ii, addl, date
-#' @param obs_types (list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations
+#' @param data_args (named list) Optional list of additional arguments to data of \emph{newProject} from \emph{lixoftConnectors}, i.e.,
+#' \itemize{
+#'    \item \emph{sheet} (string) for the sheet name if data_file is an excel file
+#'    \item \emph{observationTypes} (list) defining "continuous", "discrete", or "event", default is "continuous"
+#'    \item \emph{nbSSDoses} (integer) number of steady-state doses if SS column is present
+#'    \item \emph{regressorsSettings} (character) regressors "lastCarriedForward" or "linearInterpolation"
+#' }
 #' @param mapping (list) List of mapping between model outputs and observation IDs
 #' @param pmx_parm_dist (named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
 #' all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".
@@ -413,7 +419,7 @@ nn_converter_nm <- function(ctl_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.
 #' @export
 nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0.1,pre_fixef=NULL,
                              gen_mlx_file=FALSE,mlx_name=NULL,data_file=NULL,header_types=NULL,
-                             obs_types=NULL,mapping=NULL,pmx_parm_dist=NULL,seed=1908){
+                             data_args=list(),mapping=NULL,pmx_parm_dist=NULL,seed=1908){
   set.seed(seed)
   pop <- pop_only
   
@@ -506,7 +512,7 @@ nn_converter_mlx <- function(mlx_path,pop_only=FALSE,theta_scale=0.1,eta_scale=0
                           pop=pop,
                           pre_fixef=pre_fixef,
                           omega_inis=eta_scale,
-                          obs_types=obs_types,
+                          data_args=data_args,
                           mapping=mapping,
                           pmx_parm_dist=pmx_parm_dist)
   }
