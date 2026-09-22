@@ -11,6 +11,7 @@
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return A vector of derivatives of the NN for the state values
 #' @author Dominic Bräm
+#' @importFrom stats setNames
 #' @keywords internal
 derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
@@ -326,6 +327,7 @@ ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return A vector of derivatives of the NN for the state values
 #' @author Dominic Bräm
+#' @importFrom stats setNames
 #' @keywords internal
 derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(!(act %in% c("ReLU","Softplus"))){

@@ -33,6 +33,7 @@ importFrom(checkmate,
   assert_character,
   assert_data_frame
 )
+importFrom(stats,setNames)
 importFrom(tidyr,
   pivot_longer,
   starts_with
