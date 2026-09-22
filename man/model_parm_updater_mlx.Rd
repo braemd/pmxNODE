@@ -4,7 +4,7 @@
 \alias{model_parm_updater_mlx}
 \title{Internal: Update input line}
 \usage{
-model_parm_updater_mlx(text, model_parm_names, nn_thetas)
+model_parm_updater_mlx(text, model_parm_names, model_reg_names, nn_thetas)
 }
 \arguments{
 \item{text}{(list of strings) The Monolix model with each line as element of a list}

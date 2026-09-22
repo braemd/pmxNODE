@@ -10,6 +10,7 @@ rhs_plot_mlx(
   inputs,
   est_parms = NULL,
   mlx_file = NULL,
+  n_hidden = NULL,
   time_nn = NULL,
   act = NULL,
   beta = 20
@@ -26,6 +27,8 @@ for each variable in \emph{rhs}.}
 \item{est_parms}{(named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.}
 
 \item{mlx_file}{(string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.}
+
+\item{n_hidden}{(numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5}
 
 \item{time_nn}{(boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.}
 

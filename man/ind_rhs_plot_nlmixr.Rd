@@ -11,6 +11,7 @@ ind_rhs_plot_nlmixr(
   group,
   est_parms = NULL,
   fit_obj = NULL,
+  n_hidden = NULL,
   time_nn = NULL,
   act = NULL,
   beta = 20
@@ -30,6 +31,8 @@ for each variable in \emph{rhs}.}
 extracted through the \emph{indparm_extractor_nlmixr} function. For optionality, see \strong{Details}.}
 
 \item{fit_obj}{(nlmixr fit object; semi-optional) The fit-object from nlmixr2(...), fitted with IIV. For optionality, see \strong{Details}.}
+
+\item{n_hidden}{(numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5}
 
 \item{time_nn}{(boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.}
 

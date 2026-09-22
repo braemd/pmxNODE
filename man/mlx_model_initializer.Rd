@@ -16,8 +16,9 @@ mlx_model_initializer(
   pop = FALSE,
   omega_inis = NULL,
   pre_fixef = NULL,
-  obs_types = NULL,
-  mapping = NULL
+  data_args = list(),
+  mapping = NULL,
+  pmx_parm_dist = NULL
 )
 }
 \arguments{
@@ -44,9 +45,18 @@ fits with inter-individual variability (FALSE) should be used}
 
 \item{pre_fixef}{(named vector) Named vector of all initial values to be used for NN and non-NN parameters}
 
-\item{obs_types}{(list) List of types of observations, e.g., \dQuote{continuous}; only required if non-continuous observations}
+\item{data_args}{(named list) Optional list of additional arguments to data of \emph{newProject} from \emph{lixoftConnectors}, i.e.,
+\itemize{
+   \item \emph{sheet} (string) for the sheet name if data_file is an excel file
+   \item \emph{observationTypes} (list) defining "continuous", "discrete", or "event", default is "continuous"
+   \item \emph{nbSSDoses} (integer) number of steady-state doses if SS column is present
+   \item \emph{regressorsSettings} (character) regressors "lastCarriedForward" or "linearInterpolation"
+}}
 
 \item{mapping}{(list) List of mapping between model outputs and observation IDs}
+
+\item{pmx_parm_dist}{(named list) Optional; named list of individual parameter distributions for non-NN parameters. "logNormal" is set for
+all parameters not specified otherwise. Default is NULL, i.e., all non-NN parameters are set to "logNormal".}
 }
 \value{
 No return value, saving a Monolix .mlxtran file.

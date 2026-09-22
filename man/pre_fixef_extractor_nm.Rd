@@ -4,10 +4,12 @@
 \alias{pre_fixef_extractor_nm}
 \title{THETA extraction from results file}
 \usage{
-pre_fixef_extractor_nm(res_path)
+pre_fixef_extractor_nm(res_path, fix_zero_grad = TRUE)
 }
 \arguments{
 \item{res_path}{(string) (Path/)Name of the results file of a NONMEM run, must include file extension, e.g., \dQuote{.res}}
+
+\item{fix_zero_grad}{(boolean) Define whether parameters with zero gradient (deactivated neurons) should be fixed to zero. Default is TRUE.}
 }
 \value{
 Named vector with parameter estimates from the previous run

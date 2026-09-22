@@ -13,6 +13,7 @@ ind_der_vs_state_mlx(
   mlx_file = NULL,
   time_nn = FALSE,
   length_out = 100,
+  n_hidden = 5,
   act = "ReLU",
   beta = 20,
   transform = NULL
@@ -35,6 +36,8 @@ extracted through the \emph{indparm_extractor_mlx} function. For optionality, se
 \item{time_nn}{(boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.}
 
 \item{length_out}{(numeric) Number of states between min_state and max_state for derivative calculations.}
+
+\item{n_hidden}{(numeric) Number of neurons in the hidden layer, default value is 5}
 
 \item{act}{(string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.}
 

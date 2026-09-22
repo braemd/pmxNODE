@@ -11,6 +11,7 @@
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return A vector of derivatives of the NN for the state values
 #' @author Dominic Bräm
+#' @importFrom stats setNames
 #' @keywords internal
 derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
@@ -18,6 +19,9 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
             Activation function of NN",nn_name," was set to ReLU"))
     act <- "ReLU"
   }
+  suppressWarnings({
+    parms <- setNames(as.numeric(parms),names(parms))
+  })
   out <- lapply(inputs,function(y){
     out <- with(as.list(c(parms)),{
     if(!time_nn){
@@ -54,6 +58,7 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
@@ -63,7 +68,7 @@ derivative_calc_mlx <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,ac
 #' @author Dominic Bräm
 #' @keywords internal
 der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,
-                             length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
+                             length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
     error_msg <- "Either inputs or both, min_state and max_state, must be given"
     stop(error_msg)
@@ -88,7 +93,7 @@ der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,e
   if(is.null(inputs)){
     inputs <- seq(min_state,max_state,length.out=length_out)
   }
-  outputs <- derivative_calc_mlx(nn_name,est_parms,inputs,time_nn=time_nn,act=act,beta=beta)
+  outputs <- derivative_calc_mlx(nn_name,est_parms,inputs,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   if(!is.null(transform)){
     if(!is.character(transform)){
       error_msg <- "transform must be a mathematical expression as string including NN as independent variable"
@@ -125,6 +130,7 @@ der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,e
 #' extracted through the \emph{indparm_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param mlx_file (string; semi-optional) (path)/name of the Monolix run. Must include ".mlxtran" and estimation bust have been run previously. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
@@ -134,7 +140,7 @@ der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,e
 #' @author Dominic Bräm
 #' @keywords internal
 ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,
-                                 length_out=100,act="ReLU",beta=20,transform=NULL){
+                                 length_out=100,n_hidden=5,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
     error_msg <- "Either inputs or both, min_state and max_state, must be given"
     stop(error_msg)
@@ -156,7 +162,7 @@ ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NU
   }
   outputs <- apply(est_parms,1,function(x){
     names(x) <- gsub("_mode","",names(x))
-    out <- derivative_calc_mlx(nn_name,x,inputs,time_nn=time_nn,act=act,beta=beta)
+    out <- derivative_calc_mlx(nn_name,x,inputs,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   })
   if(!is.null(transform)){
     if(!is.character(transform)){
@@ -196,6 +202,7 @@ ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NU
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param length_out (numeric) Number of points between min_state and max_state
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param plot_type (string) What plot type should be used; "base" or "ggplot"
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
@@ -211,10 +218,10 @@ ind_der_vs_state_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NU
 #' @import ggplot2
 #' @export
 der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,mlx_file=NULL,time_nn=FALSE,act="ReLU",
-                               length_out=100,plot_type=c("base","ggplot"),beta=20,transform=NULL){
+                               length_out=100,n_hidden=5,plot_type=c("base","ggplot"),beta=20,transform=NULL){
   data <- der_vs_state_mlx(nn_name=nn_name,min_state=min_state,max_state=max_state,inputs=inputs,
                            est_parms=est_parms,mlx_file=mlx_file,time_nn=time_nn,length_out=length_out,
-                           act=act,beta=beta,transform=transform)
+                           n_hidden=n_hidden,act=act,beta=beta,transform=transform)
   
   if(length(plot_type)>1){
     plot_type <- "base"
@@ -258,6 +265,7 @@ der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL
 #' @param ribbon (boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 #' displayed as individual spaghetti plot (FALSE)
 #' @param length_out (numeric) Number of points between min_state and max_state
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
@@ -275,10 +283,10 @@ der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL
 #' @export
 ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,
                                    mlx_file=NULL,time_nn=FALSE,act="ReLU",
-                               ribbon=TRUE,length_out=100,beta=20,transform=NULL){
+                               ribbon=TRUE,length_out=100,n_hidden=5,beta=20,transform=NULL){
   data <- ind_der_vs_state_mlx(nn_name=nn_name,min_state=min_state,max_state=max_state,inputs=inputs,
                            est_parms=est_parms,mlx_file=mlx_file,time_nn=time_nn,length_out=length_out,
-                           act=act,beta=beta,transform=transform)
+                           n_hidden=n_hidden,act=act,beta=beta,transform=transform)
   
   if(ribbon){
     mins <- data.frame(mins=apply(data[,-1],1,min))
@@ -319,6 +327,7 @@ ind_der_state_plot_mlx <- function(nn_name,min_state=NULL,max_state=NULL,inputs=
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @return A vector of derivatives of the NN for the state values
 #' @author Dominic Bräm
+#' @importFrom stats setNames
 #' @keywords internal
 derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20){
   if(!(act %in% c("ReLU","Softplus"))){
@@ -326,6 +335,9 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
             Activation function of NN",nn_name," was set to ReLU"))
     act <- "ReLU"
   }
+  suppressWarnings({
+    parms <- setNames(as.numeric(parms),names(parms))
+  })
   out <- lapply(inputs,function(y){
     out <- with(as.list(c(parms)),{
       if(!time_nn){
@@ -364,6 +376,7 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_mlx} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
@@ -373,7 +386,7 @@ derivative_calc_nm <- function(nn_name,parms,inputs,n_hidden=5,time_nn=FALSE,act
 #' @author Dominic Bräm
 #' @keywords internal
 der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
-                            length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
+                            length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
     error_msg <- "Either inputs or both, min_state and max_state, must be given"
     stop(error_msg)
@@ -401,7 +414,7 @@ der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,es
   if(is.null(inputs)){
     inputs <- seq(min_state,max_state,length.out=length_out)
   }
-  outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,time_nn=time_nn,act=act,beta=beta)
+  outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   if(!is.null(transform)){
     if(!is.character(transform)){
       error_msg <- "transform must be a mathematical expression as string including NN as independent variable"
@@ -438,6 +451,7 @@ der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,es
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param nm_phi_file (string; semi-optional) (path)/name of the phi file of a NONMEM run, must include file extension “.phi”. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
@@ -447,7 +461,7 @@ der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,es
 #' @author Dominic Bräm
 #' @keywords internal
 ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
-                                nm_phi_file=NULL,length_out=100,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
+                                nm_phi_file=NULL,length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",beta=20,transform=NULL){
   if(is.null(inputs) & (is.null(min_state) | is.null(max_state))){
     error_msg <- "Either inputs or both, min_state and max_state, must be given"
     stop(error_msg)
@@ -475,7 +489,7 @@ ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
   outputs <- apply(num_est_parms,1,function(x) {
     x <- as.numeric(x)
     names(x) <- colnames(num_est_parms)
-    out <- derivative_calc_nm(nn_name,x,inputs,time_nn=time_nn,act=act,beta=beta)
+    out <- derivative_calc_nm(nn_name,x,inputs,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   })
   if(!is.null(transform)){
     if(!is.character(transform)){
@@ -515,6 +529,7 @@ ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
 #' @param est_parms (named vector; semi-optional) Named vector of estimated parameters from the NN extracted through the \emph{pre_fixef_extractor_nm} function. For optionality, see \strong{Details}.
 #' @param nm_res_file (string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.
 #' @param length_out (numeric) Number of states between min_state and max_state for derivative calculations.
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param time_nn (boolean) Whether the neural network to analyze is a time-dependent neural network or not. Default values is FALSE.
 #' @param act (string) Activation function used in the NN. Currently "ReLU" and "Softplus" available.
 #' @param plot_type (string) What plot type should be used; "base" or "ggplot"
@@ -531,10 +546,10 @@ ind_der_vs_state_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
 #' @author Dominic Bräm
 #' @export
 der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
-                              length_out=100,time_nn=FALSE,act="ReLU",plot_type=c("base","ggplot"),beta=20,transform=NULL){
+                              length_out=100,n_hidden=5,time_nn=FALSE,act="ReLU",plot_type=c("base","ggplot"),beta=20,transform=NULL){
   data <- der_vs_state_nm(nn_name=nn_name,min_state=min_state,max_state=max_state,
                            est_parms=est_parms,nm_res_file=nm_res_file,length_out=length_out,
-                          time_nn=time_nn,act=act,beta=beta,transform=transform)
+                          n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta,transform=transform)
   
   if(length(plot_type)>1){
     plot_type <- "base"
@@ -579,6 +594,7 @@ der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,
 #' @param ribbon (boolean) Whether individual derivatives versus states should be summarise in a ribbon (TRUE) or
 #' displayed as individual spaghetti plot (FALSE)
 #' @param length_out (numeric) Number of points between min_state and max_state
+#' @param n_hidden (numeric) Number of neurons in the hidden layer, default value is 5
 #' @param beta (numeric) Beta value for the Softplus activation function, only applicable if \emph{act="Softplus"}; Default to 20.
 #' @param transform (string) Mathematical exression as string to transform the NN output. Independent variable must be called NN, e.g.,
 #' "1/(1+exp(-NN))" for sigmoidal transformation.
@@ -595,11 +611,11 @@ der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,
 #' @importFrom tidyr starts_with
 #' @export
 ind_der_state_plot_nm <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NULL,est_parms=NULL,nm_res_file=NULL,
-                                  nm_phi_file=NULL,length_out=100,time_nn=FALSE,ribbon=TRUE,act="ReLU",beta=20,
+                                  nm_phi_file=NULL,length_out=100,n_hidden=5,time_nn=FALSE,ribbon=TRUE,act="ReLU",beta=20,
                                   transform=NULL){
   data <- ind_der_vs_state_nm(nn_name=nn_name,min_state=min_state,max_state=max_state,
                               est_parms=est_parms,nm_res_file=nm_res_file,nm_phi_file=nm_phi_file,
-                              length_out=length_out,time_nn=time_nn,act=act,beta=beta,
+                              n_hidden=n_hidden,length_out=length_out,time_nn=time_nn,act=act,beta=beta,
                               transform=transform)
   
   if(ribbon){

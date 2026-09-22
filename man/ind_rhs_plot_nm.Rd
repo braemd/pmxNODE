@@ -12,6 +12,7 @@ ind_rhs_plot_nm(
   est_parms = NULL,
   nm_res_file = NULL,
   nm_phi_file = NULL,
+  n_hidden = NULL,
   time_nn = NULL,
   act = NULL,
   beta = 20
@@ -33,6 +34,8 @@ extracted through the \emph{indparm_extractor_nm} function. For optionality, see
 \item{nm_res_file}{(string; semi-optional) (path)/name of the results file of a NONMEM run, must include file extension, e.g., “.res”. For optionality, see \strong{Details}.}
 
 \item{nm_phi_file}{(string; semi-optional) (path)/name of the phi file of a NONMEM run, must include file extension “.phi”. For optionality, see \strong{Details}.}
+
+\item{n_hidden}{(numeric vector) Vector for each NN in \emph{rhs} defining the number of hidden neurons. Default value for all NN is 5}
 
 \item{time_nn}{(boolean vector) Vector for each NN in \emph{rhs} defining whether the neural network is a time-dependent neural network or not. Default value for all NN is FALSE.}
 
