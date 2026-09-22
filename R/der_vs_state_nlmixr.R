@@ -92,7 +92,7 @@ der_vs_state_nlmixr <- function(nn_name,min_state=NULL,max_state=NULL,inputs=NUL
   if(is.null(inputs)){
     inputs <- seq(min_state,max_state,length.out=length_out)
   }
-  outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,n_hidden=5,time_nn=time_nn,act=act,beta=beta)
+  outputs <- derivative_calc_nm(nn_name,num_est_parms,inputs,n_hidden=n_hidden,time_nn=time_nn,act=act,beta=beta)
   out <- data.frame(state=inputs,
                     derivatives=outputs)
   return(out)

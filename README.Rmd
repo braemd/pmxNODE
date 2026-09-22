@@ -37,7 +37,7 @@ The general workflow of pmxNODE consists of few steps:
 
 * Convert the written model file with the `nn_converter_XXX` function from the pmxNODE package, e.g. `nn_converter_mlx` for Monolix. This function can also directly generate a *.mlxtran* file with automatically initialized model parameters.
 
-* We suggest to fit the model to the data first without inter-individual variability on neural networks parameters (argument *pop = True* in the `nn_converter_mlx`{.R} function) and add the random effects in a second run, where parameters were initialized with last estimates.
+* We suggest to fit the model to the data first without inter-individual variability on neural networks parameters (argument *pop_only = True* in the `nn_converter_mlx`{.R} function) and add the random effects in a second run, where parameters were initialized with last estimates.
 
 #### NN functions
 
@@ -62,7 +62,7 @@ We first need to load the pmxNODE package and to initialize the lixoftConnectors
 
 If the lixoftConnectors package is not yet installed, an installation path to the package .tar.gz file from Monolix must be provided.
 
-```{r, echo = T, results = 'hide'}
+```{r, echo = T, results = 'hide', eval = F}
 library(pmxNODE)
 library(ggplot2)
 software_initializer(software = "Monolix",
@@ -85,13 +85,13 @@ copy_examples(
 
 
 #### Converting and population fit
-Before fitting the model, it needs to be converted with the `nn_converter_mlx`{.R} function. In addition to the path/file name of the unconverted Monolix model and the argument on including inter-individual variability for the neural network parameters, a Monolix *.mlxtran* file can be automatically generated with the *gen_mlx_file = TRUE* argument. In order to do so, a data file and the header types must be provided. If no file name for the new Monolix file is given through the *mlx_name* argument, the Monolix file name is automatically generated based on the Monolix model file. Note that a suffix is added to the file name, either *\_pop* if *pop = TRUE* or *\_ind* if *ind = TRUE*.
+Before fitting the model, it needs to be converted with the `nn_converter_mlx`{.R} function. In addition to the path/file name of the unconverted Monolix model and the argument on including inter-individual variability for the neural network parameters, a Monolix *.mlxtran* file can be automatically generated with the *gen_mlx_file = TRUE* argument. In order to do so, a data file and the header types must be provided. If no file name for the new Monolix file is given through the *mlx_name* argument, the Monolix file name is automatically generated based on the Monolix model file. Note that a suffix is added to the file name, either *\_pop* if *pop_only = TRUE* or *\_ind* if *pop_only = FALSE*.
 
 The model can be automatically run from R with the function `run_mlx`{.R} from the pmxNODE package.
 
 ```{r, echo = T, results = 'hide', eval = F}
 nn_converter_mlx(mlx_path = "~/pmxNODE/mlx_example1_model.txt",
-                 pop = TRUE,
+                 pop_only = TRUE,
                  gen_mlx_file = TRUE,
                  mlx_name = "~/pmxNODE/mlx_example1",
                  data_file = "~/pmxNODE/data_example1_mlx.csv",
@@ -103,7 +103,7 @@ run_mlx("~/pmxNODE/mlx_example1_pop.mlxtran")
 #### Converting and individual fit
 In order to get the parameter estimations from the population fit (without inter-individual variability), the `pre_fixef_extractor_mlx`{.R} function can be utilized.
 
-These parameter estimates can be given as additional argument *pre_fixef* to the `nn_converter_mlx`{.R} function. To include inter-individual variability, the population argument is set to false (*pop = FALSE*) in the `nn_converter_mlx`{.R} function.
+These parameter estimates can be given as additional argument *pre_fixef* to the `nn_converter_mlx`{.R} function. To include inter-individual variability, the population argument is set to false (*pop_only = FALSE*) in the `nn_converter_mlx`{.R} function.
 
 The final model with inter-individual variability can then be fitted again with the `run_mlx`{.R} function.
 
@@ -111,7 +111,7 @@ The final model with inter-individual variability can then be fitted again with 
 est_parms <- pre_fixef_extractor_mlx("~/pmxNODE/mlx_example1_pop.mlxtran")
 
 nn_converter_mlx(mlx_path = "~/pmxNODE/mlx_example1_model.txt",
-                 pop = FALSE,
+                 pop_only = FALSE,
                  pre_fixef = est_parms,
                  gen_mlx_file = TRUE,
                  mlx_name = "~/pmxNODE/mlx_example1",
