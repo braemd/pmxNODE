@@ -200,22 +200,37 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
                              initialValue=pre_fixef,
                              method="MLE")
       
-      model_omega_df <- data.frame(name=paste0("omega_",parm_names),
-                                   initialValue=1,
-                                   method="MLE")
+      if(length(parm_names) != 0){
+        model_omega_df <- data.frame(name=paste0("omega_",parm_names),
+                                     initialValue=1,
+                                     method="MLE")
+      }
+      
       
       if(!pop){
         nn_omega_df <- data.frame(name=paste0("omega_",theta_names),
                                   initialValue=omega_inis,
                                   method="MLE")
         
-        mlx_inis <- rbind(theta_df,
-                          model_omega_df,
-                          nn_omega_df)
+        if(length(parm_names) != 0){
+          mlx_inis <- rbind(theta_df,
+                            model_omega_df,
+                            nn_omega_df)
+        } else{
+          mlx_inis <- rbind(theta_df,
+                            nn_omega_df)
+        }
+        
         
       } else{
-        mlx_inis <- rbind(theta_df,
-                          model_omega_df)
+        
+        if(length(parm_names) != 0){
+          mlx_inis <- rbind(theta_df,
+                            model_omega_df)
+        } else{
+          mlx_inis <- theta_df
+        }
+        
       }
       
       
