@@ -131,6 +131,10 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
       stop(paste0("Header types must be in: ",paste(header_possibilites,collapse = ",")))
     }
     
+    if(any(names(data_args) %in% c("dataFile","headerTypes"))){
+      stop("dataFile and headerTypes must be given as separat arguments, not part of data_args")
+    }
+    
     data_args <- append(list(dataFile=data_file,headerTypes=header_types),data_args)
     
     if(!is.null(mapping)){
