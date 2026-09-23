@@ -11,10 +11,12 @@ model_parm_updater_mlx(text, model_parm_names, model_reg_names, nn_thetas)
 
 \item{model_parm_names}{(list of strings) A list of all non-NN parameters}
 
+\item{model_reg_names}{(list of strings) A list of regressors}
+
 \item{nn_thetas}{(list of strings) A list of all NN parameters}
 }
 \value{
-The Monolix model including all non-NN and NN parameters in \emph{input = ...}
+The Monolix model including all non-NN and NN parameters and regressors in \emph{input = ...}
 }
 \description{
 Update a Monolix model input to define non-NN and NN parameters as model inputs

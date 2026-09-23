@@ -54,8 +54,9 @@ model_parm_extractor_mlx <- function(text){
 #' 
 #' @param text (list of strings) The Monolix model with each line as element of a list
 #' @param model_parm_names (list of strings) A list of all non-NN parameters
+#' @param model_reg_names (list of strings) A list of regressors
 #' @param nn_thetas (list of strings) A list of all NN parameters
-#' @return The Monolix model including all non-NN and NN parameters in \emph{input = ...}
+#' @return The Monolix model including all non-NN and NN parameters and regressors in \emph{input = ...}
 #' @author Dominic Bräm
 #' @keywords internal
 model_parm_updater_mlx <- function(text,model_parm_names,model_reg_names,nn_thetas){
@@ -128,6 +129,10 @@ mlx_model_initializer <- function(model_name,model_file,data_file,header_types,
     
     if(!all(header_types %in% header_possibilites)){
       stop(paste0("Header types must be in: ",paste(header_possibilites,collapse = ",")))
+    }
+    
+    if(any(names(data_args) %in% c("dataFile","headerTypes"))){
+      stop("dataFile and headerTypes must be given as separat arguments, not part of data_args")
     }
     
     data_args <- append(list(dataFile=data_file,headerTypes=header_types),data_args)
